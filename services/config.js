@@ -18,12 +18,14 @@ module.exports = {
       !strapi.plugins.config.config.minify ? 
         JSON.stringify(JSON.parse(fileContents), null, 2)
         : fileContents;
-    
-    await strapi.fs.writePluginFile(
-      'config',
-      `files/${configName}.json`,
-      json
-    );
+
+    // Create the export folder if it does not yet exist.
+    if (!fs.existsSync(strapi.plugins.config.config.destination)) {
+      fs.mkdirSync(strapi.plugins.config.config.destination, { recursive: true });
+    }
+
+    const writeFile = util.promisify(fs.writeFile);
+    await writeFile(`${strapi.plugins.config.config.destination}${configName}.json`, json);
   },
 
   readConfigFile: async (configName) => {
