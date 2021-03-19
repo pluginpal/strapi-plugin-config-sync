@@ -3,19 +3,16 @@
 const fs = require('fs');
 
 /**
- * config.js controller
- *
- * @description: A set of functions called "actions" of the `config` plugin.
+ * Main controllers for config import/export.
  */
 
 module.exports = {
-
   /**
-   * Default action.
+   * Export all config, from db to filesystem.
    *
-   * @return {Object}
+   * @param {object} ctx - Request context object.
+   * @returns {void}
    */
-
   export: async (ctx) => {
     const coreStoreAPI = strapi.query('core_store');
     const coreStore = await coreStoreAPI.find({ _limit: -1 });
@@ -29,6 +26,12 @@ module.exports = {
     });
   },
 
+  /**
+   * Import all config, from filesystem to db.
+   *
+   * @param {object} ctx - Request context object.
+   * @returns {void}
+   */
   import: async (ctx) => {
     // Check for existance of the config file destination dir.
     if (!fs.existsSync(strapi.plugins.config.config.destination)) {
