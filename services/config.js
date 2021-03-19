@@ -11,10 +11,15 @@ const util = require('util');
 
 module.exports = {
   writeConfigFile: async (configName, fileContents) => {
+    const json = 
+      strapi.plugins.config.config.beautify ? 
+        JSON.stringify(JSON.parse(fileContents), null, 2)
+        : fileContents;
+    
     await strapi.fs.writePluginFile(
       'config',
       `files/${configName}.json`,
-      fileContents
+      json
     );
   },
 
