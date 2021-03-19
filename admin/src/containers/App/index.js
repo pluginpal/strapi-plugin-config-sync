@@ -8,19 +8,20 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { NotFound } from 'strapi-helper-plugin';
-// Utils
-import pluginId from '../../pluginId';
-// Containers
-import HomePage from '../HomePage';
+import { Provider } from 'react-redux';
+
+import { store } from "../../helpers/configureStore";
+import pluginId from '../../helpers/pluginId';
+import ConfigPage from '../ConfigPage';
 
 const App = () => {
   return (
-    <div>
+    <Provider store={store}>
       <Switch>
-        <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
+        <Route path={`/plugins/${pluginId}`} component={ConfigPage} exact />
         <Route component={NotFound} />
       </Switch>
-    </div>
+    </Provider>
   );
 };
 
