@@ -11,6 +11,9 @@ const util = require('util');
 
 module.exports = {
   writeConfigFile: async (configName, fileContents) => {
+    const shouldExclude = strapi.plugins.config.config.exclude.includes(configName);
+    if (shouldExclude) return;
+
     const json = 
       !strapi.plugins.config.config.minify ? 
         JSON.stringify(JSON.parse(fileContents), null, 2)
@@ -35,6 +38,9 @@ module.exports = {
   },
 
   importFromFile: async (configName) => {
+    const shouldExclude = strapi.plugins.config.config.exclude.includes(configName);
+    if (shouldExclude) return;
+
     const coreStoreAPI = strapi.query('core_store');
     const fileContents = await strapi.plugins.config.services.config.readConfigFile(configName);
 
