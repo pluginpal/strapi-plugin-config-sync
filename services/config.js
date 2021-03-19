@@ -12,7 +12,7 @@ const util = require('util');
 module.exports = {
   writeConfigFile: async (configName, fileContents) => {
     const json = 
-      strapi.plugins.config.config.beautify ? 
+      !strapi.plugins.config.config.minify ? 
         JSON.stringify(JSON.parse(fileContents), null, 2)
         : fileContents;
     
@@ -37,9 +37,6 @@ module.exports = {
   importFromFile: async (configName) => {
     const coreStoreAPI = strapi.query('core_store');
     const fileContents = await strapi.plugins.config.services.config.readConfigFile(configName);
-
-    // If there is no corresponding config file we should not try to import.
-    if (!fileContents) return;
 
     try {
       const configExists = await strapi
