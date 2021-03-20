@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 
 import { getAllDatabaseConfig, getAllFileConfig } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
+import ActionButtons from '../../components/ActionButtons';
 
 const ConfigPage = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const ConfigPage = () => {
 
   return (
     <div>
+      <ActionButtons />
       <ConfigList fileConfig={fileConfig} databaseConfig={databaseConfig} />
     </div>
   );

@@ -7,6 +7,8 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
+import ContainerFluid from '../../components/Container';
+import Header from '../../components/Header';
 
 import { store } from "../../helpers/configureStore";
 import ConfigPage from '../ConfigPage';
@@ -14,7 +16,10 @@ import ConfigPage from '../ConfigPage';
 const App = () => {
   return (
     <Provider store={store}>
-      <ConfigPage />
+      <ContainerFluid>
+        <Header />
+        <ConfigPage />
+      </ContainerFluid>
     </Provider>
   );
 };
