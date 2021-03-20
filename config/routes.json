@@ -15,6 +15,22 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/all/from-files",
+      "handler": "config.getConfigsFromFiles",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/all/from-database",
+      "handler": "config.getConfigsFromDatabase",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

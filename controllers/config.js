@@ -51,5 +51,55 @@ module.exports = {
     ctx.send({
       message: 'Config was successfully imported.'
     });
+  },
+
+  /**
+   * Get all configs as defined in your filesystem.
+   *
+   * @param {object} ctx - Request context object.
+   * @returns {object} Object with key value pairs of configs.
+   */
+   getConfigsFromFiles: async (ctx) => {
+    // Check for existance of the config file destination dir.
+    if (!fs.existsSync(strapi.plugins.config.config.destination)) {
+      ctx.send({
+        message: 'No config files were found.'
+      });
+
+      return;
+    }
+    
+    const configFiles = fs.readdirSync(strapi.plugins.config.config.destination);
+    let formattedConfigs = {};
+
+    const getConfigs = async () => {
+      return Promise.all(configFiles.map(async (file) => {
+        const formattedConfigName = file.slice(0, -5); // remove the .json extension.
+        const fileContents = await strapi.plugins.config.services.config.readConfigFile(formattedConfigName);
+        formattedConfigs[formattedConfigName] = fileContents;
+      }));
+    };
+
+    await getConfigs();
+
+    ctx.send(formattedConfigs);
+  },
+
+  /**
+   * Get all configs as defined in your database.
+   *
+   * @param {object} ctx - Request context object.
+   * @returns {object} Object with key value pairs of configs.
+   */
+   getConfigsFromDatabase: async (ctx) => {
+    const coreStoreAPI = strapi.query('core_store');
+    const coreStore = await coreStoreAPI.find({ _limit: -1 });
+    
+    let formattedConfigs = {};
+    Object.values(coreStore).map(async ({ key, value }) => {
+      formattedConfigs[key] =  JSON.parse(value);
+    });
+
+    ctx.send(formattedConfigs);
   }
 };
