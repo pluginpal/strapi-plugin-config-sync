@@ -24,6 +24,7 @@ const ConfigPage = () => {
       oldValue={JSON.stringify(fileConfig.get('plugin_users-permissions_email'), null, 2)}
       newValue={JSON.stringify(databaseConfig.get('plugin_users-permissions_email'), null, 2)}
       splitView={true}
+      disableWordDiff
     />
   );
 }
