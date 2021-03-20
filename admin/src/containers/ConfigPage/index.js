@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactDiffViewer from 'react-diff-viewer';
 import { Map } from 'immutable';
 
 import { getAllDatabaseConfig, getAllFileConfig } from '../../state/actions/Config';
+import ConfigList from '../../components/ConfigList';
 
 const ConfigPage = () => {
   const dispatch = useDispatch();
@@ -15,17 +15,14 @@ const ConfigPage = () => {
     dispatch(getAllFileConfig());
   }, []);
 
-  if (!fileConfig || !databaseConfig) {
+  if (fileConfig.size === 0 || databaseConfig.size === 0) {
     return null;
   }
 
   return (
-    <ReactDiffViewer
-      oldValue={JSON.stringify(fileConfig.get('plugin_users-permissions_email'), null, 2)}
-      newValue={JSON.stringify(databaseConfig.get('plugin_users-permissions_email'), null, 2)}
-      splitView={true}
-      disableWordDiff
-    />
+    <div>
+      <ConfigList fileConfig={fileConfig} databaseConfig={databaseConfig} />
+    </div>
   );
 }
  
