@@ -1,5 +1,6 @@
 {
   "destination": "extensions/config/files/",
   "minify": false,
+  "importOnBootstrap": false,
   "exclude": []
 }
