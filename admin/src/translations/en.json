@@ -3,5 +3,9 @@
   "popUpWarning.warning.export": "If you continue all your database config<br></br>will be written into config files.",
   "popUpWarning.button.import": "Yes, import",
   "popUpWarning.button.export": "Yes, export",
+
+  "Header.Title": "Config Sync",
+  "Header.Description": "Manage your database config acros environments.",
+
   "plugin.name": "Config Sync"
 }
