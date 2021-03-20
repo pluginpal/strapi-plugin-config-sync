@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { Table } from '@buffetjs/core';
-import difference from '../../helpers/getObjectDiff';
 import ConfigDiff from '../ConfigDiff';
 
 const headers = [
   {
-    name: 'Id',
-    value: 'id',
-  },
-  {
     name: 'Config name',
-    value: 'name',
+    value: 'config_name',
   },
   {
     name: 'Database table',
-    value: 'lastname',
+    value: 'table_name',
   },
   {
     name: 'Change',
@@ -22,15 +17,21 @@ const headers = [
   },
 ];
 
-const ConfigList = ({ fileConfig, databaseConfig }) => {
-  const diff = difference(fileConfig.toJS(), databaseConfig.toJS());
+const ConfigList = ({ fileConfig, databaseConfig, isLoading, diff }) => {
   const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
   const [configName, setConfigName] = useState('');
   let rows = [];
 
-  Object.keys(diff).map((config) => rows.push({ name: config }));
+  Object.keys(diff).map((config) => {
+    // @TODO implement different config types, roles/permissions e.g.
+    rows.push({ 
+      config_name: config,
+      table_name: 'core_store',
+      change_type: ''
+    });
+  });
 
   const closeModal = () => {
     setOriginalConfig({});
@@ -49,15 +50,17 @@ const ConfigList = ({ fileConfig, databaseConfig }) => {
         onToggle={closeModal}
         configName={configName}
       />
-      <Table 
+      <Table
         headers={headers}
         onClickRow={(e, data) => {
-          setOriginalConfig(fileConfig.get(data.name));
-          setNewConfig(databaseConfig.get(data.name));
-          setConfigName(data.name);
+          setOriginalConfig(fileConfig.get(data.config_name));
+          setNewConfig(databaseConfig.get(data.config_name));
+          setConfigName(data.config_name);
           setOpenModal(true);
         }}
-        rows={rows} 
+        rows={!isLoading ? rows : []}
+        tableEmptyText="No config changes. You are up to date!"
+        isLoading={isLoading}
       />
     </div>
   );

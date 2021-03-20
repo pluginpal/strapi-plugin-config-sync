@@ -50,3 +50,33 @@ export function setFileConfigInState(config) {
     config,
   };
 }
+
+export function exportAllConfig() {
+  return async function(dispatch) {
+    try {
+      const { message } = await request('/config/export', { method: 'GET' });
+      dispatch(getAllFileConfig());
+      dispatch(getAllDatabaseConfig());
+
+      strapi.notification.success(message);
+    } catch(err) {
+      console.log(err);
+      strapi.notification.error('notification.error');
+    }
+  }
+}
+
+export function importAllConfig() {
+  return async function(dispatch) {
+    try {
+      const { message } = await request('/config/import', { method: 'GET' });
+      dispatch(getAllFileConfig());
+      dispatch(getAllDatabaseConfig());
+
+      strapi.notification.success(message);
+    } catch(err) {
+      console.log(err);
+      strapi.notification.error('notification.error');
+    }
+  }
+}
