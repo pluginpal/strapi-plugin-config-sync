@@ -6,6 +6,8 @@ import {
 import getTrad from '../../helpers/getTrad';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
+  if (!isOpen) return null;
+
   return (
     <ModalConfirm
       confirmButtonLabel={{
@@ -25,9 +27,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
           br: () => <br />,
         },
       }}
-    >
-      <div>Zeker?</div>
-    </ModalConfirm>
+    />
   );
 }
  

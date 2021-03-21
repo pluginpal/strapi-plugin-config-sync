@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 import { Button } from '@buffetjs/core';
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
@@ -22,8 +23,8 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={!diff} color="primary" label="Import" onClick={() => openModal('import')} />
-      <Button disabled={!diff} color="primary" label="Export" onClick={() => openModal('export')} />
+      <Button disabled={isEmpty(diff)} color="primary" label="Import" onClick={() => openModal('import')} />
+      <Button disabled={isEmpty(diff)} color="primary" label="Export" onClick={() => openModal('export')} />
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}

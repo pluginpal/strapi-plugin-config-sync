@@ -5,7 +5,7 @@
   "popUpWarning.button.export": "Yes, export",
 
   "Header.Title": "Config Sync",
-  "Header.Description": "Manage your database config acros environments.",
+  "Header.Description": "Manage your database config across environments.",
 
   "plugin.name": "Config Sync"
 }

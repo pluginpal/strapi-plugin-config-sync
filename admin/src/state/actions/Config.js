@@ -7,30 +7,18 @@
 import { request } from 'strapi-helper-plugin';
 import { Map } from 'immutable';
 
-export function getAllDatabaseConfig() {
+export function getAllConfig() {
   return async function(dispatch) {
+    dispatch(setLoadingState(true));
     try {
-      const data = await request('/config/all/from-database', { method: 'GET' });
-      dispatch(setDatabaseConfigInState(data));
-
-      strapi.notification.success('woop!');
+      const databaseConfig = await request('/config/all/from-database', { method: 'GET' });
+      const fileConfig = await request('/config/all/from-files', { method: 'GET' });
+      dispatch(setFileConfigInState(fileConfig));
+      dispatch(setDatabaseConfigInState(databaseConfig));
+      dispatch(setLoadingState(false));
     } catch(err) {
-      console.log(err);
       strapi.notification.error('notification.error');
-    }
-  }
-}
-
-export function getAllFileConfig() {
-  return async function(dispatch) {
-    try {
-      const data = await request('/config/all/from-files', { method: 'GET' });
-      dispatch(setFileConfigInState(data));
-
-      strapi.notification.success('woop!');
-    } catch(err) {
-      console.log(err);
-      strapi.notification.error('notification.error');
+      dispatch(setLoadingState(false));
     }
   }
 }
@@ -53,30 +41,42 @@ export function setFileConfigInState(config) {
 
 export function exportAllConfig() {
   return async function(dispatch) {
+    dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config/export', { method: 'GET' });
-      dispatch(getAllFileConfig());
-      dispatch(getAllDatabaseConfig());
+      dispatch(setFileConfigInState(Map({})));
+      dispatch(setDatabaseConfigInState(Map({})));
 
       strapi.notification.success(message);
+      dispatch(setLoadingState(false));
     } catch(err) {
-      console.log(err);
       strapi.notification.error('notification.error');
+      dispatch(setLoadingState(false));
     }
   }
 }
 
 export function importAllConfig() {
   return async function(dispatch) {
+    dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config/import', { method: 'GET' });
-      dispatch(getAllFileConfig());
-      dispatch(getAllDatabaseConfig());
+      dispatch(setFileConfigInState(Map({})));
+      dispatch(setDatabaseConfigInState(Map({})));
 
       strapi.notification.success(message);
+      dispatch(setLoadingState(false));
     } catch(err) {
-      console.log(err);
       strapi.notification.error('notification.error');
+      dispatch(setLoadingState(false));
     }
   }
+}
+
+export const SET_LOADING_STATE = 'SET_LOADING_STATE';
+export function setLoadingState(value) {
+  return {
+    type: SET_LOADING_STATE,
+    value,
+  };
 }

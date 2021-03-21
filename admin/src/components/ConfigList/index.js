@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table } from '@buffetjs/core';
 import ConfigDiff from '../ConfigDiff';
 
@@ -17,22 +17,26 @@ const headers = [
   },
 ];
 
-const ConfigList = ({ fileConfig, databaseConfig, isLoading, diff }) => {
+const ConfigList = ({ fileConfig, databaseConfig, diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
   const [configName, setConfigName] = useState('');
-  let rows = [];
+  const [rows, setRows] = useState([]);
 
-  Object.keys(diff).map((config) => {
-    // @TODO implement different config types, roles/permissions e.g.
-    rows.push({ 
-      config_name: config,
-      table_name: 'core_store',
-      change_type: ''
+  useEffect(() => {
+    let formattedRows = [];
+    Object.keys(diff).map((config) => {
+      // @TODO implement different config types, roles/permissions e.g.
+      formattedRows.push({ 
+        config_name: config,
+        table_name: 'core_store',
+        change_type: ''
+      });
     });
-  });
-
+    setRows(formattedRows);
+  }, [diff]);
+  
   const closeModal = () => {
     setOriginalConfig({});
     setNewConfig({});
@@ -59,8 +63,8 @@ const ConfigList = ({ fileConfig, databaseConfig, isLoading, diff }) => {
           setOpenModal(true);
         }}
         rows={!isLoading ? rows : []}
-        tableEmptyText="No config changes. You are up to date!"
         isLoading={isLoading}
+        tableEmptyText="No config changes. You are up to date!"
       />
     </div>
   );
