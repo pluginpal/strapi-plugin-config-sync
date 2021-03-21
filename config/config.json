@@ -1,5 +1,5 @@
 {
-  "destination": "extensions/config/files/",
+  "destination": "extensions/config-sync/files/",
   "minify": false,
   "importOnBootstrap": false,
   "exclude": []

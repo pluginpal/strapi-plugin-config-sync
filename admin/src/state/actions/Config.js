@@ -11,8 +11,8 @@ export function getAllConfig() {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const databaseConfig = await request('/config/all/from-database', { method: 'GET' });
-      const fileConfig = await request('/config/all/from-files', { method: 'GET' });
+      const databaseConfig = await request('/config-sync/all/from-database', { method: 'GET' });
+      const fileConfig = await request('/config-sync/all/from-files', { method: 'GET' });
       dispatch(setFileConfigInState(fileConfig));
       dispatch(setDatabaseConfigInState(databaseConfig));
       dispatch(setLoadingState(false));
@@ -43,7 +43,7 @@ export function exportAllConfig() {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config/export', { method: 'GET' });
+      const { message } = await request('/config-sync/export', { method: 'GET' });
       dispatch(setFileConfigInState(Map({})));
       dispatch(setDatabaseConfigInState(Map({})));
 
@@ -60,7 +60,7 @@ export function importAllConfig() {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config/import', { method: 'GET' });
+      const { message } = await request('/config-sync/import', { method: 'GET' });
       dispatch(setFileConfigInState(Map({})));
       dispatch(setDatabaseConfigInState(Map({})));
 

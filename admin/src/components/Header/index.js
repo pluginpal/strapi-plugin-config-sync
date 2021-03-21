@@ -13,9 +13,9 @@ const HeaderComponent = () => {
 
   const headerProps = {
     title: {
-      label: formatMessage({ id: 'config.Header.Title' }),
+      label: formatMessage({ id: 'config-sync.Header.Title' }),
     },
-    content: formatMessage({ id: 'config.Header.Description' }),
+    content: formatMessage({ id: 'config-sync.Header.Description' }),
   };
   
   return (

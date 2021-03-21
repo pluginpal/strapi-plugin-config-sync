@@ -1,3 +1,3 @@
-# Strapi plugin config
+# Strapi plugin config-sync
 
-A quick description of config.
+A quick description of config-sync.

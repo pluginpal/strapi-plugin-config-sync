@@ -17,21 +17,21 @@ module.exports = {
    */
   writeConfigFile: async (configName, fileContents) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins.config.config.exclude.includes(configName);
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(configName);
     if (shouldExclude) return;
 
     // Check if the JSON content should be minified. 
     const json = 
-      !strapi.plugins.config.config.minify ? 
+      !strapi.plugins['config-sync'].config.minify ? 
         JSON.stringify(JSON.parse(fileContents), null, 2)
         : fileContents;
 
-    if (!fs.existsSync(strapi.plugins.config.config.destination)) {
-      fs.mkdirSync(strapi.plugins.config.config.destination, { recursive: true });
+    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
+      fs.mkdirSync(strapi.plugins['config-sync'].config.destination, { recursive: true });
     }
 
     const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${strapi.plugins.config.config.destination}${configName}.json`, json);
+    await writeFile(`${strapi.plugins['config-sync'].config.destination}${configName}.json`, json);
   },
 
   /**
@@ -42,7 +42,7 @@ module.exports = {
    */
   readConfigFile: async (configName) => {
     const readFile = util.promisify(fs.readFile);
-    return await readFile(`${strapi.plugins.config.config.destination}${configName}.json`)
+    return await readFile(`${strapi.plugins['config-sync'].config.destination}${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -59,11 +59,11 @@ module.exports = {
    */
   importFromFile: async (configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins.config.config.exclude.includes(configName);
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(configName);
     if (shouldExclude) return;
 
     const coreStoreAPI = strapi.query('core_store');
-    const fileContents = await strapi.plugins.config.services.config.readConfigFile(configName);
+    const fileContents = await strapi.plugins['config-sync'].services.config.readConfigFile(configName);
 
     const configExists = await strapi
       .query('core_store')

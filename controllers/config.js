@@ -18,11 +18,11 @@ module.exports = {
     const coreStore = await coreStoreAPI.find({ _limit: -1 });
 
     Object.values(coreStore).map(async ({ key, value }) => {
-      await strapi.plugins.config.services.config.writeConfigFile(key, value);
+      await strapi.plugins['config-sync'].services.config.writeConfigFile(key, value);
     });
 
     ctx.send({
-      message: `Config was successfully exported to ${strapi.plugins.config.config.destination}.`
+      message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`
     });
   },
 
@@ -34,7 +34,7 @@ module.exports = {
    */
   import: async (ctx) => {
     // Check for existance of the config file destination dir.
-    if (!fs.existsSync(strapi.plugins.config.config.destination)) {
+    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       ctx.send({
         message: 'No config files were found.'
       });
@@ -42,10 +42,10 @@ module.exports = {
       return;
     }
     
-    const configFiles = fs.readdirSync(strapi.plugins.config.config.destination);
+    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
 
     configFiles.map((file) => {
-      strapi.plugins.config.services.config.importFromFile(file.slice(0, -5));
+      strapi.plugins['config-sync'].services.config.importFromFile(file.slice(0, -5));
     });
 
     ctx.send({
@@ -61,7 +61,7 @@ module.exports = {
    */
    getConfigsFromFiles: async (ctx) => {
     // Check for existance of the config file destination dir.
-    if (!fs.existsSync(strapi.plugins.config.config.destination)) {
+    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       ctx.send({
         message: 'No config files were found.'
       });
@@ -69,13 +69,13 @@ module.exports = {
       return;
     }
     
-    const configFiles = fs.readdirSync(strapi.plugins.config.config.destination);
+    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
     let formattedConfigs = {};
 
     const getConfigs = async () => {
       return Promise.all(configFiles.map(async (file) => {
         const formattedConfigName = file.slice(0, -5); // remove the .json extension.
-        const fileContents = await strapi.plugins.config.services.config.readConfigFile(formattedConfigName);
+        const fileContents = await strapi.plugins['config-sync'].services.config.readConfigFile(formattedConfigName);
         formattedConfigs[formattedConfigName] = fileContents;
       }));
     };

@@ -13,12 +13,12 @@ const fs = require('fs');
  */
 
 module.exports = () => {
-  if (strapi.plugins.config.config.importOnBootstrap) {
-    if (fs.existsSync(strapi.plugins.config.config.destination)) {
-      const configFiles = fs.readdirSync(strapi.plugins.config.config.destination);
+  if (strapi.plugins['config-sync'].config.importOnBootstrap) {
+    if (fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
+      const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
 
       configFiles.map((file) => {
-        strapi.plugins.config.services.config.importFromFile(file.slice(0, -5));
+        strapi.plugins['config-sync'].services.config.importFromFile(file.slice(0, -5));
       });
     }
   }

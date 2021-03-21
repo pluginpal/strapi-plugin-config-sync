@@ -1,11 +1,11 @@
 {
-  "name": "strapi-plugin-config",
+  "name": "strapi-plugin-config-sync",
   "version": "0.0.1",
-  "description": "Manage your Strapi core_store configuration as partial json files which can be imported/exported across environments. ",
+  "description": "Manage your Strapi database configuration as partial json files which can be imported/exported across environments. ",
   "strapi": {
-    "name": "config",
+    "name": "config-sync",
     "icon": "plug",
-    "description": "Manage your Strapi core_store configuration as partial json files which can be imported/exported across environments. "
+    "description": "Manage your Strapi database configuration as partial json files which can be imported/exported across environments. "
   },
   "dependencies": {
     "immutable": "^4.0.0-rc.12",
