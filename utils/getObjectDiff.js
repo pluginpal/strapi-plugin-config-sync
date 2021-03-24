@@ -1,4 +1,5 @@
-import { transform, isEqual, isArray, isObject } from 'lodash';
+'use strict';
+const { transform, isEqual, isArray, isObject } = require('lodash');
 
 /**
  * Find difference between two objects
@@ -19,4 +20,4 @@ const difference = (origObj, newObj) => {
   return changes(newObj, origObj)
 }
 
-export default difference;
+module.exports = difference;

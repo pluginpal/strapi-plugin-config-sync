@@ -3,7 +3,7 @@
     {
       "method": "GET",
       "path": "/export",
-      "handler": "config.export",
+      "handler": "config.exportAll",
       "config": {
         "policies": []
       }
@@ -11,23 +11,15 @@
     {
       "method": "GET",
       "path": "/import",
-      "handler": "config.import",
+      "handler": "config.importAll",
       "config": {
         "policies": []
       }
     },
     {
       "method": "GET",
-      "path": "/all/from-files",
-      "handler": "config.getConfigsFromFiles",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/all/from-database",
-      "handler": "config.getConfigsFromDatabase",
+      "path": "/diff",
+      "handler": "config.getDiff",
       "config": {
         "policies": []
       }
