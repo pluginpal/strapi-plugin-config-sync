@@ -50,8 +50,7 @@ export function importAllConfig() {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/import', { method: 'GET' });
-      dispatch(setFileConfigInState(Map({})));
-      dispatch(setDatabaseConfigInState(Map({})));
+      dispatch(setConfigDiffInState(Map({})));
 
       strapi.notification.success(message);
       dispatch(setLoadingState(false));

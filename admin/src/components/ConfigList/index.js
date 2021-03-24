@@ -27,6 +27,7 @@ const ConfigList = ({ diff, isLoading }) => {
 
   useEffect(() => {
     if (isEmpty(diff)) {
+      setRows([]);
       return;
     }
 
