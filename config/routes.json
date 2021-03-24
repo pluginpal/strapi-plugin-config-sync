@@ -18,16 +18,8 @@
     },
     {
       "method": "GET",
-      "path": "/all/from-files",
-      "handler": "config.getConfigsFromFiles",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/all/from-database",
-      "handler": "config.getConfigsFromDatabase",
+      "path": "/diff",
+      "handler": "config.getDiff",
       "config": {
         "policies": []
       }

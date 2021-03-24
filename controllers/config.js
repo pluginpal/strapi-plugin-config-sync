@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const difference = require('../utils/getObjectDiff');
 
 /**
  * Main controllers for config import/export.
@@ -45,12 +46,12 @@ module.exports = {
   },
 
   /**
-   * Get all configs as defined in your filesystem.
+   * Get config diff between filesystem & db.
    *
    * @param {object} ctx - Request context object.
-   * @returns {object} Object with key value pairs of configs.
+   * @returns Object with key value pairs of config.
    */
-   getConfigsFromFiles: async (ctx) => {
+  getDiff: async (ctx) => {
     // Check for existance of the config file destination dir.
     if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       ctx.send({
@@ -59,38 +60,24 @@ module.exports = {
 
       return;
     }
-    
-    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
-    let formattedConfigs = {};
 
-    const getConfigs = async () => {
-      return Promise.all(configFiles.map(async (file) => {
-        const formattedConfigName = file.slice(0, -5); // remove the .json extension.
-        const fileContents = await strapi.plugins['config-sync'].services.main.readConfigFile(formattedConfigName);
-        formattedConfigs[formattedConfigName] = fileContents;
-      }));
+    const formattedDiff = {
+      fileConfig: {},
+      databaseConfig: {},
+      diff: {}
     };
-
-    await getConfigs();
-
-    ctx.send(formattedConfigs);
-  },
-
-  /**
-   * Get all configs as defined in your database.
-   *
-   * @param {object} ctx - Request context object.
-   * @returns {object} Object with key value pairs of configs.
-   */
-   getConfigsFromDatabase: async (ctx) => {
-    const coreStoreAPI = strapi.query('core_store');
-    const coreStore = await coreStoreAPI.find({ _limit: -1 });
     
-    let formattedConfigs = {};
-    Object.values(coreStore).map(async ({ key, value }) => {
-      formattedConfigs[key] =  JSON.parse(value);
-    });
+    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles();
+    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase();
 
-    ctx.send(formattedConfigs);
-  }
+    const diff = difference(fileConfig, databaseConfig);
+    formattedDiff.diff = diff;
+
+    Object.keys(diff).map((changedConfigName) => {
+      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
+      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
+    })
+
+    return formattedDiff;
+  },
 };
