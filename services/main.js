@@ -61,6 +61,55 @@ module.exports = {
       });
   },
 
+
+  /**
+   * Get all the config JSON from the filesystem.
+   *
+   * @returns {object} Object with key value pairs of configs.
+   */
+  getAllConfigFromFiles: async () => {
+    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
+
+    const getConfigs = async () => {
+      let fileConfigs = {};
+
+      await Promise.all(configFiles.map(async (file) => {
+        const type = file.split('.')[0]; // Grab the first part of the filename.
+        const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
+        const fileContents = await strapi.plugins['config-sync'].services.main.readConfigFile(type, name);
+        fileConfigs[`${type}.${name}`] = fileContents;
+      }));
+
+      return fileConfigs;
+    };
+
+    return await getConfigs();
+  },
+
+  /**
+   * Get all the config JSON from the database.
+   *
+   * @returns {object} Object with key value pairs of configs.
+   */
+  getAllConfigFromDatabase: async (configType = null) => {
+    const getConfigs = async () => {
+      let databaseConfigs = {};
+      
+      await Promise.all(strapi.plugins['config-sync'].config.include.map(async (type) => {
+        if (configType && configType !== type) {
+          return;
+        }
+
+        const config = await strapi.plugins['config-sync'].services[type].getAllFromDatabase();
+        databaseConfigs = Object.assign(config, databaseConfigs);
+      }));
+
+      return databaseConfigs;
+    }
+
+    return await getConfigs();
+  },
+
   /**
    * Import all config files into the db.
    *
