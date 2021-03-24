@@ -23,8 +23,8 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(diff)} color="primary" label="Import" onClick={() => openModal('import')} />
-      <Button disabled={isEmpty(diff)} color="primary" label="Export" onClick={() => openModal('export')} />
+      <Button disabled={isEmpty(diff.diff)} color="primary" label="Import" onClick={() => openModal('import')} />
+      <Button disabled={isEmpty(diff.diff)} color="primary" label="Export" onClick={() => openModal('export')} />
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}

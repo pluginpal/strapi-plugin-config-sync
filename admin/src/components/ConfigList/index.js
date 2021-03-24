@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '@buffetjs/core';
+import { isEmpty } from 'lodash';
 import ConfigDiff from '../ConfigDiff';
 
 const headers = [
@@ -8,8 +9,8 @@ const headers = [
     value: 'config_name',
   },
   {
-    name: 'Database table',
-    value: 'table_name',
+    name: 'Config type',
+    value: 'config_type',
   },
   {
     name: 'Change',
@@ -17,7 +18,7 @@ const headers = [
   },
 ];
 
-const ConfigList = ({ fileConfig, databaseConfig, diff, isLoading }) => {
+const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
@@ -25,15 +26,22 @@ const ConfigList = ({ fileConfig, databaseConfig, diff, isLoading }) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
+    if (isEmpty(diff)) {
+      return;
+    }
+
     let formattedRows = [];
-    Object.keys(diff).map((config) => {
-      // @TODO implement different config types, roles/permissions e.g.
+    Object.keys(diff.fileConfig).map((configName) => {
+      const type = configName.split('.')[0]; // Grab the first part of the filename.
+      const name = configName.split(/\.(.+)/)[1].split('.')[0] // Grab the rest of the filename minus the file extension.
+
       formattedRows.push({ 
-        config_name: config,
-        table_name: 'core_store',
+        config_name: name,
+        config_type: type,
         change_type: ''
       });
     });
+
     setRows(formattedRows);
   }, [diff]);
   
@@ -56,10 +64,10 @@ const ConfigList = ({ fileConfig, databaseConfig, diff, isLoading }) => {
       />
       <Table
         headers={headers}
-        onClickRow={(e, data) => {
-          setOriginalConfig(fileConfig.get(data.config_name));
-          setNewConfig(databaseConfig.get(data.config_name));
-          setConfigName(data.config_name);
+        onClickRow={(e, { config_type, config_name }) => {
+          setOriginalConfig(diff.fileConfig[`${config_type}.${config_name}`]);
+          setNewConfig(diff.databaseConfig[`${config_type}.${config_name}`]);
+          setConfigName(`${config_type}.${config_name}`);
           setOpenModal(true);
         }}
         rows={!isLoading ? rows : []}
