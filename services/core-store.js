@@ -44,6 +44,22 @@ module.exports = {
   },
 
   /**
+   * Get all core-store config from the db.
+   *
+   * @returns {object} Object with key value pairs of configs.
+   */
+   getAllFromDatabase: async () => {
+    const coreStore = await strapi.query(coreStoreQueryString).find({ _limit: -1 });
+    let configs = {};
+
+    Object.values(coreStore).map( ({ id, value, ...config }) => {
+      configs[`${configPrefix}.${config.key}`] = { value: JSON.parse(value), ...config };
+    });
+
+    return configs;
+  },
+
+  /**
    * Import all core-store config files into the db.
    *
    * @returns {void}

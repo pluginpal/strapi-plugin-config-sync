@@ -41,6 +41,22 @@ module.exports = {
   },
 
   /**
+   * Get all webhook config from the db.
+   *
+   * @returns {object} Object with key value pairs of configs.
+   */
+   getAllFromDatabase: async () => {
+    const webhooks = await strapi.query(webhookQueryString).find({ _limit: -1 });
+    let configs = {};
+
+    Object.values(webhooks).map( (config) => {
+      configs[`${configPrefix}.${config.id}`] = config;
+    });
+
+    return configs;
+  },
+
+  /**
    * Import all webhook config files into the db.
    *
    * @returns {void}

@@ -64,6 +64,39 @@ module.exports = {
   },
 
   /**
+   * Get all role-permissions config from the db.
+   *
+   * @returns {object} Object with key value pairs of configs.
+   */
+   getAllFromDatabase: async () => {
+    const service =
+      strapi.plugins['users-permissions'].services.userspermissions;
+
+    const [roles, plugins] = await Promise.all([
+      service.getRoles(),
+      service.getPlugins(),
+    ]);
+
+    const rolesWithPermissions = await Promise.all(
+      roles.map(async role => service.getRole(role.id, plugins))
+    );
+
+    const sanitizedRolesArray = rolesWithPermissions.map(role =>
+      sanitizeEntity(role, {
+        model: strapi.plugins['users-permissions'].models.role,
+      })
+    );
+
+    let configs = {};
+
+    Object.values(sanitizedRolesArray).map((config) => {
+      configs[`${configPrefix}.${config.type}`] = config;
+    });
+
+    return configs;
+  },
+
+  /**
    * Import all role-permissions config files into the db.
    *
    * @returns {void}
