@@ -3,7 +3,7 @@
     {
       "method": "GET",
       "path": "/export",
-      "handler": "config.export",
+      "handler": "config.exportAll",
       "config": {
         "policies": []
       }
@@ -11,7 +11,7 @@
     {
       "method": "GET",
       "path": "/import",
-      "handler": "config.import",
+      "handler": "config.importAll",
       "config": {
         "policies": []
       }

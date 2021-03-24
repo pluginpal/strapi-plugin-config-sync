@@ -12,14 +12,10 @@ const fs = require('fs');
  * See more details here: https://strapi.io/documentation/v3.x/concepts/configurations.html#bootstrap
  */
 
-module.exports = () => {
+module.exports = async () => {
   if (strapi.plugins['config-sync'].config.importOnBootstrap) {
     if (fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
-      const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
-
-      configFiles.map((file) => {
-        strapi.plugins['config-sync'].services.config.importFromFile(file.slice(0, -5));
-      });
+      await strapi.plugins['config-sync'].services.main.importAllConfig();
     }
   }
 };

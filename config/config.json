@@ -2,5 +2,10 @@
   "destination": "extensions/config-sync/files/",
   "minify": false,
   "importOnBootstrap": false,
+  "include": [
+    "core-store",
+    "role-permissions",
+    "webhooks"
+  ],
   "exclude": []
 }
