@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '@buffetjs/core';
 import { isEmpty } from 'lodash';
 import ConfigDiff from '../ConfigDiff';
+import FirstExport from '../FirstExport';
 
 const headers = [
   {
@@ -26,7 +27,7 @@ const ConfigList = ({ diff, isLoading }) => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    if (isEmpty(diff)) {
+    if (isEmpty(diff.diff)) {
       setRows([]);
       return;
     }
@@ -52,6 +53,10 @@ const ConfigList = ({ diff, isLoading }) => {
     setConfigName('');
     setOpenModal(false);
   };
+
+  if (!isLoading && !isEmpty(diff.message)) {
+    return <FirstExport />
+  }
 
   return (
     <div>
