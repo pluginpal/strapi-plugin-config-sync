@@ -6,9 +6,7 @@ That's where this plugin comes in to play. It allows you to export these configs
 
 Importing, exporting and keeping track of config changes is done in the admin page of the plugin.
 
-*Currently only the core_store changes are being tracked.*
-
-**THIS PLUGIN IS STILL IN DEVELOPMENT**
+**THIS PLUGIN IS NOT STABLE**
 
 **PLEASE USE WITH CARE**
 
@@ -45,20 +43,40 @@ PLEASE USE WITH CARE.
 
 > `required:` NO | `type:` bool | `default:` false
 
+#### `include`
+
+Configs you want to include. Allowed values: `core-store`, `role-permissions`, `webhooks`. By default these are all enabled.
+
+> `required:` NO | `type:` array | `default:` ["core-store", "role-permissions", "webhooks"]
+
 #### `exclude`
 
 You might not want all your database config exported and managed in git. This settings allows you to add an array of config names which should not be tracked by the config-sync plugin.
 
-For now only the `core_store` table is being tracked. Add the `key` value of a `core_store` item to the array to exclude it from being tracked.
+*Currently not working*
 
 > `required:` NO | `type:` array | `default:` []
 
+## Naming convention
+All the config files written in the file destination have the same naming convention. It goes as follows:
+
+	[config-type].[config-name].json
+
+- `config-type` - Corresponds to the value in from the config.include setting.
+- `config-name` - The unique identifier of the config. 
+	- 	For `core-store` config this is the `key` value.
+	-  	For `role-permissions` config this is the `type` value.
+	-  	For `webhooks` config this is the `id` value
+  
+
 ## TODOs
-- Exporting of user roles & permissions
-- Exporting of webhooks
-- Specify which tables you want to track in the plugin configurations
+- ~~Exporting of user roles & permissions~~
+- ~~Exporting of webhooks~~
+- ~~Specify which tables you want to track in the plugin configurations~~
+- Exporting of EE roles & permissions
 - Add partial import/export functionality
 - Add CLI commands for importing/exporting
+- Track config deletions
 
 ## Resources
 
