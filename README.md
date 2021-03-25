@@ -23,6 +23,8 @@ Use `npm` or `yarn` to install and build the plugin.
 Add the export path to the `watchIgnoreFiles` list in `config/server.js`.
 This way your app won't reload when you export the config in development.
 
+##### `config/server.js`:
+
 	admin: {
 	  auth: {
      	...
@@ -33,42 +35,29 @@ This way your app won't reload when you export the config in development.
 	},
 
 
-## Configuration
-Some settings for the plugin are able to be modified by creating a file `extensions/config-sync/config/config.json` and changing the following settings:
+## Settings
+Some settings for the plugin are able to be modified by creating a file `extensions/config-sync/config/config.json` and overwriting the default settings.
 
-#### `destination`
+#### Default settings:
+	{
+	  "destination": "extensions/config-sync/files/",
+	  "minify": false,
+	  "importOnBootstrap": false,
+	  "include": [
+	    "core-store",
+	    "role-permissions",
+	    "webhooks"
+	  ],
+	  "exclude": []
+	}
 
-The path for reading and writing the config JSON files.
-
-> `required:` NO | `type:` string | `default:` extensions/config-sync/files/
-
-#### `minify`
-
-Setting to minify the JSON that's being exported. It defaults to false for better readability in git commits.
-
-> `required:` NO | `type:` bool | `default:` false
-
-#### `importOnBootstrap`
-
-Allows you to let the config be imported automaticly when strapi is bootstrapping (on `yarn start`). This setting should only be used in production, and should be handled very carefully as it can unintendedly overwrite the changes in your database.
-
-PLEASE USE WITH CARE.
-
-> `required:` NO | `type:` bool | `default:` false
-
-#### `include`
-
-Configs you want to include. Allowed values: `core-store`, `role-permissions`, `webhooks`. By default these are all enabled.
-
-> `required:` NO | `type:` array | `default:` ["core-store", "role-permissions", "webhooks"]
-
-#### `exclude`
-
-You might not want all your database config exported and managed in git. This settings allows you to add an array of config names which should not be tracked by the config-sync plugin.
-
-*Currently not working*
-
-> `required:` NO | `type:` array | `default:` []
+| Property | Default | Description |
+| -------- | ------- | ----------- |
+| destination | extensions/config-sync/files/ | The path for reading and writing the config JSON files. |
+| minify | false |  Setting to minify the JSON that's being exported. It defaults to false for better readability in git commits. |
+| importOnBootstrap | false |  Allows you to let the config be imported automaticly when strapi is bootstrapping (on `yarn start`). This setting should only be used in production, and should be handled very carefully as it can unintendedly overwrite the changes in your database. PLEASE USE WITH CARE. |
+| include | ["core-store", "role-permissions", "webhooks"] |  Configs you want to include. Allowed values: `core-store`, `role-permissions`, `webhooks`. |
+| exclude | [] |  You might not want all your database config exported and managed in git. This settings allows you to add an array of config names which should not be tracked by the config-sync plugin. *Currently not working* |
 
 ## Naming convention
 All the config files written in the file destination have the same naming convention. It goes as follows:
