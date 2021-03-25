@@ -20,6 +20,19 @@ Use `npm` or `yarn` to install and build the plugin.
 	yarn build
 	yarn develop
 
+Add the export path to the `watchIgnoreFiles` list in `config/server.js`.
+This way your app won't reload when you export the config in development.
+
+	admin: {
+	  auth: {
+     	...
+	  },
+	  watchIgnoreFiles: [
+	    '**/config-sync/files/**',
+	  ]
+	},
+
+
 ## Configuration
 Some settings for the plugin are able to be modified by creating a file `extensions/config-sync/config/config.json` and changing the following settings:
 
