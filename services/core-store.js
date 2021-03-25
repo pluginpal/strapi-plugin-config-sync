@@ -52,8 +52,8 @@ module.exports = {
     const coreStore = await strapi.query(coreStoreQueryString).find({ _limit: -1 });
     let configs = {};
 
-    Object.values(coreStore).map( ({ id, value, ...config }) => {
-      configs[`${configPrefix}.${config.key}`] = { value: JSON.parse(value), ...config };
+    Object.values(coreStore).map( ({ id, value, key, ...config }) => {
+      configs[`${configPrefix}.${key}`] = { key, value: JSON.parse(value), ...config };
     });
 
     return configs;
