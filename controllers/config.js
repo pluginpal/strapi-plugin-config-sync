@@ -15,19 +15,11 @@ module.exports = {
    * @returns {void}
    */
   exportAll: async (ctx) => {
-    if (strapi.config.get('autoReload')) {
-      ctx.send({
-        message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`
-      });
-    }
-
     await strapi.plugins['config-sync'].services.main.exportAllConfig();
 
-    if (!strapi.config.get('autoReload')) {
-      ctx.send({
-        message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`
-      });
-    }
+    ctx.send({
+      message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`
+    });
   },
 
   /**
