@@ -10,7 +10,7 @@ Importing, exporting and keeping track of config changes is done in the admin pa
 
 **PLEASE USE WITH CARE**
 
-![Strapi config-sync changes](.github/config-diff.png)
+<img src=".github/config-diff.png" alt="Strapi config-sync changes" />
 
 ## Installation
 
