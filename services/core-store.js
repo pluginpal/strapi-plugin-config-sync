@@ -17,6 +17,10 @@ module.exports = {
     const coreStore = await strapi.query(coreStoreQueryString).find({ _limit: -1 });
 
     await Promise.all(Object.values(coreStore).map(async ({ id, ...config }) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.key}`);
+      if (shouldExclude) return;
+
       config.value = JSON.parse(config.value);
       await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.key, config);
     }));
@@ -30,6 +34,10 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const { value, ...fileContent } = configContent;
     const coreStoreAPI = strapi.query(coreStoreQueryString);
 
@@ -53,6 +61,10 @@ module.exports = {
     let configs = {};
 
     Object.values(coreStore).map( ({ id, value, key, ...config }) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${key}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${key}`] = { key, value: JSON.parse(value), ...config };
     });
 

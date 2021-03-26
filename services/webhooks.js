@@ -17,6 +17,10 @@ module.exports = {
     const webhooks = await strapi.query(webhookQueryString).find({ _limit: -1 });
 
     await Promise.all(Object.values(webhooks).map(async (config) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.id}`);
+      if (shouldExclude) return;
+
       await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.id, config);
     }));
   },
@@ -29,6 +33,10 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const webhookAPI = strapi.query(webhookQueryString);
 
     const configExists = await webhookAPI.findOne({ id: configName });
@@ -50,6 +58,10 @@ module.exports = {
     let configs = {};
 
     Object.values(webhooks).map( (config) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.id}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${config.id}`] = config;
     });
 

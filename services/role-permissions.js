@@ -34,6 +34,10 @@ module.exports = {
     );
 
     await Promise.all(sanitizedRolesArray.map(async (config) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
+      if (shouldExclude) return;
+
       await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.type, config);
     }));
   },
@@ -46,6 +50,10 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const service =
       strapi.plugins['users-permissions'].services.userspermissions;
       
@@ -90,6 +98,10 @@ module.exports = {
     let configs = {};
 
     Object.values(sanitizedRolesArray).map((config) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${config.type}`] = config;
     });
 
