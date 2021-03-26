@@ -33,7 +33,7 @@ const ConfigList = ({ diff, isLoading }) => {
     }
 
     let formattedRows = [];
-    Object.keys(diff.fileConfig).map((configName) => {
+    Object.keys(diff.diff).map((configName) => {
       const type = configName.split('.')[0]; // Grab the first part of the filename.
       const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 

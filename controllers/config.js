@@ -70,7 +70,8 @@ module.exports = {
     const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles();
     const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase();
 
-    const diff = difference(fileConfig, databaseConfig);
+    const diff = difference(databaseConfig, fileConfig);
+
     formattedDiff.diff = diff;
 
     Object.keys(diff).map((changedConfigName) => {
