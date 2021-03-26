@@ -7,5 +7,7 @@
     "role-permissions",
     "webhooks"
   ],
-  "exclude": []
+  "exclude": [
+    "core-store.plugin_users-permissions_grant"
+  ]
 }

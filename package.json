@@ -4,7 +4,7 @@
   "description": "Manage your Strapi database configuration as partial json files which can be imported/exported across environments. ",
   "strapi": {
     "name": "config-sync",
-    "icon": "plug",
+    "icon": "sync",
     "description": "Manage your Strapi database configuration as partial json files which can be imported/exported across environments. "
   },
   "dependencies": {

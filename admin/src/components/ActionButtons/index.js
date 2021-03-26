@@ -25,6 +25,9 @@ const ActionButtons = ({ diff }) => {
     <ActionButtonsStyling>
       <Button disabled={isEmpty(diff.fileConfig)} color="primary" label="Import" onClick={() => openModal('import')} />
       <Button disabled={isEmpty(diff.fileConfig)} color="primary" label="Export" onClick={() => openModal('export')} />
+      {!isEmpty(diff.diff) && (
+        <h4 style={{ display: 'inline' }}>{Object.keys(diff.diff).length} {Object.keys(diff.diff).length === 1 ? "config change" : "config changes"}</h4>
+      )}
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}
