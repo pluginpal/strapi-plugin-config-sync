@@ -83,6 +83,10 @@ module.exports = {
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
+    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
+      return {};
+    }
+
     const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
 
     const getConfigs = async () => {
