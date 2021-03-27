@@ -3,6 +3,7 @@ import { Table } from '@buffetjs/core';
 import { isEmpty } from 'lodash';
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
+import ConfigListRow from './ConfigListRow';
 
 const headers = [
   {
@@ -14,8 +15,8 @@ const headers = [
     value: 'config_type',
   },
   {
-    name: 'Change',
-    value: 'change_type',
+    name: 'State',
+    value: 'state',
   },
 ];
 
@@ -25,6 +26,25 @@ const ConfigList = ({ diff, isLoading }) => {
   const [newConfig, setNewConfig] = useState({});
   const [configName, setConfigName] = useState('');
   const [rows, setRows] = useState([]);
+
+  const getConfigState = (configName) => {
+    if (
+      diff.fileConfig[configName] &&
+      diff.databaseConfig[configName]
+    ) {
+      return 'Different'
+    } else if (
+      diff.fileConfig[configName] &&
+      !diff.databaseConfig[configName]
+    ) {
+      return 'Only in sync dir'
+    } else if (
+      !diff.fileConfig[configName] &&
+      diff.databaseConfig[configName]
+    ) {
+      return 'Only in DB'
+    }
+  };
 
   useEffect(() => {
     if (isEmpty(diff.diff)) {
@@ -40,7 +60,13 @@ const ConfigList = ({ diff, isLoading }) => {
       formattedRows.push({ 
         config_name: name,
         config_type: type,
-        change_type: ''
+        state: getConfigState(configName),
+        onClick: (config_type, config_name) => {
+          setOriginalConfig(diff.fileConfig[`${config_type}.${config_name}`]);
+          setNewConfig(diff.databaseConfig[`${config_type}.${config_name}`]);
+          setConfigName(`${config_type}.${config_name}`);
+          setOpenModal(true);
+        }
       });
     });
 
@@ -70,12 +96,7 @@ const ConfigList = ({ diff, isLoading }) => {
       />
       <Table
         headers={headers}
-        onClickRow={(e, { config_type, config_name }) => {
-          setOriginalConfig(diff.fileConfig[`${config_type}.${config_name}`]);
-          setNewConfig(diff.databaseConfig[`${config_type}.${config_name}`]);
-          setConfigName(`${config_type}.${config_name}`);
-          setOpenModal(true);
-        }}
+        customRow={ConfigListRow}
         rows={!isLoading ? rows : []}
         isLoading={isLoading}
         tableEmptyText="No config changes. You are up to date!"
