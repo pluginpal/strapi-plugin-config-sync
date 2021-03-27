@@ -44,6 +44,9 @@ module.exports = {
     if (!configExists) {
       await webhookAPI.create(configContent);
     } else {
+      if (configContent === null) {
+        await webhookAPI.delete({ id: configName });
+      }
       await webhookAPI.update({ id: configName }, configContent);
     }
   },

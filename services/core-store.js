@@ -38,11 +38,18 @@ module.exports = {
     const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
     if (shouldExclude) return;
 
-    const { value, ...fileContent } = configContent;
     const coreStoreAPI = strapi.query(coreStoreQueryString);
 
     const configExists = await coreStoreAPI
-      .findOne({ key: configName, environment: fileContent.environment });
+      .findOne({ key: configName });
+
+    if (configExists && configContent === null) {
+      await coreStoreAPI.delete({ key: configName });
+
+      return;
+    }
+
+    const { value, ...fileContent } = configContent;
 
     if (!configExists) {
       await coreStoreAPI.create({ value: JSON.stringify(value), ...fileContent });

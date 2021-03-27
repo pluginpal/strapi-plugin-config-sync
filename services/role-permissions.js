@@ -61,6 +61,15 @@ module.exports = {
       .query('role', 'users-permissions')
       .findOne({ type: configName });
 
+    if (role && configContent === null) {
+      const publicRole = await strapi.query('role', 'users-permissions').findOne({ type: 'public' });
+      const publicRoleID = publicRole.id;
+
+      await service.deleteRole(role.id, publicRoleID);
+
+      return;
+    }
+
     const users = role ? role.users : [];
     configContent.users = users;
 
