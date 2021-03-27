@@ -33,7 +33,7 @@ module.exports = {
       })
     );
 
-    await Promise.all(sanitizedRolesArray.map(async (config) => {
+    await Promise.all(sanitizedRolesArray.map(async ({id, ...config}) => {
       // Check if the config should be excluded.
       const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
       if (shouldExclude) return;
@@ -97,7 +97,7 @@ module.exports = {
 
     let configs = {};
 
-    Object.values(sanitizedRolesArray).map((config) => {
+    Object.values(sanitizedRolesArray).map(({ id, ...config }) => {
       // Check if the config should be excluded.
       const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
       if (shouldExclude) return;
