@@ -4,8 +4,9 @@
   "importOnBootstrap": false,
   "include": [
     "core-store",
-    "role-permissions",
-    "webhooks"
+    "role-permissions"
   ],
-  "exclude": []
+  "exclude": [
+    "core-store.plugin_users-permissions_grant"
+  ]
 }

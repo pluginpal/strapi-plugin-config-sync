@@ -23,7 +23,6 @@ export default strapi => {
     blockerComponent: null,
     blockerComponentProps: {},
     description: pluginDescription,
-    icon: pluginPkg.strapi.icon,
     id: pluginId,
     initializer: Initializer,
     injectedComponents: [],

@@ -2,6 +2,7 @@
 
 const coreStoreQueryString = 'core_store';
 const configPrefix = 'core-store'; // Should be the same as the filename.
+const difference = require('../utils/getObjectDiff');
 
 /**
  * Import/Export for core-store configs.
@@ -14,11 +15,38 @@ module.exports = {
    * @returns {void}
    */
    exportAll: async () => {
-    const coreStore = await strapi.query(coreStoreQueryString).find({ _limit: -1 });
+    const formattedDiff = {
+      fileConfig: {},
+      databaseConfig: {},
+      diff: {}
+    };
+    
+    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles(configPrefix);
+    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase(configPrefix);
+    const diff = difference(databaseConfig, fileConfig);
 
-    await Promise.all(Object.values(coreStore).map(async ({ id, ...config }) => {
-      config.value = JSON.parse(config.value);
-      await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.key, config);
+    formattedDiff.diff = diff;
+
+    Object.keys(diff).map((changedConfigName) => {
+      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
+      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
+    })
+
+    await Promise.all(Object.entries(diff).map(async ([configName, config]) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configName}`);
+      if (shouldExclude) return;
+
+      const currentConfig = formattedDiff.databaseConfig[configName];
+
+      if (
+        !currentConfig &&
+        formattedDiff.fileConfig[configName]
+      ) {
+        await strapi.plugins['config-sync'].services.main.deleteConfigFile(configName);
+      } else {
+        await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, currentConfig.key, currentConfig);
+      }
     }));
   },
 
@@ -30,11 +58,22 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
-    const { value, ...fileContent } = configContent;
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const coreStoreAPI = strapi.query(coreStoreQueryString);
 
     const configExists = await coreStoreAPI
-      .findOne({ key: configName, environment: fileContent.environment });
+      .findOne({ key: configName });
+
+    if (configExists && configContent === null) {
+      await coreStoreAPI.delete({ key: configName });
+
+      return;
+    }
+
+    const { value, ...fileContent } = configContent;
 
     if (!configExists) {
       await coreStoreAPI.create({ value: JSON.stringify(value), ...fileContent });
@@ -53,6 +92,10 @@ module.exports = {
     let configs = {};
 
     Object.values(coreStore).map( ({ id, value, key, ...config }) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${key}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${key}`] = { key, value: JSON.parse(value), ...config };
     });
 

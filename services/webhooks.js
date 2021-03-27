@@ -6,6 +6,7 @@
 
 const webhookQueryString = 'strapi_webhooks';
 const configPrefix = 'webhooks'; // Should be the same as the filename.
+const difference = require('../utils/getObjectDiff');
 
 module.exports = {
   /**
@@ -14,10 +15,38 @@ module.exports = {
    * @returns {void}
    */
    exportAll: async () => {
-    const webhooks = await strapi.query(webhookQueryString).find({ _limit: -1 });
+    const formattedDiff = {
+      fileConfig: {},
+      databaseConfig: {},
+      diff: {}
+    };
+    
+    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles(configPrefix);
+    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase(configPrefix);
+    const diff = difference(databaseConfig, fileConfig);
 
-    await Promise.all(Object.values(webhooks).map(async (config) => {
-      await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.id, config);
+    formattedDiff.diff = diff;
+
+    Object.keys(diff).map((changedConfigName) => {
+      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
+      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
+    })
+
+    await Promise.all(Object.entries(diff).map(async ([configName, config]) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configName}`);
+      if (shouldExclude) return;
+
+      const currentConfig = formattedDiff.databaseConfig[configName];
+
+      if (
+        !currentConfig &&
+        formattedDiff.fileConfig[configName]
+      ) {
+        await strapi.plugins['config-sync'].services.main.deleteConfigFile(configName);
+      } else {
+        await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, currentConfig.id, currentConfig);
+      }
     }));
   },
 
@@ -29,6 +58,10 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const webhookAPI = strapi.query(webhookQueryString);
 
     const configExists = await webhookAPI.findOne({ id: configName });
@@ -36,6 +69,9 @@ module.exports = {
     if (!configExists) {
       await webhookAPI.create(configContent);
     } else {
+      if (configContent === null) {
+        await webhookAPI.delete({ id: configName });
+      }
       await webhookAPI.update({ id: configName }, configContent);
     }
   },
@@ -50,6 +86,10 @@ module.exports = {
     let configs = {};
 
     Object.values(webhooks).map( (config) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.id}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${config.id}`] = config;
     });
 

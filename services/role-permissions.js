@@ -1,6 +1,7 @@
 'use strict';
 
 const { sanitizeEntity } = require('strapi-utils');
+const difference = require('../utils/getObjectDiff');
 
 const configPrefix = 'role-permissions'; // Should be the same as the filename.
 
@@ -15,26 +16,39 @@ module.exports = {
    * @returns {void}
    */
    exportAll: async () => {
-    const service =
-      strapi.plugins['users-permissions'].services.userspermissions;
+    const formattedDiff = {
+      fileConfig: {},
+      databaseConfig: {},
+      diff: {}
+    };
+    
+    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles(configPrefix);
+    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase(configPrefix);
+    const diff = difference(databaseConfig, fileConfig);
 
-    const [roles, plugins] = await Promise.all([
-      service.getRoles(),
-      service.getPlugins(),
-    ]);
+    formattedDiff.diff = diff;
 
-    const rolesWithPermissions = await Promise.all(
-      roles.map(async role => service.getRole(role.id, plugins))
-    );
+    Object.keys(diff).map((changedConfigName) => {
+      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
+      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
+    })
 
-    const sanitizedRolesArray = rolesWithPermissions.map(role =>
-      sanitizeEntity(role, {
-        model: strapi.plugins['users-permissions'].models.role,
-      })
-    );
+    await Promise.all(Object.entries(diff).map(async ([configName, config]) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configName}`);
+      if (shouldExclude) return;
 
-    await Promise.all(sanitizedRolesArray.map(async (config) => {
-      await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, config.type, config);
+      const currentConfig = formattedDiff.databaseConfig[configName];
+
+      if (
+        !currentConfig &&
+        formattedDiff.fileConfig[configName]
+      ) {
+        await strapi.plugins['config-sync'].services.main.deleteConfigFile(configName);
+      } else {
+        await strapi.plugins['config-sync'].services.main.writeConfigFile(configPrefix, currentConfig.type, currentConfig);
+      }
+
     }));
   },
 
@@ -46,12 +60,25 @@ module.exports = {
    * @returns {void}
    */
   importSingle: async (configName, configContent) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${configName}`);
+    if (shouldExclude) return;
+
     const service =
       strapi.plugins['users-permissions'].services.userspermissions;
       
     const role = await strapi
       .query('role', 'users-permissions')
       .findOne({ type: configName });
+
+    if (role && configContent === null) {
+      const publicRole = await strapi.query('role', 'users-permissions').findOne({ type: 'public' });
+      const publicRoleID = publicRole.id;
+
+      await service.deleteRole(role.id, publicRoleID);
+
+      return;
+    }
 
     const users = role ? role.users : [];
     configContent.users = users;
@@ -89,7 +116,11 @@ module.exports = {
 
     let configs = {};
 
-    Object.values(sanitizedRolesArray).map((config) => {
+    Object.values(sanitizedRolesArray).map(({ id, ...config }) => {
+      // Check if the config should be excluded.
+      const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
+      if (shouldExclude) return;
+
       configs[`${configPrefix}.${config.type}`] = config;
     });
 
