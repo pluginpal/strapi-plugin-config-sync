@@ -92,7 +92,11 @@ module.exports = {
         const type = file.split('.')[0]; // Grab the first part of the filename.
         const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
 
-        if (configType && configType !== type) {
+        if (
+          configType && configType !== type ||
+          !strapi.plugins['config-sync'].config.include.includes(type) ||
+          strapi.plugins['config-sync'].config.exclude.includes(`${type}.${name}`)
+        ) {
           return;
         }
 
