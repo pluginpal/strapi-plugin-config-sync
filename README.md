@@ -42,7 +42,7 @@ In the example below you can see how, and also what the default settings are.
 ##### `config/plugins.js`:
 	module.exports = ({ env }) => ({
 	  // ...
-	  'config-sync: {
+	  'config-sync': {
 	    destination: "extensions/config-sync/files/",
 	    minify: false,
 	    importOnBootstrap: false,
