@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const util = require('util');
+const difference = require('../utils/getObjectDiff');
 
 /**
  * Main services for config import/export.
@@ -116,11 +117,14 @@ module.exports = {
    * @returns {void}
    */
   importAllConfig: async (configType = null) => {
-    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
+    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles();
+    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase();
 
-    configFiles.map((file) => {
+    const diff = difference(databaseConfig, fileConfig);
+
+    Object.keys(diff).map((file) => {
       const type = file.split('.')[0]; // Grab the first part of the filename.
-      const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
+      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
       if (configType && configType !== type) {
         return;
