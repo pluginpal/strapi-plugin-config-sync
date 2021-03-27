@@ -45,6 +45,20 @@ module.exports = {
   },
 
   /**
+   * Delete config file.
+   *
+   * @param {string} configName - The name of the config file.
+   * @returns {void}
+   */
+   deleteConfigFile: async (configName) => {
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configName}`);
+    if (shouldExclude) return;
+
+    fs.unlinkSync(`${strapi.plugins['config-sync'].config.destination}${configName}.json`);
+  },
+
+  /**
    * Read from a config file.
    *
    * @param {string} configType - The type of config.
@@ -68,7 +82,7 @@ module.exports = {
    *
    * @returns {object} Object with key value pairs of configs.
    */
-  getAllConfigFromFiles: async () => {
+  getAllConfigFromFiles: async (configType = null) => {
     const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
 
     const getConfigs = async () => {
@@ -77,6 +91,11 @@ module.exports = {
       await Promise.all(configFiles.map(async (file) => {
         const type = file.split('.')[0]; // Grab the first part of the filename.
         const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
+
+        if (configType && configType !== type) {
+          return;
+        }
+
         const fileContents = await strapi.plugins['config-sync'].services.main.readConfigFile(type, name);
         fileConfigs[`${type}.${name}`] = fileContents;
       }));
