@@ -8,8 +8,8 @@ import ActionButtons from '../../components/ActionButtons';
 
 const ConfigPage = () => {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state) => state.getIn(['config', 'isLoading']), Map());
-  const configDiff = useSelector((state) => state.getIn(['config', 'configDiff']), Map());
+  const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], Map({})));
+  const configDiff = useSelector((state) => state.getIn(['config', 'configDiff'], Map({})));
 
   useEffect(() => {
     dispatch(getAllConfigDiff());
