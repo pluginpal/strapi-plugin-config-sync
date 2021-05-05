@@ -120,6 +120,9 @@ module.exports = {
       // Check if the config should be excluded.
       const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${config.type}`);
       if (shouldExclude) return;
+      
+      // Do not export the _id field, as it is immutable
+      delete config._id;
 
       configs[`${configPrefix}.${config.type}`] = config;
     });

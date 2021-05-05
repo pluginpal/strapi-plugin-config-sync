@@ -96,6 +96,9 @@ module.exports = {
       const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${key}`);
       if (shouldExclude) return;
 
+      // Do not export the _id field, as it is immutable
+      delete config._id;
+
       configs[`${configPrefix}.${key}`] = { key, value: JSON.parse(value), ...config };
     });
 
