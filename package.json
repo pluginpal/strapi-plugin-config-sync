@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Manage your Strapi database configuration as partial json files which can be imported/exported across environments. ",
   "strapi": {
     "name": "config-sync",
