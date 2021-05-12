@@ -1,0 +1,39 @@
+#!/bin/bash
+
+Color_Off='\033[0m'
+BRed="\033[1;31m"         # Red
+BGreen="\033[1;32m"       # Green
+BYellow="\033[1;33m"      # Yellow
+BBlue="\033[1;34m"        # Blue
+
+MSG_FILE=$1
+FILE_CONTENT="$(cat $MSG_FILE)"
+REGEX='(feat: |fix: |docs: |style: |refactor: |test: |chore: )'
+ERROR_MSG="Commit message format must match regex \"${REGEX}\""
+
+if [[ $FILE_CONTENT =~ $REGEX ]]; then
+ if [[ $FILE_CONTENT =~ (feat: ) ]]; then
+  printf '%s %s' ":sparkles:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (fix: ) ]]; then
+  printf '%s %s' ":bug:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (docs: ) ]]; then
+  printf '%s %s' ":memo:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (style: ) ]]; then
+  printf '%s %s' ":art:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (refactor: ) ]]; then
+  printf '%s %s' ":recycle:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (test: ) ]]; then
+  printf '%s %s' ":white_check_mark:" "$(cat $MSG_FILE)" >$MSG_FILE
+ elif [[ $FILE_CONTENT =~ (chore: ) ]]; then
+  printf '%s %s' ":wrench:" "$(cat $MSG_FILE)" >$MSG_FILE
+ fi
+ printf "${BGreen}Good commit!${Color_Off}"
+else
+ printf "${BRed}Bad commit ${BBlue}\"$FILE_CONTENT\"\n"
+ printf "${BYellow}$ERROR_MSG\n"
+ printf "The semantic git commit patten is expected, for details see https://gist.github.com/boazpoolman/42629d941b5f747734d296e02ecf737d\n"
+ printf "commit-msg hook failed (add --no-verify to bypass)\n"
+ exit 1
+fi
+
+exit 0
