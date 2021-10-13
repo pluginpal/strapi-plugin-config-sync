@@ -1,4 +1,23 @@
-# Strapi Plugin Config Sync
+<div align="center">
+<h1>Strapi config-sync plugin</h1>
+	
+<p style="margin-top: 0;">Enables a development workflow in Strapi for easy migration of config data across environments.</p>
+	
+<p>
+  <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
+    <img src="https://img.shields.io/npm/v/strapi-plugin-config-sync/latest.svg" alt="NPM Version" />
+  </a>
+  <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
+    <img src="https://img.shields.io/npm/dm/strapi-plugin-config-sync" alt="Monthly download on NPM" />
+  </a>
+  <a href="https://codecov.io/gh/boazpoolman/strapi-plugin-config-sync">
+    <img src="https://img.shields.io/github/workflow/status/boazpoolman/strapi-plugin-config-sync/Tests/master" alt="CI build status" />
+  </a>
+  <a href="https://codecov.io/gh/boazpoolman/strapi-plugin-config-sync">
+    <img src="https://codecov.io/gh/boazpoolman/strapi-plugin-config-sync/coverage.svg?branch=master" alt="codecov.io" />
+  </a>
+</p>
+</div>
 
 A lot of configuration of your Strapi project is stored in the database. Like core_store, user permissions, user roles & webhooks. Things you might want to have the same on all environments. But when you update them locally, you will have to manually update them on all other environments too.
 
