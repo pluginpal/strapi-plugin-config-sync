@@ -18,7 +18,7 @@ module.exports = {
     await strapi.plugins['config-sync'].services.main.exportAllConfig();
 
     ctx.send({
-      message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`
+      message: `Config was successfully exported to ${strapi.plugins['config-sync'].config.destination}.`,
     });
   },
 
@@ -32,16 +32,16 @@ module.exports = {
     // Check for existance of the config file destination dir.
     if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       ctx.send({
-        message: 'No config files were found.'
+        message: 'No config files were found.',
       });
 
       return;
     }
-    
+
     await strapi.plugins['config-sync'].services.main.importAllConfig();
 
     ctx.send({
-      message: 'Config was successfully imported.'
+      message: 'Config was successfully imported.',
     });
   },
 
@@ -49,13 +49,16 @@ module.exports = {
    * Get config diff between filesystem & db.
    *
    * @param {object} ctx - Request context object.
-   * @returns Object with key value pairs of config.
+   * @returns {object} formattedDiff - The formatted diff object.
+   * @returns {object} formattedDiff.fileConfig - The config as found in the filesystem.
+   * @returns {object} formattedDiff.databaseConfig - The config as found in the database.
+   * @returns {object} formattedDiff.diff - The diff between the file config and databse config.
    */
   getDiff: async (ctx) => {
     // Check for existance of the config file destination dir.
     if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       ctx.send({
-        message: 'No config files were found.'
+        message: 'No config files were found.',
       });
 
       return;
@@ -64,9 +67,9 @@ module.exports = {
     const formattedDiff = {
       fileConfig: {},
       databaseConfig: {},
-      diff: {}
+      diff: {},
     };
-    
+
     const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles();
     const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase();
 

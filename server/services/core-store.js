@@ -18,9 +18,9 @@ module.exports = {
     const formattedDiff = {
       fileConfig: {},
       databaseConfig: {},
-      diff: {}
+      diff: {},
     };
-    
+
     const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles(configPrefix);
     const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase(configPrefix);
     const diff = difference(databaseConfig, fileConfig);
@@ -30,7 +30,7 @@ module.exports = {
     Object.keys(diff).map((changedConfigName) => {
       formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
       formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
-    })
+    });
 
     await Promise.all(Object.entries(diff).map(async ([configName, config]) => {
       // Check if the config should be excluded.
@@ -40,8 +40,8 @@ module.exports = {
       const currentConfig = formattedDiff.databaseConfig[configName];
 
       if (
-        !currentConfig &&
-        formattedDiff.fileConfig[configName]
+        !currentConfig
+        && formattedDiff.fileConfig[configName]
       ) {
         await strapi.plugins['config-sync'].services.main.deleteConfigFile(configName);
       } else {
@@ -89,9 +89,9 @@ module.exports = {
    */
    getAllFromDatabase: async () => {
     const coreStore = await strapi.query(coreStoreQueryString).find({ _limit: -1 });
-    let configs = {};
+    const configs = {};
 
-    Object.values(coreStore).map( ({ id, value, key, ...config }) => {
+    Object.values(coreStore).map(({ id, value, key, ...config }) => {
       // Check if the config should be excluded.
       const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configPrefix}.${key}`);
       if (shouldExclude) return;

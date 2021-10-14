@@ -23,10 +23,9 @@ module.exports = {
     if (shouldExclude) return;
 
     // Check if the JSON content should be minified.
-    const json =
-      !strapi.plugins['config-sync'].config.minify ?
-        JSON.stringify(fileContents, null, 2)
-        : JSON.stringify(fileContents);
+    const json = !strapi.plugins['config-sync'].config.minify
+      ? JSON.stringify(fileContents, null, 2)
+      : JSON.stringify(fileContents);
 
     if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       fs.mkdirSync(strapi.plugins['config-sync'].config.destination, { recursive: true });
@@ -67,7 +66,7 @@ module.exports = {
    */
   readConfigFile: async (configType, configName) => {
     const readFile = util.promisify(fs.readFile);
-    return await readFile(`${strapi.plugins['config-sync'].config.destination}${configType}.${configName}.json`)
+    return readFile(`${strapi.plugins['config-sync'].config.destination}${configType}.${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -80,6 +79,7 @@ module.exports = {
   /**
    * Get all the config JSON from the filesystem.
    *
+   * @param {string} configType - Type of config to gather. Leave empty to get all config.
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
@@ -90,16 +90,16 @@ module.exports = {
     const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
 
     const getConfigs = async () => {
-      let fileConfigs = {};
+      const fileConfigs = {};
 
       await Promise.all(configFiles.map(async (file) => {
         const type = file.split('.')[0].replace('##', '::'); // Grab the first part of the filename.
         const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.').replace('##', '::'); // Grab the rest of the filename minus the file extension.
 
         if (
-          configType && configType !== type ||
-          !strapi.plugins['config-sync'].config.include.includes(type) ||
-          strapi.plugins['config-sync'].config.exclude.includes(`${type}.${name}`)
+          configType && configType !== type
+          || !strapi.plugins['config-sync'].config.include.includes(type)
+          || strapi.plugins['config-sync'].config.exclude.includes(`${type}.${name}`)
         ) {
           return;
         }
@@ -111,18 +111,19 @@ module.exports = {
       return fileConfigs;
     };
 
-    return await getConfigs();
+    return getConfigs();
   },
 
   /**
    * Get all the config JSON from the database.
    *
+   * @param {string} configType - Type of config to gather. Leave empty to get all config.
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromDatabase: async (configType = null) => {
     const getConfigs = async () => {
       let databaseConfigs = {};
-      
+
       await Promise.all(strapi.plugins['config-sync'].config.include.map(async (type) => {
         if (configType && configType !== type) {
           return;
@@ -133,14 +134,15 @@ module.exports = {
       }));
 
       return databaseConfigs;
-    }
+    };
 
-    return await getConfigs();
+    return getConfigs();
   },
 
   /**
    * Import all config files into the db.
    *
+   * @param {string} configType - Type of config to impor. Leave empty to import all config.
    * @returns {void}
    */
   importAllConfig: async (configType = null) => {
@@ -164,6 +166,7 @@ module.exports = {
   /**
    * Export all config files.
    *
+   * @param {string} configType - Type of config to export. Leave empty to export all config.
    * @returns {void}
    */
    exportAllConfig: async (configType = null) => {
@@ -201,6 +204,6 @@ module.exports = {
    * @returns {void}
    */
    exportSingleConfig: async (configType, configName) => {
-   
+
   },
 };
