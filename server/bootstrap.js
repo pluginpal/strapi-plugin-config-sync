@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const types = require('./types');
 
 /**
  * An asynchronous bootstrap function that runs before
@@ -14,8 +13,6 @@ const types = require('./types');
  */
 
 module.exports = async () => {
-  // console.log(await types['core-store'].exportAll());
-
   if (strapi.plugins['config-sync'].config.importOnBootstrap) {
     if (fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       await strapi.plugins['config-sync'].services.main.importAllConfig();

@@ -112,6 +112,8 @@
 
     "no-cond-assign": "warn",
 
+    "no-confusing-arrow": "off",
+
     "no-console": "off",
 
     "no-constant-condition": "warn",

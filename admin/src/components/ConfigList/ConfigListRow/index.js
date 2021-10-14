@@ -1,10 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 
 const CustomRow = ({ row }) => {
-  const { config_name, config_type, state, onClick } = row;
+  const { configName, configType, state, onClick } = row;
 
-  const stateStyle = (state) => {
+  const stateStyle = (stateStr) => {
     const style = {
       display: 'inline-flex',
       padding: '0 10px',
@@ -14,17 +13,17 @@ const CustomRow = ({ row }) => {
       fontWeight: '500',
     };
 
-    if (state === 'Only in DB') {
+    if (stateStr === 'Only in DB') {
       style.backgroundColor = '#cbf2d7';
       style.color = '#1b522b';
     }
 
-    if (state === 'Only in sync dir') {
+    if (stateStr === 'Only in sync dir') {
       style.backgroundColor = '#f0cac7';
       style.color = '#3d302f';
     }
 
-    if (state === 'Different') {
+    if (stateStr === 'Different') {
       style.backgroundColor = '#e8e6b7';
       style.color = '#4a4934';
     }
@@ -33,12 +32,12 @@ const CustomRow = ({ row }) => {
   };
 
   return (
-    <tr onClick={() => onClick(config_type, config_name)}>
+    <tr onClick={() => onClick(configType, configName)}>
       <td>
-        <p>{config_name}</p>
+        <p>{configName}</p>
       </td>
       <td>
-        <p>{config_type}</p>
+        <p>{configType}</p>
       </td>
       <td>
         <p style={stateStyle(state)}>{state}</p>

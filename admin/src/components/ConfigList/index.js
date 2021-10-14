@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
-import { NoContent } from '@strapi/helper-plugin';
-import AddIcon from '@strapi/icons/AddIcon';
-import { VisuallyHidden } from '@strapi/parts/VisuallyHidden';
-import { Table, Thead, Tbody, Tr, Th, TFooter } from '@strapi/parts/Table';
+import { Table, Thead, Tbody, Tr, Th } from '@strapi/parts/Table';
 import { TableLabel } from '@strapi/parts/Text';
-import { Button } from '@strapi/parts/Button';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
@@ -16,25 +12,25 @@ const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
-  const [configName, setConfigName] = useState('');
+  const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
 
   const getConfigState = (configName) => {
     if (
-      diff.fileConfig[configName] &&
-      diff.databaseConfig[configName]
+      diff.fileConfig[configName]
+      && diff.databaseConfig[configName]
     ) {
-      return 'Different'
+      return 'Different';
     } else if (
-      diff.fileConfig[configName] &&
-      !diff.databaseConfig[configName]
+      diff.fileConfig[configName]
+      && !diff.databaseConfig[configName]
     ) {
-      return 'Only in sync dir'
+      return 'Only in sync dir';
     } else if (
-      !diff.fileConfig[configName] &&
-      diff.databaseConfig[configName]
+      !diff.fileConfig[configName]
+      && diff.databaseConfig[configName]
     ) {
-      return 'Only in DB'
+      return 'Only in DB';
     }
   };
 
@@ -44,21 +40,21 @@ const ConfigList = ({ diff, isLoading }) => {
       return;
     }
 
-    let formattedRows = [];
-    Object.keys(diff.diff).map((configName) => {
-      const type = configName.split('.')[0]; // Grab the first part of the filename.
-      const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
+    const formattedRows = [];
+    Object.keys(diff.diff).map((name) => {
+      const type = name.split('.')[0]; // Grab the first part of the filename.
+      const formattedName = name.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
       formattedRows.push({
-        config_name: name,
-        config_type: type,
-        state: getConfigState(configName),
-        onClick: (config_type, config_name) => {
-          setOriginalConfig(diff.fileConfig[`${config_type}.${config_name}`]);
-          setNewConfig(diff.databaseConfig[`${config_type}.${config_name}`]);
-          setConfigName(`${config_type}.${config_name}`);
+        configName: formattedName,
+        configType: type,
+        state: getConfigState(name),
+        onClick: (configType, configName) => {
+          setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
+          setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
+          setCname(`${configType}.${configName}`);
           setOpenModal(true);
-        }
+        },
       });
     });
 
@@ -68,7 +64,7 @@ const ConfigList = ({ diff, isLoading }) => {
   const closeModal = () => {
     setOriginalConfig({});
     setNewConfig({});
-    setConfigName('');
+    setCname('');
     setOpenModal(false);
   };
 
@@ -83,8 +79,7 @@ const ConfigList = ({ diff, isLoading }) => {
         oldValue={originalConfig}
         newValue={newConfig}
         onClose={closeModal}
-        onToggle={closeModal}
-        configName={configName}
+        configName={cName}
       />
       <Table colCount={4} rowCount={rows.length + 1}>
         <Thead>

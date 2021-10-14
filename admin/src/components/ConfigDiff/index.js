@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 
-import { ModalLayout, ModalFooter, ModalBody, ModalHeader } from '@strapi/parts/ModalLayout';
+import { ModalLayout, ModalBody, ModalHeader } from '@strapi/parts/ModalLayout';
 import { ButtonText } from '@strapi/parts/Text';
-import { Button } from '@strapi/parts/Button';
 
-const ConfigDiff = ({ isOpen, onClose, onToggle, oldValue, newValue, configName }) => {
+const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
   if (!isOpen) {
     return null;
   }
@@ -30,13 +29,8 @@ const ConfigDiff = ({ isOpen, onClose, onToggle, oldValue, newValue, configName 
           />
         </section>
       </ModalBody>
-      <ModalFooter>
-        <section style={{ alignItems: 'center' }}>
-
-        </section>
-      </ModalFooter>
     </ModalLayout>
   );
-}
+};
 
 export default ConfigDiff;
