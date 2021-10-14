@@ -2,13 +2,14 @@
 
 const fs = require('fs');
 const util = require('util');
+const types = require('../types');
 const difference = require('../utils/getObjectDiff');
 
 /**
  * Main services for config import/export.
  */
 
-module.exports = {
+module.exports = () => ({
   /**
    * Write a single config file.
    *
@@ -19,20 +20,20 @@ module.exports = {
    */
   writeConfigFile: async (configType, configName, fileContents) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configType}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configType}.${configName}`);
     if (shouldExclude) return;
 
     // Check if the JSON content should be minified.
-    const json = !strapi.plugins['config-sync'].config.minify
+    const json = !strapi.config.get('plugin.config-sync').minify
       ? JSON.stringify(fileContents, null, 2)
       : JSON.stringify(fileContents);
 
-    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
-      fs.mkdirSync(strapi.plugins['config-sync'].config.destination, { recursive: true });
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync').destination)) {
+      fs.mkdirSync(strapi.config.get('plugin.config-sync').destination, { recursive: true });
     }
 
     const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${strapi.plugins['config-sync'].config.destination}${configType}.${configName}.json`, json)
+    await writeFile(`${strapi.config.get('plugin.config-sync').destination}${configType}.${configName}.json`, json)
       .then(() => {
         // @TODO:
         // Add logging for successfull config export.
@@ -51,10 +52,10 @@ module.exports = {
    */
    deleteConfigFile: async (configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
     if (shouldExclude) return;
 
-    fs.unlinkSync(`${strapi.plugins['config-sync'].config.destination}${configName}.json`);
+    fs.unlinkSync(`${strapi.config.get('plugin.config-sync').destination}${configName}.json`);
   },
 
   /**
@@ -66,7 +67,7 @@ module.exports = {
    */
   readConfigFile: async (configType, configName) => {
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.plugins['config-sync'].config.destination}${configType}.${configName}.json`)
+    return readFile(`${strapi.config.get('plugin.config-sync').destination}${configType}.${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -83,11 +84,11 @@ module.exports = {
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
-    if (!fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync').destination)) {
       return {};
     }
 
-    const configFiles = fs.readdirSync(strapi.plugins['config-sync'].config.destination);
+    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync').destination);
 
     const getConfigs = async () => {
       const fileConfigs = {};
@@ -98,13 +99,13 @@ module.exports = {
 
         if (
           configType && configType !== type
-          || !strapi.plugins['config-sync'].config.include.includes(type)
-          || strapi.plugins['config-sync'].config.exclude.includes(`${type}.${name}`)
+          || !strapi.config.get('plugin.config-sync.include').includes(type)
+          || strapi.config.get('plugin.config-sync.exclude').includes(`${type}.${name}`)
         ) {
           return;
         }
 
-        const fileContents = await strapi.plugins['config-sync'].services.main.readConfigFile(type, name);
+        const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
         fileConfigs[`${type}.${name}`] = fileContents;
       }));
 
@@ -124,12 +125,12 @@ module.exports = {
     const getConfigs = async () => {
       let databaseConfigs = {};
 
-      await Promise.all(strapi.plugins['config-sync'].config.include.map(async (type) => {
+      await Promise.all(strapi.config.get('plugin.config-sync.include').map(async (type) => {
         if (configType && configType !== type) {
           return;
         }
 
-        const config = await strapi.plugins['config-sync'].services[type].getAllFromDatabase();
+        const config = await types[type].getAllFromDatabase();
         databaseConfigs = Object.assign(config, databaseConfigs);
       }));
 
@@ -146,8 +147,8 @@ module.exports = {
    * @returns {void}
    */
   importAllConfig: async (configType = null) => {
-    const fileConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromFiles();
-    const databaseConfig = await strapi.plugins['config-sync'].services.main.getAllConfigFromDatabase();
+    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles();
+    const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase();
 
     const diff = difference(databaseConfig, fileConfig);
 
@@ -159,7 +160,7 @@ module.exports = {
         return;
       }
 
-      strapi.plugins['config-sync'].services.main.importSingleConfig(type, name);
+      strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
     });
   },
 
@@ -170,12 +171,12 @@ module.exports = {
    * @returns {void}
    */
    exportAllConfig: async (configType = null) => {
-    await Promise.all(strapi.plugins['config-sync'].config.include.map(async (type) => {
+    await Promise.all(strapi.config.get('plugin.config-sync.include').map(async (type) => {
       if (configType && configType !== type) {
         return;
       }
 
-      await strapi.plugins['config-sync'].services[type].exportAll();
+      await types[type].exportAll();
     }));
   },
 
@@ -188,12 +189,12 @@ module.exports = {
    */
   importSingleConfig: async (configType, configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${configType}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configType}.${configName}`);
     if (shouldExclude) return;
 
-    const fileContents = await strapi.plugins['config-sync'].services.main.readConfigFile(configType, configName);
+    const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(configType, configName);
 
-    await strapi.plugins['config-sync'].services[configType].importSingle(configName, fileContents);
+    await types[configType].importSingle(configName, fileContents);
   },
 
   /**
@@ -206,4 +207,4 @@ module.exports = {
    exportSingleConfig: async (configType, configName) => {
 
   },
-};
+});
