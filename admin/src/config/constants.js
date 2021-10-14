@@ -1,1 +1,1 @@
-export const __DEBUG__ = strapi.env === 'development';
+export const __DEBUG__ = true; // TODO: set actual env.

@@ -5,21 +5,22 @@
  */
 
 import React, { memo } from 'react';
-import { Header } from '@buffetjs/custom';
-import { useGlobalContext } from 'strapi-helper-plugin';
+import { useIntl } from 'react-intl';
+
+import { HeaderLayout } from '@strapi/parts/Layout';
+import { Box } from '@strapi/parts/Box';
 
 const HeaderComponent = () => {
-  const { formatMessage } = useGlobalContext();
+  const { formatMessage } = useIntl();
 
-  const headerProps = {
-    title: {
-      label: formatMessage({ id: 'config-sync.Header.Title' }),
-    },
-    content: formatMessage({ id: 'config-sync.Header.Description' }),
-  };
-  
   return (
-    <Header {...headerProps} />
+    <Box background="neutral100">
+      <HeaderLayout
+        title={formatMessage({ id: 'config-sync.Header.Title' })}
+        subtitle={formatMessage({ id: 'config-sync.Header.Description' })}
+        as="h2"
+      />
+    </Box>
   );
 };
 

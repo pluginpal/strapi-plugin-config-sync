@@ -21,6 +21,6 @@ const ConfigPage = () => {
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
     </div>
   );
-}
- 
+};
+
 export default ConfigPage;

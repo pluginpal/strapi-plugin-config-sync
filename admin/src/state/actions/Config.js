@@ -4,7 +4,7 @@
  *
  */
 
-import { request } from 'strapi-helper-plugin';
+import { request } from '@strapi/helper-plugin';
 import { Map } from 'immutable';
 
 export function getAllConfigDiff() {
@@ -14,11 +14,11 @@ export function getAllConfigDiff() {
       const configDiff = await request('/config-sync/diff', { method: 'GET' });
       dispatch(setConfigDiffInState(configDiff));
       dispatch(setLoadingState(false));
-    } catch(err) {
+    } catch (err) {
       strapi.notification.error('notification.error');
       dispatch(setLoadingState(false));
     }
-  }
+  };
 }
 
 export const SET_CONFIG_DIFF_IN_STATE = 'SET_CONFIG_DIFF_IN_STATE';
@@ -38,11 +38,11 @@ export function exportAllConfig() {
 
       strapi.notification.success(message);
       dispatch(setLoadingState(false));
-    } catch(err) {
+    } catch (err) {
       strapi.notification.error('notification.error');
       dispatch(setLoadingState(false));
     }
-  }
+  };
 }
 
 export function importAllConfig() {
@@ -54,11 +54,11 @@ export function importAllConfig() {
 
       strapi.notification.success(message);
       dispatch(setLoadingState(false));
-    } catch(err) {
+    } catch (err) {
       strapi.notification.error('notification.error');
       dispatch(setLoadingState(false));
     }
-  }
+  };
 }
 
 export const SET_LOADING_STATE = 'SET_LOADING_STATE';

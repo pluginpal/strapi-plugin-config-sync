@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from '@buffetjs/core';
 import { isEmpty } from 'lodash';
+
+import { NoContent } from '@strapi/helper-plugin';
+import AddIcon from '@strapi/icons/AddIcon';
+import { VisuallyHidden } from '@strapi/parts/VisuallyHidden';
+import { Table, Thead, Tbody, Tr, Th, TFooter } from '@strapi/parts/Table';
+import { TableLabel } from '@strapi/parts/Text';
+import { Button } from '@strapi/parts/Button';
+
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
 import ConfigListRow from './ConfigListRow';
-
-const headers = [
-  {
-    name: 'Config name',
-    value: 'config_name',
-  },
-  {
-    name: 'Config type',
-    value: 'config_type',
-  },
-  {
-    name: 'State',
-    value: 'state',
-  },
-];
 
 const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -57,7 +49,7 @@ const ConfigList = ({ diff, isLoading }) => {
       const type = configName.split('.')[0]; // Grab the first part of the filename.
       const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
-      formattedRows.push({ 
+      formattedRows.push({
         config_name: name,
         config_type: type,
         state: getConfigState(configName),
@@ -72,7 +64,7 @@ const ConfigList = ({ diff, isLoading }) => {
 
     setRows(formattedRows);
   }, [diff]);
-  
+
   const closeModal = () => {
     setOriginalConfig({});
     setNewConfig({});
@@ -81,7 +73,7 @@ const ConfigList = ({ diff, isLoading }) => {
   };
 
   if (!isLoading && !isEmpty(diff.message)) {
-    return <FirstExport />
+    return <FirstExport />;
   }
 
   return (
@@ -94,15 +86,28 @@ const ConfigList = ({ diff, isLoading }) => {
         onToggle={closeModal}
         configName={configName}
       />
-      <Table
-        headers={headers}
-        customRow={ConfigListRow}
-        rows={!isLoading ? rows : []}
-        isLoading={isLoading}
-        tableEmptyText="No config changes. You are up to date!"
-      />
+      <Table colCount={4} rowCount={rows.length + 1}>
+        <Thead>
+          <Tr>
+            <Th>
+              <TableLabel>Config name</TableLabel>
+            </Th>
+            <Th>
+              <TableLabel>Config type</TableLabel>
+            </Th>
+            <Th>
+              <TableLabel>State</TableLabel>
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {rows.map((row) => (
+            <ConfigListRow key={row.name} {...row} />
+          ))}
+        </Tbody>
+      </Table>
     </div>
   );
-}
+};
 
 export default ConfigList;

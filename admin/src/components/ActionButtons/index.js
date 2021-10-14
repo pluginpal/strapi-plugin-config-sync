@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button } from '@buffetjs/core';
+import { Button } from '@strapi/parts/Button';
+
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
@@ -23,20 +24,20 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(diff.diff)} color="primary" label="Import" onClick={() => openModal('import')} />
-      <Button disabled={isEmpty(diff.diff)} color="primary" label="Export" onClick={() => openModal('export')} />
+      <Button disabled={isEmpty(diff.diff)} label="Import" onClick={() => openModal('import')} />
+      <Button disabled={isEmpty(diff.diff)} label="Export" onClick={() => openModal('export')} />
       {!isEmpty(diff.diff) && (
         <h4 style={{ display: 'inline' }}>{Object.keys(diff.diff).length} {Object.keys(diff.diff).length === 1 ? "config change" : "config changes"}</h4>
       )}
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}
-        type={actionType} 
-        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
+        type={actionType}
+        onSubmit={actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
       />
     </ActionButtonsStyling>
   );
-}
+};
 
 const ActionButtonsStyling = styled.div`
   padding: 10px 0 20px 0;
@@ -45,5 +46,5 @@ const ActionButtonsStyling = styled.div`
     margin-right: 10px;
   }
 `;
- 
+
 export default ActionButtons;
