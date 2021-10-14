@@ -24,8 +24,8 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(diff.diff)} label="Import" onClick={() => openModal('import')} />
-      <Button disabled={isEmpty(diff.diff)} label="Export" onClick={() => openModal('export')} />
+      <Button disabled={isEmpty(diff.diff)} onClick={() => openModal('import')}>Import</Button>
+      <Button disabled={isEmpty(diff.diff)} onClick={() => openModal('export')}>Export</Button>
       {!isEmpty(diff.diff) && (
         <h4 style={{ display: 'inline' }}>{Object.keys(diff.diff).length} {Object.keys(diff.diff).length === 1 ? "config change" : "config changes"}</h4>
       )}
@@ -33,7 +33,7 @@ const ActionButtons = ({ diff }) => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         type={actionType}
-        onSubmit={actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
+        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
       />
     </ActionButtonsStyling>
   );

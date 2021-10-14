@@ -28,12 +28,12 @@ module.exports = () => ({
       ? JSON.stringify(fileContents, null, 2)
       : JSON.stringify(fileContents);
 
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync').destination)) {
-      fs.mkdirSync(strapi.config.get('plugin.config-sync').destination, { recursive: true });
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+      fs.mkdirSync(strapi.config.get('plugin.config-sync.destination'), { recursive: true });
     }
 
     const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${strapi.config.get('plugin.config-sync').destination}${configType}.${configName}.json`, json)
+    await writeFile(`${strapi.config.get('plugin.config-sync.destination')}${configType}.${configName}.json`, json)
       .then(() => {
         // @TODO:
         // Add logging for successfull config export.
@@ -55,7 +55,7 @@ module.exports = () => ({
     const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
     if (shouldExclude) return;
 
-    fs.unlinkSync(`${strapi.config.get('plugin.config-sync').destination}${configName}.json`);
+    fs.unlinkSync(`${strapi.config.get('plugin.config-sync.destination')}${configName}.json`);
   },
 
   /**
@@ -67,7 +67,7 @@ module.exports = () => ({
    */
   readConfigFile: async (configType, configName) => {
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.config.get('plugin.config-sync').destination}${configType}.${configName}.json`)
+    return readFile(`${strapi.config.get('plugin.config-sync.destination')}${configType}.${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -84,11 +84,11 @@ module.exports = () => ({
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync').destination)) {
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
       return {};
     }
 
-    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync').destination);
+    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync.destination'));
 
     const getConfigs = async () => {
       const fileConfigs = {};
