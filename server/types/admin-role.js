@@ -1,5 +1,3 @@
-const { assignPermissions } = require('@strapi/admin/server/services/role');
-
 const { sanitizeConfig } = require('../utils');
 const ConfigType = require("../services/type");
 
@@ -33,9 +31,9 @@ const AdminRolePermissionsConfigType = class AdminRolePermissionsConfigType exte
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
       const newConfig = await queryAPI.create({ data: query });
-      await assignPermissions(newConfig.id, permissions);
+      await strapi.admin.services.role.assignPermissions(newConfig.id, permissions);
     } else {
-      await assignPermissions(existingConfig.id, configContent.permissions);
+      await strapi.admin.services.role.assignPermissions(existingConfig.id, configContent.permissions);
       delete configContent.permissions;
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
