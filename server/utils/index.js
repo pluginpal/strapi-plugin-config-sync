@@ -10,8 +10,18 @@ const getService = (name) => {
 
 const logMessage = (msg = '') => `[strapi-plugin-config-sync]: ${msg}`;
 
+const sanitizeConfig = (config) => {
+  delete config._id;
+  delete config.id;
+  delete config.updatedAt;
+  delete config.createdAt;
+
+  return config;
+};
+
 module.exports = {
   getService,
   getCoreStore,
   logMessage,
+  sanitizeConfig,
 };

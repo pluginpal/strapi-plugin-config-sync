@@ -1,6 +1,7 @@
+const { sanitizeConfig } = require('../utils');
 const ConfigType = require("../services/type");
 
-const RolePermissionsConfigType = class RolePermissionsConfigType extends ConfigType {
+const UserRolePermissionsConfigType = class UserRolePermissionsConfigType extends ConfigType {
   /**
    * Import a single role-permissions config file into the db.
    *
@@ -10,7 +11,7 @@ const RolePermissionsConfigType = class RolePermissionsConfigType extends Config
    */
   importSingle = async (configName, configContent) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.plugins['config-sync'].config.exclude.includes(`${this.configPrefix}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${this.configPrefix}.${configName}`);
     if (shouldExclude) return;
 
     const roleService = strapi.plugin('users-permissions').service('role');
@@ -63,8 +64,7 @@ const RolePermissionsConfigType = class RolePermissionsConfigType extends Config
       const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${this.configPrefix}.${config.type}`);
       if (shouldExclude) return;
 
-      // Do not export the _id field, as it is immutable
-      delete config._id;
+      config = sanitizeConfig(config);
 
       configs[`${this.configPrefix}.${config.type}`] = config;
     });
@@ -73,4 +73,4 @@ const RolePermissionsConfigType = class RolePermissionsConfigType extends Config
   }
 };
 
-module.exports = RolePermissionsConfigType;
+module.exports = UserRolePermissionsConfigType;

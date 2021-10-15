@@ -1,15 +1,15 @@
-const { logMessage } = require('../utils');
+const { logMessage, sanitizeConfig } = require('../utils');
 const difference = require('../utils/getObjectDiff');
 
 const ConfigType = class ConfigType {
-  constructor(queryString, configPrefix, uid, fieldsToStringify) {
+  constructor(queryString, configPrefix, uid, jsonFields) {
     if (!queryString) {
       strapi.log.error(logMessage('Query string is missing for ConfigType'));
     }
     this.queryString = queryString;
     this.configPrefix = configPrefix;
     this.uid = uid;
-    this.fieldsToStringify = fieldsToStringify || [];
+    this.jsonFields = jsonFields || [];
   }
 
   /**
@@ -48,7 +48,7 @@ const ConfigType = class ConfigType {
       ) {
         await strapi.plugin('config-sync').service('main').deleteConfigFile(configName);
       } else {
-        await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, currentConfig[this.uid].replace('::', '##'), currentConfig);
+        await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, currentConfig[this.uid], currentConfig);
       }
     }));
   }
@@ -68,7 +68,7 @@ const ConfigType = class ConfigType {
     const queryAPI = strapi.query(this.queryString);
 
     const configExists = await queryAPI
-      .findOne({ [this.uid]: configName });
+      .findOne({ where: { [this.uid]: configName } });
 
     if (configExists && configContent === null) {
       await queryAPI.delete({ where: { [this.uid]: configName } });
@@ -78,11 +78,11 @@ const ConfigType = class ConfigType {
 
     if (!configExists) {
       const query = { ...configContent };
-      this.fieldsToStringify.map((field) => query[field] = JSON.stringify(configContent[field]));
-      await queryAPI.create(query);
+      this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
+      await queryAPI.create({ data: query });
     } else {
       const query = { ...configContent };
-      this.fieldsToStringify.map((field) => query[field] = JSON.stringify(configContent[field]));
+      this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
       await queryAPI.update({ where: { [this.uid]: configName }, data: { ...query } });
     }
   }
@@ -101,11 +101,10 @@ const ConfigType = class ConfigType {
       const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${this.configPrefix}.${config[this.uid]}`);
       if (shouldExclude) return;
 
-      // Do not export the _id field, as it is immutable
-      delete config._id;
+      config = sanitizeConfig(config);
 
       const formattedObject = { ...config };
-      this.fieldsToStringify.map((field) => formattedObject[field] = JSON.parse(config[field]));
+      this.jsonFields.map((field) => formattedObject[field] = JSON.parse(config[field]));
 
       configs[`${this.configPrefix}.${config[this.uid]}`] = formattedObject;
     });

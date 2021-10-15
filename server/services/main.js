@@ -94,8 +94,8 @@ module.exports = () => ({
       const fileConfigs = {};
 
       await Promise.all(configFiles.map(async (file) => {
-        const type = file.split('.')[0].replace('##', '::'); // Grab the first part of the filename.
-        const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.').replace('##', '::'); // Grab the rest of the filename minus the file extension.
+        const type = file.split('.')[0]; // Grab the first part of the filename.
+        const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
 
         if (
           configType && configType !== type
