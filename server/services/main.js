@@ -152,7 +152,7 @@ module.exports = () => ({
 
     const diff = difference(databaseConfig, fileConfig);
 
-    Object.keys(diff).map((file) => {
+    await Promise.all(Object.keys(diff).map(async (file) => {
       const type = file.split('.')[0]; // Grab the first part of the filename.
       const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
@@ -160,8 +160,8 @@ module.exports = () => ({
         return;
       }
 
-      strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
-    });
+      await strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
+    }));
   },
 
   /**
