@@ -2,7 +2,7 @@ const { logMessage, sanitizeConfig } = require('../utils');
 const difference = require('../utils/getObjectDiff');
 
 const ConfigType = class ConfigType {
-  constructor(queryString, configPrefix, uid, jsonFields) {
+  constructor(queryString, configPrefix, uid, jsonFields, relations) {
     if (!queryString) {
       strapi.log.error(logMessage('Query string is missing for ConfigType'));
     }
@@ -10,6 +10,7 @@ const ConfigType = class ConfigType {
     this.configPrefix = configPrefix;
     this.uid = uid;
     this.jsonFields = jsonFields || [];
+    this.relations = relations || {};
   }
 
   /**

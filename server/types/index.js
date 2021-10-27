@@ -8,5 +8,14 @@ module.exports = {
   'i18n-locale': new ConfigType('plugin::i18n.locale', 'i18n-locale', 'code'),
   'core-store': new ConfigType('strapi::core-store', 'core-store', 'key', ['value']),
   'user-role': new UserRoleConfigType('plugin::users-permissions.role', 'user-role', 'type'),
-  'admin-role': new AdminRoleConfigType('admin::role', 'admin-role', 'code'),
+  'admin-role': new AdminRoleConfigType(
+    'admin::role',
+    'admin-role',
+    'code',
+    [],
+    [{
+      queryString: 'admin::permission',
+      relationName: 'permissions',
+    }]
+  ),
 };

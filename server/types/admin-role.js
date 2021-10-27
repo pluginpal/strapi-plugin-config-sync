@@ -20,24 +20,31 @@ const AdminRolePermissionsConfigType = class AdminRolePermissionsConfigType exte
       .findOne({ where: { [this.uid]: configName } });
 
     if (existingConfig && configContent === null) {
-      await queryAPI.delete({ where: { [this.uid]: configName } });
+      await queryAPI.delete({
+        where: { [this.uid]: configName },
+        populate: this.relations.map(({ relationName }) => relationName),
+      });
 
       return;
     }
 
     if (!existingConfig) {
-      const { permissions } = configContent;
-      delete configContent.permissions;
+      // Format JSON fields.
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
-      const newConfig = await queryAPI.create({ data: query });
-      await strapi.admin.services.role.assignPermissions(newConfig.id, permissions);
+
+      this.relations.map(({ queryString }) => {
+        const queryAPI = strapi.query(queryString);
+
+        // Compare relations
+        // Make changes to the db
+      });
+
+      await queryAPI.create({ data: query });
     } else {
-      await strapi.admin.services.role.assignPermissions(existingConfig.id, configContent.permissions);
-      delete configContent.permissions;
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
-      await queryAPI.update({ where: { [this.uid]: configName }, data: query });
+      await queryAPI.update({ where: { [this.uid]: configName }, data: { ...query } });
     }
   }
 

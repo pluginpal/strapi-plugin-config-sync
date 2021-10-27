@@ -5,7 +5,7 @@ import { Flex } from '@strapi/design-system/Flex';
 import { Text } from '@strapi/design-system/Text';
 import { Stack } from '@strapi/design-system/Stack';
 import { Button } from '@strapi/design-system/Button';
-import DeleteIcon from '@strapi/icons/DeleteIcon';
+import DeleteIcon from '@strapi/icons/Delete';
 import AlertWarningIcon from '@strapi/icons/AlertWarningIcon';
 
 import getTrad from '../../helpers/getTrad';
