@@ -40,7 +40,7 @@
   ],
   "devDependencies": {
     "@strapi/helper-plugin": "4.0.0-beta.6",
-    "@strapi/icons": "^0.0.1-alpha.53",
+    "@strapi/icons": "0.0.1-alpha.50",
     "@strapi/design-system": "^0.0.1-alpha.53",
     "@strapi/utils": "4.0.0-beta.6",
     "babel-eslint": "9.0.0",
