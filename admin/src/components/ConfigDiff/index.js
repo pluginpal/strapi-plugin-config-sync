@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 
-import { ModalLayout, ModalBody, ModalHeader } from '@strapi/parts/ModalLayout';
-import { ButtonText } from '@strapi/parts/Text';
+import { ModalLayout, ModalBody, ModalHeader } from '@strapi/design-system/ModalLayout';
+import { ButtonText } from '@strapi/design-system/Text';
 
 const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
   if (!isOpen) {

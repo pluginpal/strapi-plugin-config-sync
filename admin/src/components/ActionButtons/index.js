@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button } from '@strapi/parts/Button';
+import { Button } from '@strapi/design-system/Button';
 
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';

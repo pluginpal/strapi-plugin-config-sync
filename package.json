@@ -39,10 +39,10 @@
     "strapi-server.js"
   ],
   "devDependencies": {
-    "@strapi/helper-plugin": "4.0.0-beta.2",
-    "@strapi/icons": "^0.0.1-alpha.42",
-    "@strapi/parts": "^0.0.1-alpha.42",
-    "@strapi/utils": "4.0.0-beta.2",
+    "@strapi/helper-plugin": "4.0.0-beta.6",
+    "@strapi/icons": "^0.0.1-alpha.53",
+    "@strapi/design-system": "^0.0.1-alpha.53",
+    "@strapi/utils": "4.0.0-beta.6",
     "babel-eslint": "9.0.0",
     "codecov": "^3.8.3",
     "eslint": "^5.16.0",

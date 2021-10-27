@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
-import { Table, Thead, Tbody, Tr, Th } from '@strapi/parts/Table';
-import { TableLabel } from '@strapi/parts/Text';
+import { Table, Thead, Tbody, Tr, Th } from '@strapi/design-system/Table';
+import { TableLabel } from '@strapi/design-system/Text';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';

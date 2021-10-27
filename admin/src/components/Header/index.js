@@ -7,8 +7,8 @@
 import React, { memo } from 'react';
 import { useIntl } from 'react-intl';
 
-import { HeaderLayout } from '@strapi/parts/Layout';
-import { Box } from '@strapi/parts/Box';
+import { HeaderLayout } from '@strapi/design-system/Layout';
+import { Box } from '@strapi/design-system/Box';
 
 const HeaderComponent = () => {
   const { formatMessage } = useIntl();

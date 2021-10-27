@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Dialog, DialogBody, DialogFooter } from '@strapi/parts/Dialog';
-import { Row } from '@strapi/parts/Row';
-import { Text } from '@strapi/parts/Text';
-import { Stack } from '@strapi/parts/Stack';
-import { Button } from '@strapi/parts/Button';
+import { Dialog, DialogBody, DialogFooter } from '@strapi/design-system/Dialog';
+import { Flex } from '@strapi/design-system/Flex';
+import { Text } from '@strapi/design-system/Text';
+import { Stack } from '@strapi/design-system/Stack';
+import { Button } from '@strapi/design-system/Button';
 import DeleteIcon from '@strapi/icons/DeleteIcon';
 import AlertWarningIcon from '@strapi/icons/AlertWarningIcon';
 
@@ -21,9 +21,9 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
     >
       <DialogBody icon={<AlertWarningIcon />}>
         <Stack size={2}>
-          <Row justifyContent="center">
+          <Flex justifyContent="center">
             <Text id="confirm-description">{getTrad(`popUpWarning.warning.${type}`)}</Text>
-          </Row>
+          </Flex>
         </Stack>
       </DialogBody>
       <DialogFooter
