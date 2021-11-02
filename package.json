@@ -10,12 +10,20 @@
     "required": false,
     "kind": "plugin"
   },
+  "main": "server/cli.js",
+  "bin": {
+    "config-sync": "./bin/config-sync.js"
+  },
   "scripts": {
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose"
   },
   "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-table": "^0.3.6",
+    "commander": "^8.3.0",
+    "inquirer": "^8.2.0",
     "react-diff-viewer": "^3.1.1",
     "redux-thunk": "^2.3.0"
   },
