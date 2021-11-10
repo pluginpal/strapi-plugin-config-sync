@@ -103,17 +103,17 @@ const handleAction = async (type, skipConfirm) => {
       const onSuccess = (name) => console.log(`${chalk.green('[success]')} Imported ${name}`);
 
       try {
-        await app.plugin('config-sync').service('main').importAllConfig(null, onSuccess)
+        await app.plugin('config-sync').service('main').importAllConfig(null, onSuccess);
       } catch (e) {
-        console.log(`${chalk.red('[error]')} Something went wrong during the import. ${e}`)
+        console.log(`${chalk.red('[error]')} Something went wrong during the import. ${e}`);
       }
     }
     if (type === 'export') {
       try {
         await app.plugin('config-sync').service('main').exportAllConfig();
-        console.log(`${chalk.green('[success]')} Exported config`)
+        console.log(`${chalk.green('[success]')} Exported config`);
       } catch (e) {
-        console.log(`${chalk.red('[error]')} Something went wrong during the export. ${e}`)
+        console.log(`${chalk.red('[error]')} Something went wrong during the export. ${e}`);
       }
     }
   }

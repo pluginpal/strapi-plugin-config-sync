@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const difference = require('../utils/getObjectDiff');
 
 /**
  * Main controllers for config import/export.

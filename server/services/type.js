@@ -1,7 +1,5 @@
 const { logMessage, sanitizeConfig, dynamicSort } = require('../utils');
-const difference = require('../utils/getObjectDiff');
-const arrayDifference = require('../utils/getArrayDiff');
-
+const difference = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
   constructor(queryString, configPrefix, uid, jsonFields, relations) {
@@ -122,8 +120,8 @@ const ConfigType = class ConfigType {
         existingConfig = sanitizeConfig(existingConfig, relationName, relationSortField);
         configContent = sanitizeConfig(configContent, relationName, relationSortField);
 
-        const configToAdd = arrayDifference(configContent[relationName], existingConfig[relationName], relationSortField);
-        const configToDelete = arrayDifference(existingConfig[relationName], configContent[relationName], relationSortField);
+        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortField);
+        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortField);
 
         await Promise.all(configToDelete.map(async (config) => {
           await relationQueryApi.delete({
