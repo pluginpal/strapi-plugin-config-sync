@@ -2,7 +2,7 @@ import { prefixPluginTranslations } from '@strapi/helper-plugin';
 import pluginPkg from '../../package.json';
 import pluginId from './helpers/pluginId';
 import pluginIcon from './components/PluginIcon';
-// import pluginPermissions from './permissions';
+import pluginPermissions from './permissions';
 // import getTrad from './helpers/getTrad';
 
 const pluginDescription = pluginPkg.strapi.description || pluginPkg.description;
@@ -32,7 +32,7 @@ export default {
 
         return component;
       },
-      permissions: [], // TODO: Add permission to view settings page.
+      permissions: pluginPermissions['menu-item'],
     });
   },
   bootstrap(app) {},

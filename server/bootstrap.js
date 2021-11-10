@@ -13,9 +13,27 @@ const fs = require('fs');
  */
 
 module.exports = async () => {
+  // Import on bootstrap.
   if (strapi.plugins['config-sync'].config.importOnBootstrap) {
     if (fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
       await strapi.plugins['config-sync'].services.main.importAllConfig();
     }
   }
+
+  // Register permission actions.
+  const actions = [
+    {
+      section: 'plugins',
+      displayName: 'Access the plugin settings',
+      uid: 'settings.read',
+      pluginName: 'config-sync',
+    },
+    {
+      section: 'plugins',
+      displayName: 'Link to plugin settings from the main menu',
+      uid: 'menu-item',
+      pluginName: 'config-sync',
+    },
+  ];
+  await strapi.admin.services.permission.actionProvider.registerMany(actions);
 };
