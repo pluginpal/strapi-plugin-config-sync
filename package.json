@@ -16,7 +16,8 @@
   "scripts": {
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
-    "test:unit": "jest --verbose"
+    "test:unit": "jest --verbose",
+    "postinstall": "rm -rf node_modules/@strapi/helper-plugin"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -70,7 +71,7 @@
     "jest-cli": "^26.0.1",
     "jest-styled-components": "^7.0.2",
     "lodash": "^4.17.11",
-    "react": "^16.8.6",
+    "react": "^17.0.2",
     "react-intl": "^5.20.12",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
