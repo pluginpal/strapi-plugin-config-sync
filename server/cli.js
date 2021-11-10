@@ -71,7 +71,7 @@ const handleAction = async (type, skipConfirm) => {
 
   // No changes.
   if (isEmpty(diff.diff)) {
-    console.log(`${chalk.cyan('[notice]')} There are no changes to ${type}`);
+    console.log(`${chalk.cyan('[notice]')} There are no changes to ${type}.`);
     process.exit(0);
   }
 
