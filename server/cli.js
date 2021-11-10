@@ -140,6 +140,7 @@ program
 // `$ config-sync import`
 program
   .command('import')
+  .alias('i')
   // .option('-t, --type <type>', 'The type of config') // TODO: partial import
   .option('-y', 'Skip the confirm prompt')
   .description('Import the config')
@@ -150,6 +151,7 @@ program
 // `$ config-sync export`
 program
   .command('export')
+  .alias('e')
   // .option('-t, --type <type>', 'The type of config') // TODO: partial export
   .option('-y', 'Skip the confirm prompt')
   .description('Export the config')
@@ -160,6 +162,7 @@ program
 // `$ config-sync diff`
 program
   .command('diff')
+  .alias('d')
   // .option('-t, --type <type>', 'The type of config') // TODO: partial diff
   .description('The config diff')
   .action(async ({ type }) => {
