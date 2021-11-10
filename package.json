@@ -41,7 +41,7 @@
   "files": [
     "admin",
     "server",
-    "public",
+    "bin",
     "strapi-admin.js",
     "strapi-server.js"
   ],
