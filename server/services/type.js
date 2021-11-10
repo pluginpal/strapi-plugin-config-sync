@@ -1,7 +1,5 @@
 const { logMessage, sanitizeConfig, dynamicSort } = require('../utils');
-const difference = require('../utils/getObjectDiff');
-const arrayDifference = require('../utils/getArrayDiff');
-
+const difference = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
   constructor(queryString, configPrefix, uid, jsonFields, relations) {
@@ -21,24 +19,9 @@ const ConfigType = class ConfigType {
    * @returns {void}
    */
   exportAll = async () => {
-    const formattedDiff = {
-      fileConfig: {},
-      databaseConfig: {},
-      diff: {},
-    };
+    const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
-    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles(this.configPrefix);
-    const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase(this.configPrefix);
-    const diff = difference(databaseConfig, fileConfig);
-
-    formattedDiff.diff = diff;
-
-    Object.keys(diff).map((changedConfigName) => {
-      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
-      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
-    });
-
-    await Promise.all(Object.entries(diff).map(async ([configName, config]) => {
+    await Promise.all(Object.entries(formattedDiff.diff).map(async ([configName, config]) => {
       // Check if the config should be excluded.
       const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
       if (shouldExclude) return;
@@ -132,29 +115,29 @@ const ConfigType = class ConfigType {
       const entity = await queryAPI.update({ where: { [this.uid]: configName }, data: query });
 
       // Delete/create relations.
-      this.relations.map(async ({ queryString, relationName, parentName, relationSortField }) => {
+      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortField }) => {
         const relationQueryApi = strapi.query(queryString);
         existingConfig = sanitizeConfig(existingConfig, relationName, relationSortField);
         configContent = sanitizeConfig(configContent, relationName, relationSortField);
 
-        const configToAdd = arrayDifference(configContent[relationName], existingConfig[relationName], relationSortField);
-        const configToDelete = arrayDifference(existingConfig[relationName], configContent[relationName], relationSortField);
+        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortField);
+        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortField);
 
-        configToDelete.map(async (config) => {
+        await Promise.all(configToDelete.map(async (config) => {
           await relationQueryApi.delete({
             where: {
               [relationSortField]: config[relationSortField],
               [parentName]: entity.id,
             },
           });
-        });
+        }));
 
-        configToAdd.map(async (config) => {
+        await Promise.all(configToAdd.map(async (config) => {
           await relationQueryApi.create({
             data: { ...config, [parentName]: entity.id },
           });
-        });
-      });
+        }));
+      }));
     }
   }
 

@@ -10,9 +10,8 @@
     "required": false,
     "kind": "plugin"
   },
-  "main": "server/cli.js",
   "bin": {
-    "config-sync": "./bin/config-sync.js"
+    "config-sync": "./bin/config-sync"
   },
   "scripts": {
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
@@ -48,10 +47,11 @@
   ],
   "devDependencies": {
     "@fortawesome/react-fontawesome": "^0.1.16",
-    "@strapi/design-system": "0.0.1-alpha.51",
-    "@strapi/helper-plugin": "4.0.0-beta.6",
-    "@strapi/icons": "0.0.1-alpha.51",
-    "@strapi/utils": "4.0.0-beta.6",
+    "@strapi/design-system": "0.0.1-alpha.64",
+    "@strapi/helper-plugin": "4.0.0-beta.12",
+    "@strapi/icons": "0.0.1-alpha.64",
+    "@strapi/strapi": "^4.0.0-beta.12",
+    "@strapi/utils": "4.0.0-beta.12",
     "babel-eslint": "9.0.0",
     "codecov": "^3.8.3",
     "eslint": "^5.16.0",
