@@ -14,7 +14,7 @@ const program = new Command();
 const initTable = (head) => {
   return new Table({
     head: [chalk.green('Name'), chalk.green(head || 'State')],
-    colWidths: [50, 15],
+    colWidths: [70, 15],
     chars: { top: '═',
       'top-mid': '╤',
       'top-left': '╔',
