@@ -111,7 +111,7 @@ const handleAction = async (type, skipConfirm) => {
     if (type === 'export') {
       try {
         await app.plugin('config-sync').service('main').exportAllConfig();
-        console.log(`${chalk.bgGreen.bold('[success]')} Exported config`);
+        console.log(`${chalk.bgGreen.bold('[success]')} Config was exported`);
       } catch (e) {
         console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the export. ${e}`);
       }
