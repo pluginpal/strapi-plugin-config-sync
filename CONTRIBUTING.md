@@ -42,7 +42,7 @@ cd YOUR_STRAPI_PROJECT && yarn build --clean
 cd YOUR_STRAPI_PROJECT && yarn develop --watch-admin
 ```
 
-The administration panel will be available at http://localhost:8000/admin
+The administration panel will be available at http://localhost:8080/admin
 
 ### Commit message convention
 
