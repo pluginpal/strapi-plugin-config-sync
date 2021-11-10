@@ -71,7 +71,7 @@ const handleAction = async (type, skipConfirm) => {
 
   // No changes.
   if (isEmpty(diff.diff)) {
-    console.log(`${chalk.cyan('[notice]')} There are no changes to ${type}.`);
+    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes to ${type}.`);
     process.exit(0);
   }
 
@@ -100,20 +100,20 @@ const handleAction = async (type, skipConfirm) => {
   // Preform the action.
   if (skipConfirm || answer.confirm) {
     if (type === 'import') {
-      const onSuccess = (name) => console.log(`${chalk.green('[success]')} Imported ${name}`);
+      const onSuccess = (name) => console.log(`${chalk.bgGreen.bold('[success]')} Imported ${name}`);
 
       try {
         await app.plugin('config-sync').service('main').importAllConfig(null, onSuccess);
       } catch (e) {
-        console.log(`${chalk.red('[error]')} Something went wrong during the import. ${e}`);
+        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the import. ${e}`);
       }
     }
     if (type === 'export') {
       try {
         await app.plugin('config-sync').service('main').exportAllConfig();
-        console.log(`${chalk.green('[success]')} Exported config`);
+        console.log(`${chalk.bgGreen.bold('[success]')} Exported config`);
       } catch (e) {
-        console.log(`${chalk.red('[error]')} Something went wrong during the export. ${e}`);
+        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the export. ${e}`);
       }
     }
   }
@@ -171,7 +171,7 @@ program
 
     // No changes.
     if (isEmpty(diff.diff)) {
-      console.log(`${chalk.cyan('[notice]')} There is no config diff, you are up to date.`);
+      console.log(`${chalk.bgCyan.bold('[notice]')} There is no config diff, you are up to date.`);
       process.exit(0);
     }
 
