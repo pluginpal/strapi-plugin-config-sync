@@ -167,10 +167,7 @@ module.exports = () => ({
           onSuccess(`${type}.${name}`);
         }
       } catch (e) {
-        console.log(e);
-        // if (onSuccess) {
-        //   onSuccess(name);
-        // }
+        throw new Error(e);
       }
     }));
   },
