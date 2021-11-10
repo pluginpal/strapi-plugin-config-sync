@@ -171,7 +171,7 @@ program
 
     // No changes.
     if (isEmpty(diff.diff)) {
-      console.log(`${chalk.bgCyan.bold('[notice]')} There is no config diff, you are up to date.`);
+      console.log(`${chalk.bgCyan.bold('[notice]')} No differences between DB and sync directory.`);
       process.exit(0);
     }
 
