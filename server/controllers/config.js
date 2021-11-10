@@ -64,24 +64,6 @@ module.exports = {
       return;
     }
 
-    const formattedDiff = {
-      fileConfig: {},
-      databaseConfig: {},
-      diff: {},
-    };
-
-    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles();
-    const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase();
-
-    const diff = difference(databaseConfig, fileConfig);
-
-    formattedDiff.diff = diff;
-
-    Object.keys(diff).map((changedConfigName) => {
-      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
-      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
-    });
-
-    return formattedDiff;
+    return strapi.plugin('config-sync').service('main').getFormattedDiff();
   },
 };

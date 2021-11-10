@@ -144,9 +144,10 @@ module.exports = () => ({
    * Import all config files into the db.
    *
    * @param {string} configType - Type of config to impor. Leave empty to import all config.
+   * @param {object} onSuccess - Success callback to run on each single successfull import.
    * @returns {void}
    */
-  importAllConfig: async (configType = null) => {
+  importAllConfig: async (configType = null, onSuccess) => {
     const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles();
     const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase();
 
@@ -160,7 +161,17 @@ module.exports = () => ({
         return;
       }
 
-      await strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
+      try {
+        await strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
+        if (onSuccess) {
+          onSuccess(`${type}.${name}`);
+        }
+      } catch (e) {
+        console.log(e);
+        // if (onSuccess) {
+        //   onSuccess(name);
+        // }
+      }
     }));
   },
 
@@ -206,5 +217,34 @@ module.exports = () => ({
    */
    exportSingleConfig: async (configType, configName) => {
 
+  },
+
+  /**
+   * Get the formatted diff.
+   *
+   * @param {string} configType - Type of config to get the diff of. Leave empty to get the diff of all config.
+   *
+   * @returns {object} - the formatted diff.
+   */
+  getFormattedDiff: async (configType = null) => {
+    const formattedDiff = {
+      fileConfig: {},
+      databaseConfig: {},
+      diff: {},
+    };
+
+    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles(configType);
+    const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase(configType);
+
+    const diff = difference(databaseConfig, fileConfig);
+
+    formattedDiff.diff = diff;
+
+    Object.keys(diff).map((changedConfigName) => {
+      formattedDiff.fileConfig[changedConfigName] = fileConfig[changedConfigName];
+      formattedDiff.databaseConfig[changedConfigName] = databaseConfig[changedConfigName];
+    });
+
+    return formattedDiff;
   },
 });
