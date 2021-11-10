@@ -166,6 +166,12 @@ program
     const app = await strapi().load();
     const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
+    // No changes.
+    if (isEmpty(diff.diff)) {
+      console.log(`${chalk.cyan('[notice]')} There is no config diff, you are up to date.`);
+      process.exit(0);
+    }
+
     // Init table.
     const table = initTable();
 
