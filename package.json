@@ -19,7 +19,6 @@
     "test:unit": "jest --verbose"
   },
   "dependencies": {
-    "@strapi/strapi": "^4.0.0-beta.12",
     "chalk": "^4.1.2",
     "cli-table": "^0.3.6",
     "commander": "^8.3.0",
@@ -51,6 +50,7 @@
     "@strapi/design-system": "0.0.1-alpha.64",
     "@strapi/helper-plugin": "4.0.0-beta.12",
     "@strapi/icons": "0.0.1-alpha.64",
+    "@strapi/strapi": "^4.0.0-beta.12",
     "@strapi/utils": "4.0.0-beta.12",
     "babel-eslint": "9.0.0",
     "codecov": "^3.8.3",
