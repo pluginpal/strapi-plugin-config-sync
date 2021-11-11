@@ -3,7 +3,7 @@ const pluginPermissions = {
   // If the plugin link should be displayed in the menu
   // And also if the plugin is accessible. This use case is found when a user types the url of the
   // plugin directly in the browser
-  'menu-item': [{ action: 'plugin::config-sync.menu-item', subject: null }],
+  'menu-link': [{ action: 'plugin::config-sync.menu-link', subject: null }],
   settings: [{ action: 'plugin::config-sync.settings.read', subject: null }],
 };
 

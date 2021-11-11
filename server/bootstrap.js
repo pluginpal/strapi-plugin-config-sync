@@ -30,8 +30,8 @@ module.exports = async () => {
     },
     {
       section: 'plugins',
-      displayName: 'Link to plugin settings from the main menu',
-      uid: 'menu-item',
+      displayName: 'Menu link to plugin settings',
+      uid: 'menu-link',
       pluginName: 'config-sync',
     },
   ];
