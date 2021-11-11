@@ -26,7 +26,22 @@ Go to the plugin and install it's dependencies.
 cd YOUR_STRAPI_PROJECT/src/plugins/config-sync/ && yarn install
 ```
 
-#### 4. Rebuild your Strapi project
+#### 4. Enable the plugin
+
+Add the following lines to the `config/plugins.js` file in your Strapi project.
+
+```
+const path = require('path');
+// ...
+{
+  'config-sync': {
+    enabled: true,
+    resolve: path.resolve(__dirname, '../src/plugins/config-sync'),
+  },
+}
+```
+
+#### 5. Rebuild your Strapi project
 
 Rebuild your strapi project to build the admin part of the plugin.
 
@@ -34,7 +49,7 @@ Rebuild your strapi project to build the admin part of the plugin.
 cd YOUR_STRAPI_PROJECT && yarn build --clean
 ```
 
-#### 5. Running the administration panel in development mode
+#### 6. Running the administration panel in development mode
 
 **Start the administration panel server for development**
 
@@ -75,7 +90,6 @@ The `package.json` file contains various scripts for common tasks:
 
 When you're sending a pull request:
 
-- Preferably create the pull request to merge in to the `develop` branch
 - Prefer small pull requests focused on one change.
 - Verify that linters and tests are passing.
 - Review the documentation to make sure it looks good.
