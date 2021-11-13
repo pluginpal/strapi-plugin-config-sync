@@ -6,6 +6,7 @@ import { TableLabel } from '@strapi/design-system/Text';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
+import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 
 const ConfigList = ({ diff, isLoading }) => {
@@ -70,6 +71,10 @@ const ConfigList = ({ diff, isLoading }) => {
 
   if (!isLoading && !isEmpty(diff.message)) {
     return <FirstExport />;
+  }
+
+  if (!isLoading && isEmpty(diff.diff)) {
+    return <NoChanges />;
   }
 
   return (
