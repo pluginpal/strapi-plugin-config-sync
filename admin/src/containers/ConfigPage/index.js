@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map } from 'immutable';
+import { Box } from '@strapi/design-system/Box';
 
 import { getAllConfigDiff } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
@@ -16,10 +17,10 @@ const ConfigPage = () => {
   }, []);
 
   return (
-    <div>
+    <Box paddingLeft={8} paddingRight={8}>
       <ActionButtons diff={configDiff.toJS()} />
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
-    </div>
+    </Box>
   );
 };
 

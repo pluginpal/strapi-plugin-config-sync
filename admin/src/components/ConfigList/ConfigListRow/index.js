@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tr, Td } from '@strapi/design-system/Table';
 
 const CustomRow = ({ row }) => {
   const { configName, configType, state, onClick } = row;
@@ -32,17 +33,20 @@ const CustomRow = ({ row }) => {
   };
 
   return (
-    <tr onClick={() => onClick(configType, configName)}>
-      <td>
+    <Tr
+      onClick={() => onClick(configType, configName)}
+      style={{ cursor: 'pointer' }}
+    >
+      <Td>
         <p>{configName}</p>
-      </td>
-      <td>
+      </Td>
+      <Td>
         <p>{configType}</p>
-      </td>
-      <td>
+      </Td>
+      <Td>
         <p style={stateStyle(state)}>{state}</p>
-      </td>
-    </tr>
+      </Td>
+    </Tr>
   );
 };
 

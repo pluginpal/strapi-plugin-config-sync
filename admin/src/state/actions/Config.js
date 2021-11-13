@@ -8,14 +8,14 @@ import { request } from '@strapi/helper-plugin';
 import { Map } from 'immutable';
 
 export function getAllConfigDiff() {
-  return async function(dispatch) {
+  return async function(dispatch, getState, toggleNotification) {
     dispatch(setLoadingState(true));
     try {
       const configDiff = await request('/config-sync/diff', { method: 'GET' });
       dispatch(setConfigDiffInState(configDiff));
       dispatch(setLoadingState(false));
     } catch (err) {
-      strapi.notification.error('notification.error');
+      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
       dispatch(setLoadingState(false));
     }
   };
@@ -30,32 +30,32 @@ export function setConfigDiffInState(config) {
 }
 
 export function exportAllConfig() {
-  return async function(dispatch) {
+  return async function(dispatch, getState, toggleNotification) {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/export', { method: 'GET' });
       dispatch(setConfigDiffInState(Map({})));
 
-      strapi.notification.success(message);
+      toggleNotification({ type: 'success', message });
       dispatch(setLoadingState(false));
     } catch (err) {
-      strapi.notification.error('notification.error');
+      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
       dispatch(setLoadingState(false));
     }
   };
 }
 
 export function importAllConfig() {
-  return async function(dispatch) {
+  return async function(dispatch, getState, toggleNotification) {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/import', { method: 'GET' });
       dispatch(setConfigDiffInState(Map({})));
 
-      strapi.notification.success(message);
+      toggleNotification({ type: 'success', message });
       dispatch(setLoadingState(false));
     } catch (err) {
-      strapi.notification.error('notification.error');
+      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
       dispatch(setLoadingState(false));
     }
   };

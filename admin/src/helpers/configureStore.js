@@ -5,12 +5,12 @@ import { Map } from 'immutable';
 import rootReducer from '../state/reducers';
 import { __DEBUG__ } from '../config/constants';
 
-const configureStore = () => {
+const configureStore = (toggleNotification) => {
   const initialStoreState = Map();
 
   const enhancers = [];
   const middlewares = [
-    thunkMiddleware,
+    thunkMiddleware.withExtraArgument(toggleNotification),
   ];
 
   let devtools;
@@ -43,5 +43,3 @@ const configureStore = () => {
 };
 
 export default configureStore;
-
-export const store = configureStore();
