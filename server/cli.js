@@ -65,22 +65,46 @@ const getConfigState = (diff, configName, syncType) => {
   }
 };
 
-const handleAction = async (type, skipConfirm) => {
+const handleAction = async (syncType, skipConfirm, configType, partials) => {
   const app = await strapi().load();
   const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
   // No changes.
   if (isEmpty(diff.diff)) {
-    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes to ${type}.`);
+    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes to ${syncType}.`);
     process.exit(0);
   }
 
   // Init table.
   const table = initTable('Action');
+  const configNames = partials && partials.split(',');
+  const partialDiff = {};
+
+  // Fill partialDiff with arguments.
+  if (configNames) {
+    configNames.map((name) => {
+      if (diff.diff[name]) partialDiff[name] = diff.diff[name];
+    });
+  }
+  if (configType) {
+    Object.keys(diff.diff).map((name) => {
+      if (configType === name.split('.')[0]) {
+        partialDiff[name] = diff.diff[name];
+      }
+    });
+  }
+
+  // No changes for partial diff.
+  if ((partials || configType) && isEmpty(partialDiff)) {
+    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes for the specified config.`);
+    process.exit(0);
+  }
+
+  const finalDiff = (partials || configType) && partialDiff ? partialDiff : diff.diff;
 
   // Add diff to table.
-  Object.keys(diff.diff).map((configName) => {
-    table.push([configName, getConfigState(diff, configName, type)]);
+  Object.keys(finalDiff).map((configName) => {
+    table.push([configName, getConfigState(diff, configName, syncType)]);
   });
 
   // Print table.
@@ -92,23 +116,25 @@ const handleAction = async (type, skipConfirm) => {
     answer = await inquirer.prompt([{
       type: 'confirm',
       name: 'confirm',
-      message: `Are you sure you want to ${type} the config changes?`,
+      message: `Are you sure you want to ${syncType} the config changes?`,
     }]);
     console.log('');
   }
 
   // Preform the action.
   if (skipConfirm || answer.confirm) {
-    if (type === 'import') {
+    if (syncType === 'import') {
       const onSuccess = (name) => console.log(`${chalk.bgGreen.bold('[success]')} Imported ${name}`);
 
       try {
-        await app.plugin('config-sync').service('main').importAllConfig(null, onSuccess);
+        await Promise.all(Object.keys(finalDiff).map(async (name) => {
+          await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess);
+        }));
       } catch (e) {
         console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the import. ${e}`);
       }
     }
-    if (type === 'export') {
+    if (syncType === 'export') {
       try {
         await app.plugin('config-sync').service('main').exportAllConfig();
         console.log(`${chalk.bgGreen.bold('[success]')} Config was exported`);
@@ -141,22 +167,24 @@ program
 program
   .command('import')
   .alias('i')
-  // .option('-t, --type <type>', 'The type of config') // TODO: partial import
+  .option('-t, --type <type>', 'The type of config') // TODO: partial import
+  .option('-p, --partial <partials>', 'A comma separated string of configs') // TODO: partial import
   .option('-y', 'Skip the confirm prompt')
   .description('Import the config')
-  .action(async ({ y, type }) => {
-    return handleAction('import', y, type);
+  .action(async ({ y, type, partial }) => {
+    return handleAction('import', y, type, partial);
   });
 
 // `$ config-sync export`
 program
   .command('export')
   .alias('e')
-  // .option('-t, --type <type>', 'The type of config') // TODO: partial export
+  .option('-t, --type <type>', 'The type of config') // TODO: partial export
+  .option('-p, --partial <partials>', 'A comma separated string of configs') // TODO: partial import
   .option('-y', 'Skip the confirm prompt')
   .description('Export the config')
-  .action(async ({ y, type }) => {
-    return handleAction('export', y, type);
+  .action(async ({ y, type, partial }) => {
+    return handleAction('export', y, type, partial);
   });
 
 // `$ config-sync diff`

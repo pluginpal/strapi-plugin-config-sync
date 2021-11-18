@@ -161,14 +161,7 @@ module.exports = () => ({
         return;
       }
 
-      try {
-        await strapi.plugin('config-sync').service('main').importSingleConfig(type, name);
-        if (onSuccess) {
-          onSuccess(`${type}.${name}`);
-        }
-      } catch (e) {
-        throw new Error(e);
-      }
+      await strapi.plugin('config-sync').service('main').importSingleConfig(`${type}.${name}`, onSuccess);
     }));
   },
 
@@ -191,28 +184,35 @@ module.exports = () => ({
   /**
    * Import a single config file into the db.
    *
-   * @param {string} configType - The type of config.
    * @param {string} configName - The name of the config file.
+   * @param {object} onSuccess - Success callback to run on each single successfull import.
    * @returns {void}
    */
-  importSingleConfig: async (configType, configName) => {
+  importSingleConfig: async (configName, onSuccess) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configType}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
     if (shouldExclude) return;
 
-    const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(configType, configName);
+    const [type, name] = configName.split('.'); // Split the configName.
+    const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
-    await types[configType].importSingle(configName, fileContents);
+    try {
+      await types[type].importSingle(name, fileContents);
+      if (onSuccess) {
+        onSuccess(`${type}.${name}`);
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
   },
 
   /**
    * Export a single config file.
    *
-   * @param {string} configType - The type of config.
    * @param {string} configName - The name of the config file.
    * @returns {void}
    */
-   exportSingleConfig: async (configType, configName) => {
+   exportSingleConfig: async (configName) => {
 
   },
 
