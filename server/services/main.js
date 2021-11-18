@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const util = require('util');
-const types = require('../types');
+const types = require('../config/types');
 const difference = require('../utils/getObjectDiff');
 
 /**

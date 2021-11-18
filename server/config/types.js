@@ -1,6 +1,6 @@
 'use strict';
 
-const ConfigType = require("../services/type");
+const ConfigType = require("./type");
 
 module.exports = {
   'i18n-locale': new ConfigType('plugin::i18n.locale', 'i18n-locale', 'code'),
