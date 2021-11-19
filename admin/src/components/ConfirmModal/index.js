@@ -6,7 +6,7 @@ import { Flex } from '@strapi/design-system/Flex';
 import { Text } from '@strapi/design-system/Text';
 import { Stack } from '@strapi/design-system/Stack';
 import { Button } from '@strapi/design-system/Button';
-import AlertWarningIcon from '@strapi/icons/AlertWarningIcon';
+import ExclamationMarkCircle from '@strapi/icons/ExclamationMarkCircle';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   const { formatMessage } = useIntl();
@@ -19,7 +19,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
       title="Confirmation"
       isOpen={isOpen}
     >
-      <DialogBody icon={<AlertWarningIcon />}>
+      <DialogBody icon={<ExclamationMarkCircle />}>
         <Stack size={2}>
           <Flex justifyContent="center">
             <Text id="confirm-description" style={{ textAlign: 'center' }}>
