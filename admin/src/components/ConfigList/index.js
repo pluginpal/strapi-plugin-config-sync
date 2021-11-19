@@ -102,7 +102,7 @@ const ConfigList = ({ diff, isLoading }) => {
         </Thead>
         <Tbody>
           {rows.map((row) => (
-            <ConfigListRow key={row.name} row={row} />
+            <ConfigListRow key={row.configName} row={row} />
           ))}
         </Tbody>
       </Table>
