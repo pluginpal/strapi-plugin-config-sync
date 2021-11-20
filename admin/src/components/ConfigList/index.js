@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Table, Thead, Tbody, Tr, Th } from '@strapi/design-system/Table';
 import { TableLabel } from '@strapi/design-system/Text';
 import { BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
+import { Loader } from '@strapi/design-system/Loader';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
@@ -85,6 +86,14 @@ const ConfigList = ({ diff, isLoading }) => {
     setCname('');
     setOpenModal(false);
   };
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: 40 }}>
+        <Loader>Loading content...</Loader>
+      </div>
+    );
+  }
 
   if (!isLoading && !isEmpty(diff.message)) {
     return <FirstExport />;
