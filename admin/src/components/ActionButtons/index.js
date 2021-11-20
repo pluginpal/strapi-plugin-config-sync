@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button } from '@strapi/design-system/Button';
+import { Map } from 'immutable';
 
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
-const ActionButtons = ({ diff }) => {
+const ActionButtons = () => {
   const dispatch = useDispatch();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [actionType, setActionType] = useState('');
+  const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
 
   const closeModal = () => {
     setActionType('');
@@ -24,16 +26,16 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(diff.diff)} onClick={() => openModal('import')}>Import</Button>
-      <Button disabled={isEmpty(diff.diff)} onClick={() => openModal('export')}>Export</Button>
-      {!isEmpty(diff.diff) && (
-        <h4 style={{ display: 'inline' }}>{Object.keys(diff.diff).length} {Object.keys(diff.diff).length === 1 ? "config change" : "config changes"}</h4>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('import')}>Import</Button>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('export')}>Export</Button>
+      {!isEmpty(partialDiff) && (
+        <h4 style={{ display: 'inline' }}>{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</h4>
       )}
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}
         type={actionType}
-        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
+        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig(partialDiff)) : dispatch(exportAllConfig(partialDiff))}
       />
     </ActionButtonsStyling>
   );

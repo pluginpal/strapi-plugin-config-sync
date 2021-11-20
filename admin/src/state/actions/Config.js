@@ -29,13 +29,22 @@ export function setConfigDiffInState(config) {
   };
 }
 
-export function exportAllConfig() {
+export const SET_CONFIG_PARTIAL_DIFF_IN_STATE = 'SET_CONFIG_PARTIAL_DIFF_IN_STATE';
+export function setConfigPartialDiffInState(config) {
+  return {
+    type: SET_CONFIG_PARTIAL_DIFF_IN_STATE,
+    config,
+  };
+}
+
+export function exportAllConfig(partialDiff) {
   return async function(dispatch, getState, toggleNotification) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/export', { method: 'GET' });
-      dispatch(setConfigDiffInState(Map({})));
-
+      const { message } = await request('/config-sync/export', {
+        method: 'POST',
+        body: partialDiff,
+      });
       toggleNotification({ type: 'success', message });
       dispatch(setLoadingState(false));
     } catch (err) {
@@ -45,13 +54,14 @@ export function exportAllConfig() {
   };
 }
 
-export function importAllConfig() {
+export function importAllConfig(partialDiff) {
   return async function(dispatch, getState, toggleNotification) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/import', { method: 'GET' });
-      dispatch(setConfigDiffInState(Map({})));
-
+      const { message } = await request('/config-sync/import', {
+        method: 'POST',
+        body: partialDiff,
+      });
       toggleNotification({ type: 'success', message });
       dispatch(setLoadingState(false));
     } catch (err) {

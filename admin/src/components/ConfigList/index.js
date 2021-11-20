@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
+import { useDispatch } from 'react-redux';
 
 import { Table, Thead, Tbody, Tr, Th } from '@strapi/design-system/Table';
 import { TableLabel } from '@strapi/design-system/Text';
+import { BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
 import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
+import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
 const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -15,6 +18,8 @@ const ConfigList = ({ diff, isLoading }) => {
   const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
+  const [checkedItems, setCheckedItems] = useState([]);
+  const dispatch = useDispatch();
 
   const getConfigState = (configName) => {
     if (
@@ -46,6 +51,8 @@ const ConfigList = ({ diff, isLoading }) => {
       const type = name.split('.')[0]; // Grab the first part of the filename.
       const formattedName = name.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
+      setCheckedItems(checkedItems.concat(true));
+
       formattedRows.push({
         configName: formattedName,
         configType: type,
@@ -62,6 +69,14 @@ const ConfigList = ({ diff, isLoading }) => {
     setRows(formattedRows);
   }, [diff]);
 
+  useEffect(() => {
+    const newPartialDiff = [];
+    checkedItems.map((item, index) => {
+      if (item && rows[index]) newPartialDiff.push(`${rows[index].configType}.${rows[index].configName}`);
+    });
+    dispatch(setConfigPartialDiffInState(newPartialDiff));
+  }, [checkedItems]);
+
   const closeModal = () => {
     setOriginalConfig({});
     setNewConfig({});
@@ -77,6 +92,9 @@ const ConfigList = ({ diff, isLoading }) => {
     return <NoChanges />;
   }
 
+  const allChecked = checkedItems && checkedItems.every(Boolean);
+  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+
   return (
     <div>
       <ConfigDiff
@@ -90,6 +108,14 @@ const ConfigList = ({ diff, isLoading }) => {
         <Thead>
           <Tr>
             <Th>
+              <BaseCheckbox
+                aria-label="Select all entries"
+                indeterminate={isIndeterminate}
+                onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}
+                value={allChecked}
+              />
+            </Th>
+            <Th>
               <TableLabel>Config name</TableLabel>
             </Th>
             <Th>
@@ -101,8 +127,16 @@ const ConfigList = ({ diff, isLoading }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {rows.map((row) => (
-            <ConfigListRow key={row.configName} row={row} />
+          {rows.map((row, index) => (
+            <ConfigListRow
+              key={row.configName}
+              row={row}
+              checked={checkedItems[index]}
+              updateValue={() => {
+                checkedItems[index] = !checkedItems[index];
+                setCheckedItems([...checkedItems]);
+              }}
+            />
           ))}
         </Tbody>
       </Table>

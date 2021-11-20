@@ -4,7 +4,7 @@ module.exports = {
   type: 'admin',
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/export",
       handler: "config.exportAll",
       config: {
@@ -12,7 +12,7 @@ module.exports = {
       },
     },
     {
-      method: "GET",
+      method: "POST",
       path: "/import",
       handler: "config.importAll",
       config: {

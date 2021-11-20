@@ -14,7 +14,17 @@ module.exports = {
    * @returns {void}
    */
   exportAll: async (ctx) => {
-    await strapi.plugin('config-sync').service('main').exportAllConfig();
+    if (!ctx.request.body) {
+      ctx.send({
+        message: 'No config was specified for the export endpoint.',
+      });
+
+      return;
+    }
+
+    await Promise.all(ctx.request.body.map(async (configName) => {
+      await strapi.plugin('config-sync').service('main').exportSingleConfig(configName);
+    }));
 
     ctx.send({
       message: `Config was successfully exported to ${strapi.config.get('plugin.config-sync.destination')}.`,
@@ -37,7 +47,17 @@ module.exports = {
       return;
     }
 
-    await strapi.plugin('config-sync').service('main').importAllConfig();
+    if (!ctx.request.body) {
+      ctx.send({
+        message: 'No config was specified for the export endpoint.',
+      });
+
+      return;
+    }
+
+    await Promise.all(ctx.request.body.map(async (configName) => {
+      await strapi.plugin('config-sync').service('main').importSingleConfig(configName);
+    }));
 
     ctx.send({
       message: 'Config was successfully imported.',

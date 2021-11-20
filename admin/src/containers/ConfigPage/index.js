@@ -18,7 +18,7 @@ const ConfigPage = () => {
 
   return (
     <Box paddingLeft={8} paddingRight={8}>
-      <ActionButtons diff={configDiff.toJS()} />
+      <ActionButtons />
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
     </Box>
   );

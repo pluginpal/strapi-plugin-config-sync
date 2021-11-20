@@ -1,7 +1,8 @@
 import React from 'react';
 import { Tr, Td } from '@strapi/design-system/Table';
+import { BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
 
-const CustomRow = ({ row }) => {
+const CustomRow = ({ row, checked, updateValue }) => {
   const { configName, configType, state, onClick } = row;
 
   const stateStyle = (stateStr) => {
@@ -34,9 +35,20 @@ const CustomRow = ({ row }) => {
 
   return (
     <Tr
-      onClick={() => onClick(configType, configName)}
+      onClick={(e) => {
+        if (e.target.type !== 'checkbox') {
+          onClick(configType, configName);
+        }
+      }}
       style={{ cursor: 'pointer' }}
     >
+      <Td>
+        <BaseCheckbox
+          aria-label={`Select ${configName}`}
+          value={checked}
+          onValueChange={updateValue}
+        />
+      </Td>
       <Td>
         <p>{configName}</p>
       </Td>
