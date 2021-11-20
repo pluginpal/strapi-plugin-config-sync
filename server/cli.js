@@ -135,11 +135,14 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
       }
     }
     if (syncType === 'export') {
+      const onSuccess = (name) => console.log(`${chalk.bgGreen.bold('[success]')} Exported ${name}`);
+
       try {
-        await app.plugin('config-sync').service('main').exportAllConfig();
-        console.log(`${chalk.bgGreen.bold('[success]')} Config was exported`);
+        await Promise.all(Object.keys(finalDiff).map(async (name) => {
+          await app.plugin('config-sync').service('main').exportSingleConfig(name, onSuccess);
+        }));
       } catch (e) {
-        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the export. ${e}`);
+        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the import. ${e}`);
       }
     }
   }
@@ -167,8 +170,8 @@ program
 program
   .command('import')
   .alias('i')
-  .option('-t, --type <type>', 'The type of config') // TODO: partial import
-  .option('-p, --partial <partials>', 'A comma separated string of configs') // TODO: partial import
+  .option('-t, --type <type>', 'The type of config')
+  .option('-p, --partial <partials>', 'A comma separated string of configs')
   .option('-y', 'Skip the confirm prompt')
   .description('Import the config')
   .action(async ({ y, type, partial }) => {
@@ -179,8 +182,8 @@ program
 program
   .command('export')
   .alias('e')
-  .option('-t, --type <type>', 'The type of config') // TODO: partial export
-  .option('-p, --partial <partials>', 'A comma separated string of configs') // TODO: partial import
+  .option('-t, --type <type>', 'The type of config')
+  .option('-p, --partial <partials>', 'A comma separated string of configs')
   .option('-y', 'Skip the confirm prompt')
   .description('Export the config')
   .action(async ({ y, type, partial }) => {

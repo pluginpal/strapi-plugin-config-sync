@@ -14,32 +14,6 @@ const ConfigType = class ConfigType {
   }
 
   /**
-   * Export all core-store config to files.
-   *
-   * @returns {void}
-   */
-  exportAll = async () => {
-    const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
-
-    await Promise.all(Object.entries(formattedDiff.diff).map(async ([configName, config]) => {
-      // Check if the config should be excluded.
-      const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
-      if (shouldExclude) return;
-
-      const currentConfig = formattedDiff.databaseConfig[configName];
-
-      if (
-        !currentConfig
-        && formattedDiff.fileConfig[configName]
-      ) {
-        await strapi.plugin('config-sync').service('main').deleteConfigFile(configName);
-      } else {
-        await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, currentConfig[this.uid], currentConfig);
-      }
-    }));
-  }
-
-  /**
    * Import a single role-permissions config file into the db.
    *
    * @param {string} configName - The name of the config file.
@@ -142,6 +116,31 @@ const ConfigType = class ConfigType {
   }
 
   /**
+   * Export a single core-store config to a file.
+   *
+   * @param {string} configName - The name of the config file.
+   * @returns {void}
+   */
+   exportSingle = async (configName) => {
+    const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
+
+    // Check if the config should be excluded.
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
+    if (shouldExclude) return;
+
+    const currentConfig = formattedDiff.databaseConfig[configName];
+
+    if (
+      !currentConfig
+      && formattedDiff.fileConfig[configName]
+    ) {
+      await strapi.plugin('config-sync').service('main').deleteConfigFile(configName);
+    } else {
+      await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, currentConfig[this.uid], currentConfig);
+    }
+  }
+
+  /**
    * Get all role-permissions config from the db.
    *
    * @returns {object} Object with key value pairs of configs.
@@ -185,13 +184,13 @@ const ConfigType = class ConfigType {
   }
 
   /**
-   * Export a single core-store config to a file.
+   * Export all core-store config to files.
    *
-   * @param {string} configName - The name of the config file.
    * @returns {void}
    */
-   exportSingle = async (configName) => {
-     // @TODO: write export for a single core-store config.
+   exportAll = async () => {
+    // The main.importAllConfig service will loop the core-store.importSingle service.
+    await strapi.plugin('config-sync').service('main').exportAllConfig(this.configPrefix);
   }
 };
 

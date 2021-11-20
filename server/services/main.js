@@ -169,15 +169,24 @@ module.exports = () => ({
    * Export all config files.
    *
    * @param {string} configType - Type of config to export. Leave empty to export all config.
+   * @param {object} onSuccess - Success callback to run on each single successfull import.
    * @returns {void}
    */
-   exportAllConfig: async (configType = null) => {
-    await Promise.all(strapi.config.get('plugin.config-sync.include').map(async (type) => {
+   exportAllConfig: async (configType = null, onSuccess) => {
+    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles();
+    const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase();
+
+    const diff = difference(databaseConfig, fileConfig);
+
+    await Promise.all(Object.keys(diff).map(async (file) => {
+      const type = file.split('.')[0]; // Grab the first part of the filename.
+      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
+
       if (configType && configType !== type) {
         return;
       }
 
-      await types[type].exportAll();
+      await strapi.plugin('config-sync').service('main').exportSingleConfig(`${type}.${name}`, onSuccess);
     }));
   },
 
@@ -210,10 +219,24 @@ module.exports = () => ({
    * Export a single config file.
    *
    * @param {string} configName - The name of the config file.
+   * @param {object} onSuccess - Success callback to run on each single successfull import.
    * @returns {void}
    */
-   exportSingleConfig: async (configName) => {
+   exportSingleConfig: async (configName, onSuccess) => {
+     // Check if the config should be excluded.
+    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
+    if (shouldExclude) return;
 
+    const [type, name] = configName.split('.'); // Split the configName.
+
+    try {
+      await types[type].exportSingle(configName);
+      if (onSuccess) {
+        onSuccess(`${type}.${name}`);
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
   },
 
   /**
