@@ -47,11 +47,12 @@ const ConfigList = ({ diff, isLoading }) => {
     }
 
     const formattedRows = [];
+    const newCheckedItems = [];
     Object.keys(diff.diff).map((name) => {
       const type = name.split('.')[0]; // Grab the first part of the filename.
       const formattedName = name.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
 
-      setCheckedItems(checkedItems.concat(true));
+      newCheckedItems.push(true);
 
       formattedRows.push({
         configName: formattedName,
@@ -65,6 +66,7 @@ const ConfigList = ({ diff, isLoading }) => {
         },
       });
     });
+    setCheckedItems(newCheckedItems);
 
     setRows(formattedRows);
   }, [diff]);

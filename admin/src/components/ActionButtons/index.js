@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button } from '@strapi/design-system/Button';
 import { Map } from 'immutable';
+import { useNotification } from '@strapi/helper-plugin';
 
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
 const ActionButtons = () => {
   const dispatch = useDispatch();
+  const toggleNotification = useNotification();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [actionType, setActionType] = useState('');
   const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
@@ -35,7 +37,7 @@ const ActionButtons = () => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         type={actionType}
-        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig(partialDiff)) : dispatch(exportAllConfig(partialDiff))}
+        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig(partialDiff, toggleNotification)) : dispatch(exportAllConfig(partialDiff, toggleNotification))}
       />
     </ActionButtonsStyling>
   );

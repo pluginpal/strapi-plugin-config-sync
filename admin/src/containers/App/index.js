@@ -7,19 +7,17 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { CheckPagePermissions, useNotification } from '@strapi/helper-plugin';
+import { CheckPagePermissions } from '@strapi/helper-plugin';
 
 import pluginPermissions from '../../permissions';
 import Header from '../../components/Header';
-import store from "../../helpers/configureStore";
+import { store } from "../../helpers/configureStore";
 import ConfigPage from '../ConfigPage';
 
 const App = () => {
-  const toggleNotification = useNotification();
-
   return (
     <CheckPagePermissions permissions={pluginPermissions.settings}>
-      <Provider store={store(toggleNotification)}>
+      <Provider store={store}>
         <Header />
         <ConfigPage />
       </Provider>

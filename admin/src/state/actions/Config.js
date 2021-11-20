@@ -5,13 +5,13 @@
  */
 
 import { request } from '@strapi/helper-plugin';
-import { Map } from 'immutable';
 
-export function getAllConfigDiff() {
-  return async function(dispatch, getState, toggleNotification) {
+export function getAllConfigDiff(toggleNotification) {
+  return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
       const configDiff = await request('/config-sync/diff', { method: 'GET' });
+      dispatch(setConfigPartialDiffInState([]));
       dispatch(setConfigDiffInState(configDiff));
       dispatch(setLoadingState(false));
     } catch (err) {
@@ -37,8 +37,8 @@ export function setConfigPartialDiffInState(config) {
   };
 }
 
-export function exportAllConfig(partialDiff) {
-  return async function(dispatch, getState, toggleNotification) {
+export function exportAllConfig(partialDiff, toggleNotification) {
+  return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/export', {
@@ -46,6 +46,7 @@ export function exportAllConfig(partialDiff) {
         body: partialDiff,
       });
       toggleNotification({ type: 'success', message });
+      dispatch(getAllConfigDiff(toggleNotification));
       dispatch(setLoadingState(false));
     } catch (err) {
       toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
@@ -54,8 +55,8 @@ export function exportAllConfig(partialDiff) {
   };
 }
 
-export function importAllConfig(partialDiff) {
-  return async function(dispatch, getState, toggleNotification) {
+export function importAllConfig(partialDiff, toggleNotification) {
+  return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/import', {
@@ -63,6 +64,7 @@ export function importAllConfig(partialDiff) {
         body: partialDiff,
       });
       toggleNotification({ type: 'success', message });
+      dispatch(getAllConfigDiff(toggleNotification));
       dispatch(setLoadingState(false));
     } catch (err) {
       toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
