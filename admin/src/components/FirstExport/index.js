@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { NoContent } from '@strapi/helper-plugin';
+import { NoContent, useNotification } from '@strapi/helper-plugin';
 import { Button } from '@strapi/design-system/Button';
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
 
 const FirstExport = () => {
+  const toggleNotification = useNotification();
   const dispatch = useDispatch();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -16,7 +17,7 @@ const FirstExport = () => {
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         type="export"
-        onSubmit={() => dispatch(exportAllConfig())}
+        onSubmit={() => dispatch(exportAllConfig([], toggleNotification))}
       />
       <NoContent
         content={{

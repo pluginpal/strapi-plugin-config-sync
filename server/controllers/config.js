@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const { isEmpty } = require('lodash');
 
 /**
  * Main controllers for config import/export.
@@ -14,17 +15,14 @@ module.exports = {
    * @returns {void}
    */
   exportAll: async (ctx) => {
-    if (!ctx.request.body) {
-      ctx.send({
-        message: 'No config was specified for the export endpoint.',
-      });
-
-      return;
+    if (isEmpty(ctx.request.body)) {
+      await strapi.plugin('config-sync').service('main').exportAllConfig();
+    } else {
+      await Promise.all(ctx.request.body.map(async (configName) => {
+        await strapi.plugin('config-sync').service('main').exportSingleConfig(configName);
+      }));
     }
 
-    await Promise.all(ctx.request.body.map(async (configName) => {
-      await strapi.plugin('config-sync').service('main').exportSingleConfig(configName);
-    }));
 
     ctx.send({
       message: `Config was successfully exported to ${strapi.config.get('plugin.config-sync.destination')}.`,
