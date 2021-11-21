@@ -24,7 +24,8 @@
 - **CLI** (`config-sync` CLI for syncing the config from the command line)
 - **GUI** (Settings page for syncing the config in Strapi admin)
 - **Partial sync** (Import or export only specific portions of config)
-- **Exclude configs** (Exclude specific config that contains sensitive info)
+- **Exclude configs** (Exclude specific config from the sync)
+
 
 ## ⏳ Installation
 
