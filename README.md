@@ -186,6 +186,8 @@ This plugin ships with a settings page which can be accessed from the admin pane
 **Pro tip:**
 By clicking on one of the items in the diff table you can see the exact difference between sync dir and database in a git-style diff viewer.
 
+<img src="https://raw.githubusercontent.com/boazpoolman/strapi-plugin-config-sync/master/.github/config-diff.png" alt="Config diff in admin" />
+
 ## 🚀 Config types
 
 ### Admin role
