@@ -24,10 +24,9 @@
 - **CLI** (`config-sync` CLI for syncing the config from the command line)
 - **GUI** (Settings page for syncing the config in Strapi admin)
 - **Partial sync** (Import or export only specific portions of config)
+- **Exclude configs** (Exclude specific config that contains sensitive info)
 
-## ⏳ Setup
-
-### Installation
+## ⏳ Installation
 
 Install the plugin in your Strapi project.
 
@@ -38,8 +37,6 @@ yarn add strapi-plugin-config-sync
 # using npm
 npm install strapi-plugin-config-sync --save
 ```
-
-### Configuration
  
 Add the export path to the `watchIgnoreFiles` list in the `config/admin.js` file.
 This way your app won't reload when you export the config in development.
@@ -53,8 +50,6 @@ This way your app won't reload when you export the config in development.
 	  '**/config-sync/files/**',
 	],
 
-
-### Rebuilding 
 
 After successful installation you have to rebuild the admin UI so it'll include this plugin. To rebuild and restart Strapi run:
 
