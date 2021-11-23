@@ -43,14 +43,14 @@ Add the export path to the `watchIgnoreFiles` list in the `config/admin.js` file
 This way your app won't reload when you export the config in development.
 
 ##### `config/admin.js`:
-
-	auth: {
-      // ...
-	},
-	watchIgnoreFiles: [
-	  '**/config-sync/files/**',
-	],
-
+```
+module.exports = ({ env }) => ({
+  // ...
+  watchIgnoreFiles: [
+    '**/config-sync/files/**',
+  ],
+});
+```
 
 After successful installation you have to rebuild the admin UI so it'll include this plugin. To rebuild and restart Strapi run:
 
@@ -83,7 +83,9 @@ Complete installation requirements are the exact same as for Strapi itself and c
 **We recommend always using the latest version of Strapi to start your new projects**.
 
 ## 💡 Motivation
-In Strapi we come across what I would call config types. These are models of which the records are stored in our database. Just like content types. Though the difference is that for config types you would want the records to be the same on all your environments.
+In Strapi we come across what I would call config types. These are models of which the records are stored in our database, just like content types. Though the big difference here is that your code ofter relies on the database records of these types. 
+
+Having said that, it makes sense that these records can be exported, added to git, and be migrated across environments. This way we can make sure we have all the data our code relies on, on each environment.
 
 Examples of these types are:
 
@@ -92,13 +94,13 @@ Examples of these types are:
 - Admin settings _(strapi::core-store)_
 - I18n locale _(plugin::i18n.locale)_
 
-This plugin gives you the tools to sync this data across environments. You can export the data as JSON files on one env, and import them on every other env. By writing this data as JSON files you can easily track them in your version control system (git).
+This plugin gives you the tools to sync this data. You can export the data as JSON files on one env, and import them on every other env. By writing this data as JSON files you can easily track them in your version control system (git).
 
 _With great power comes great responsibility - Spider-Man_
 
 ## 🔌 Command line interface (CLI)
 
-To enable the `config-sync` CLI add the following script to the `package.json` of your Strapi project:
+Add the `config-sync` command as a script to the `package.json` of your Strapi project:
 
 ```
 "scripts": {
@@ -177,7 +179,7 @@ npm run cs diff
 ```
 
 ## 🖥️ Admin panel (GUI)
-This plugin ships with a settings page which can be accessed from the admin panel of Strapi. On this page you can do pretty much the same as you can from the CLI. You can import, export and see the difference between the config as found in the sync directory, and the config as found in the database.
+This plugin ships with a settings page which can be accessed from the admin panel of Strapi. On this page you can pretty much do the same as you can from the CLI. You can import, export and see the difference between the config as found in the sync directory, and the config as found in the database.
 
 **Pro tip:**
 By clicking on one of the items in the diff table you can see the exact difference between sync dir and database in a git-style diff viewer.
@@ -188,19 +190,31 @@ By clicking on one of the items in the diff table you can see the exact differen
 
 ### Admin role
 
-> Key: `admin-role` | UID: `code` | Query string: `admin::role`
+> Prefix: `admin-role` | UID: `code` | Query string: `admin::role`
 
 ### User role
 
-> Key: `user-role` | UID: `type` | Query string: `plugin::users-permissions.role`
+> Prefix: `user-role` | UID: `type` | Query string: `plugin::users-permissions.role`
 
 ### Core store
 
-> Key: `core-store` | UID: `key` | Query string: `strapi::core-store`
+> Prefix: `core-store` | UID: `key` | Query string: `strapi::core-store`
 
 ### I18n locale
 
-> Key: `i81n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
+> Prefix: `i81n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
+
+## 🔍 Naming convention
+All the config files written in the sync directory have the same naming convention. It goes as follows:
+
+	[config-type].[config-name].json
+
+- `config-type` - Corresponds to the `prefix` of the config type.
+- `config-name` - The unique identifier of the config. 
+	- 	For `core-store` config this is the `key` value.
+	-  	For `user-role` config this is the `type` value.
+	- 	For `admin-role` config this is the `code` value.
+	-  	For `i18n-locale` config this is the `code` value
 
 ## 🔧 Settings
 The settings of the plugin can be overridden in the `config/plugins.js` file. 
@@ -210,7 +224,7 @@ In the example below you can see how, and also what the default settings are.
 	module.exports = ({ env }) => ({
 	  // ...
 	  'config-sync': {
-	    // ...
+	    enabled: true,
 	    config: {
 	      destination: "extensions/config-sync/files/",
 	      minify: false,
@@ -235,19 +249,6 @@ In the example below you can see how, and also what the default settings are.
 | importOnBootstrap | bool | Allows you to let the config be imported automaticly when strapi is bootstrapping (on `strapi start`). This setting should only be used in production, and should be handled very carefully as it can unintendedly overwrite the changes in your database. PLEASE USE WITH CARE. |
 | include | array | Types you want to include in the syncing process. Allowed values: `core-store`, `user-role`, `admin-role`, `i18n-locale`. |
 | exclude | array | Specify the names of configs you want to exclude from the syncing process. By default the API tokens for users-permissions, which are stored in core_store, are excluded. This setting expects the config names to comply with the naming convention. |
-
-## 🔍 Naming convention
-All the config files written in the sync directory have the same naming convention. It goes as follows:
-
-	[config-type].[config-name].json
-
-- `config-type` - Corresponds to the `key` of the config type.
-- `config-name` - The unique identifier of the config. 
-	- 	For `core-store` config this is the `key` value.
-	-  	For `user-role` config this is the `type` value.
-	-  For `admin-role` config this is the `code` value.
-	-  	For `i18n-locale` config this is the `code` value
-  
 
 ## 🤝 Contributing
 
