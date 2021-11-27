@@ -70,14 +70,14 @@ const ConfigType = class ConfigType {
       const newEntity = await queryAPI.create({ data: query });
 
       // Create relation entities.
-      this.relations.map(async ({ queryString, relationName, parentName }) => {
+      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName }) => {
         const relationQueryApi = strapi.query(queryString);
 
-        configContent[relationName].map(async (relationEntity) => {
+        await Promise.all(configContent[relationName].map(async (relationEntity) => {
           const relationQuery = { ...relationEntity, [parentName]: newEntity };
           await relationQueryApi.create({ data: relationQuery });
-        });
-      });
+        }));
+      }));
     } else {
       // Format JSON fields.
       configContent = sanitizeConfig(configContent);
