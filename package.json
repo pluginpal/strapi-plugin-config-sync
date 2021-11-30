@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "0.1.6",
+  "version": "1.0.0-alpha.1",
   "description": "CLI & GUI for syncing config data across environments.",
   "strapi": {
     "displayName": "Config Sync",
@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "@fortawesome/react-fontawesome": "^0.1.16",
-    "@strapi/design-system": "0.0.1-alpha.67",
-    "@strapi/helper-plugin": "4.0.0-beta.14",
-    "@strapi/icons": "0.0.1-alpha.67",
-    "@strapi/strapi": "^4.0.0-beta.14",
-    "@strapi/utils": "4.0.0-beta.14",
+    "@strapi/design-system": "0.0.1-alpha.70",
+    "@strapi/helper-plugin": "4.0.0",
+    "@strapi/icons": "0.0.1-alpha.70",
+    "@strapi/strapi": "^4.0.0",
+    "@strapi/utils": "4.0.0",
     "babel-eslint": "9.0.0",
     "codecov": "^3.8.3",
     "eslint": "^5.16.0",
