@@ -14,9 +14,9 @@ const fs = require('fs');
 
 module.exports = async () => {
   // Import on bootstrap.
-  if (strapi.plugins['config-sync'].config.importOnBootstrap) {
-    if (fs.existsSync(strapi.plugins['config-sync'].config.destination)) {
-      await strapi.plugins['config-sync'].services.main.importAllConfig();
+  if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
+    if (fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+      await strapi.plugin('config-sync').service('main').importAllConfig();
     }
   }
 
