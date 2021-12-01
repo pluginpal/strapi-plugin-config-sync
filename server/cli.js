@@ -142,7 +142,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
           await app.plugin('config-sync').service('main').exportSingleConfig(name, onSuccess);
         }));
       } catch (e) {
-        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the import. ${e}`);
+        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the export. ${e}`);
       }
     }
   }
