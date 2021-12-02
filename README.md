@@ -98,6 +98,28 @@ This plugin gives you the tools to sync this data. You can export the data as JS
 
 _With great power comes great responsibility - Spider-Man_
 
+## ⌨️ Usage / Workflow
+### Local development
+When building a new feature locally for your Strapi project you'd use the following workflow:
+
+- Build the feature.
+- Export the config. Either through the CLI or the GUI.
+- Commit and push the files to git.
+
+### Deployment
+When deploying the newly created feature you'd use the following workflow:
+
+- Pull the latest file changes to the environment.
+- Import the config. Preferably through the CLI.
+- (Re)start your Strapi instance.
+
+### Production deployment
+When you're deploying your Strapi project to production please be cautious when import the config.
+You should make sure there are no config changes that will be overwritten by the import.
+If there have been made changes to the config since the last import you should  export these first before importing the new config.
+
+_There really shouldn't be any config changes made directly on production. This is a bad practice._
+
 ## 🔌 Command line interface (CLI)
 
 Add the `config-sync` command as a script to the `package.json` of your Strapi project:
