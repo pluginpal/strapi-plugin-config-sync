@@ -83,4 +83,10 @@ module.exports = {
 
     return strapi.plugin('config-sync').service('main').getFormattedDiff();
   },
+
+  /**
+   * Get the current Strapi env.
+   * @returns {string} The current Strapi environment.
+   */
+  getAppEnv: async () => strapi.server.app.env,
 };

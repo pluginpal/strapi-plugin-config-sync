@@ -6,7 +6,7 @@ import { useNotification } from '@strapi/helper-plugin';
 import { Alert } from '@strapi/design-system/Alert';
 import { Typography } from '@strapi/design-system/Typography';
 
-import { getAllConfigDiff } from '../../state/actions/Config';
+import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
 import ActionButtons from '../../components/ActionButtons';
 
@@ -15,14 +15,16 @@ const ConfigPage = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], Map({})));
   const configDiff = useSelector((state) => state.getIn(['config', 'configDiff'], Map({})));
+  const appEnv = useSelector((state) => state.getIn(['config', 'appEnv']));
 
   useEffect(() => {
     dispatch(getAllConfigDiff(toggleNotification));
+    dispatch(getAppEnv(toggleNotification));
   }, []);
 
   return (
     <Box paddingLeft={8} paddingRight={8} paddingBottom={8}>
-      {process.env.NODE_ENV === 'production' && (
+      {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
             <Typography variant="omega" fontWeight="bold">You&apos;re in the production environment</Typography><br />

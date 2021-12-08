@@ -27,5 +27,13 @@ module.exports = {
         policies: [],
       },
     },
+    {
+      method: "GET",
+      path: "/app-env",
+      handler: "config.getAppEnv",
+      config: {
+        policies: [],
+      },
+    },
   ],
 };

@@ -5,12 +5,18 @@
  */
 
 import { fromJS, Map, List } from 'immutable';
-import { SET_CONFIG_DIFF_IN_STATE, SET_CONFIG_PARTIAL_DIFF_IN_STATE, SET_LOADING_STATE } from '../../actions/Config';
+import {
+  SET_CONFIG_DIFF_IN_STATE,
+  SET_CONFIG_PARTIAL_DIFF_IN_STATE,
+  SET_LOADING_STATE,
+  SET_APP_ENV_IN_STATE,
+} from '../../actions/Config';
 
 const initialState = fromJS({
   configDiff: Map({}),
   partialDiff: List([]),
   isLoading: false,
+  appEnv: 'development',
 });
 
 export default function configReducer(state = initialState, action) {
@@ -24,6 +30,9 @@ export default function configReducer(state = initialState, action) {
     case SET_LOADING_STATE:
       return state
         .update('isLoading', () => fromJS(action.value));
+    case SET_APP_ENV_IN_STATE:
+      return state
+        .update('appEnv', () => fromJS(action.value));
     default:
       return state;
   }

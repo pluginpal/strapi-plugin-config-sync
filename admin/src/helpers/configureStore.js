@@ -30,7 +30,7 @@ const configureStore = () => {
   const composedEnhancers = devtools || compose;
   const storeEnhancers = composedEnhancers(
     applyMiddleware(...middlewares),
-    ...enhancers
+    ...enhancers,
   );
 
   const store = createStore(

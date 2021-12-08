@@ -80,3 +80,24 @@ export function setLoadingState(value) {
     value,
   };
 }
+
+export function getAppEnv(toggleNotification) {
+  return async function(dispatch) {
+    try {
+      const env = await request('/config-sync/app-env', {
+        method: 'GET',
+      });
+      dispatch(setAppEnvInState(env));
+    } catch (err) {
+      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+    }
+  };
+}
+
+export const SET_APP_ENV_IN_STATE = 'SET_APP_ENV_IN_STATE';
+export function setAppEnvInState(value) {
+  return {
+    type: SET_APP_ENV_IN_STATE,
+    value,
+  };
+}

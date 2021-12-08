@@ -15,7 +15,7 @@ const sortByKeys = (unordered) => {
       obj[key] = unordered[key];
       return obj;
     },
-    {}
+    {},
   );
 };
 
