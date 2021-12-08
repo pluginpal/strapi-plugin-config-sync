@@ -65,6 +65,23 @@ const sanitizeConfig = (config, relation, relationSortField) => {
   return config;
 };
 
+const noLimit = async (query, parameters, limit = 100) => {
+  let entries = [];
+  const amountOfEntries = await query.count(parameters);
+
+  for (let i = 0; i < (amountOfEntries / limit); i++) {
+    /* eslint-disable-next-line */
+    const chunk = await query.findMany({
+      ...parameters,
+      limit: limit,
+      offset: (i * limit),
+    });
+    entries = [...chunk, ...entries];
+  }
+
+  return entries;
+};
+
 module.exports = {
   getService,
   getCoreStore,
@@ -72,4 +89,5 @@ module.exports = {
   sanitizeConfig,
   sortByKeys,
   dynamicSort,
+  noLimit,
 };
