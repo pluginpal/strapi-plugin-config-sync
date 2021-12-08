@@ -1,14 +1,12 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 import { Map } from 'immutable';
 
 import rootReducer from '../state/reducers';
-import loggerConfig from '../config/logger';
 import { __DEBUG__ } from '../config/constants';
 
 const configureStore = () => {
-  let initialStoreState = Map();
+  const initialStoreState = Map();
 
   const enhancers = [];
   const middlewares = [
@@ -27,24 +25,6 @@ const configureStore = () => {
     if (devtools) {
       console.info('[setup] ✓ Enabling Redux DevTools Extension');
     }
-
-    console.info('[setup] ✓ Enabling state logger');
-    const loggerMiddleware = createLogger({
-      level: 'info',
-      collapsed: true,
-      stateTransformer: (state) => state.toJS(),
-      predicate: (getState, action) => {
-        const state = getState();
-
-        const showBlacklisted = state.getIn(['debug', 'logs', 'blacklisted']);
-        if (loggerConfig.blacklist.indexOf(action.type) !== -1 && !showBlacklisted) {
-          return false;
-        }
-
-        return state.getIn(['debug', 'logs', 'enabled']);
-      },
-    });
-    middlewares.push(loggerMiddleware);
   }
 
   const composedEnhancers = devtools || compose;

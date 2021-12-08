@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button } from '@buffetjs/core';
+import { Button } from '@strapi/design-system/Button';
+import { Map } from 'immutable';
+import { useNotification } from '@strapi/helper-plugin';
+
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
-const ActionButtons = ({ diff }) => {
+const ActionButtons = () => {
   const dispatch = useDispatch();
+  const toggleNotification = useNotification();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [actionType, setActionType] = useState('');
+  const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
 
   const closeModal = () => {
     setActionType('');
@@ -23,27 +28,29 @@ const ActionButtons = ({ diff }) => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(diff.diff)} color="primary" label="Import" onClick={() => openModal('import')} />
-      <Button disabled={isEmpty(diff.diff)} color="primary" label="Export" onClick={() => openModal('export')} />
-      {!isEmpty(diff.diff) && (
-        <h4 style={{ display: 'inline' }}>{Object.keys(diff.diff).length} {Object.keys(diff.diff).length === 1 ? "config change" : "config changes"}</h4>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('import')}>Import</Button>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('export')}>Export</Button>
+      {!isEmpty(partialDiff) && (
+        <h4 style={{ display: 'inline' }}>{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</h4>
       )}
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={closeModal}
-        type={actionType} 
-        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig()) : dispatch(exportAllConfig())}
+        type={actionType}
+        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig(partialDiff, toggleNotification)) : dispatch(exportAllConfig(partialDiff, toggleNotification))}
       />
     </ActionButtonsStyling>
   );
-}
+};
 
 const ActionButtonsStyling = styled.div`
   padding: 10px 0 20px 0;
+  display: flex;
+  align-items: center;
 
   > button {
     margin-right: 10px;
   }
 `;
- 
+
 export default ActionButtons;

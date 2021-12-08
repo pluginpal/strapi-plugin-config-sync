@@ -7,20 +7,21 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import ContainerFluid from '../../components/Container';
-import Header from '../../components/Header';
+import { CheckPagePermissions } from '@strapi/helper-plugin';
 
+import pluginPermissions from '../../permissions';
+import Header from '../../components/Header';
 import { store } from "../../helpers/configureStore";
 import ConfigPage from '../ConfigPage';
 
 const App = () => {
   return (
-    <Provider store={store}>
-      <ContainerFluid>
+    <CheckPagePermissions permissions={pluginPermissions.settings}>
+      <Provider store={store}>
         <Header />
         <ConfigPage />
-      </ContainerFluid>
-    </Provider>
+      </Provider>
+    </CheckPagePermissions>
   );
 };
 

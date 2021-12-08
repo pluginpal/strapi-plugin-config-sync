@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@buffetjs/core';
+import { NoContent, useNotification } from '@strapi/helper-plugin';
+import { Button } from '@strapi/design-system/Button';
+
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
 
 const FirstExport = () => {
+  const toggleNotification = useNotification();
   const dispatch = useDispatch();
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
-    <div style={{ 
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      textAlign: 'center',
-      height: '300px',
-     }}>
+    <div>
       <ConfirmModal
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        type={'export'}
-        onSubmit={() =>  dispatch(exportAllConfig())}
+        type="export"
+        onSubmit={() => dispatch(exportAllConfig([], toggleNotification))}
       />
-      <h3>Looks like this is your first time using config-sync for this project.</h3>
-      <p>Make the initial export!</p>
-      <Button color="primary" onClick={() => setModalIsOpen(true)}>Initial export</Button>
+      <NoContent
+        content={{
+          id: 'emptyState',
+          defaultMessage:
+            'Looks like this is your first time using config-sync for this project.',
+        }}
+        action={<Button onClick={() => setModalIsOpen(true)}>Make the initial export</Button>}
+      />
     </div>
   );
-}
- 
+};
+
 export default FirstExport;

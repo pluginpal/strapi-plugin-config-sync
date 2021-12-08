@@ -1,49 +1,44 @@
 import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
-import { AttributeIcon } from '@buffetjs/core';
-import {
-  HeaderModal,
-  HeaderModalTitle,
-  Modal,
-  ModalBody,
-  ModalFooter,
-} from 'strapi-helper-plugin';
 
-const ConfigDiff = ({ isOpen, onClose, onToggle, oldValue, newValue, configName }) => {
+import { ModalLayout, ModalBody, ModalHeader } from '@strapi/design-system/ModalLayout';
+import { ButtonText } from '@strapi/design-system/Text';
+import { Grid, GridItem } from '@strapi/design-system/Grid';
+import { Typography } from '@strapi/design-system/Typography';
+
+const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClosed={onClose}
-      onToggle={onToggle}
+    <ModalLayout
+      onClose={onClose}
+      labelledBy="title"
     >
-      <HeaderModal>
-        <section style={{ alignItems: 'center' }}>
-          <AttributeIcon type='enum' />
-          <HeaderModalTitle style={{ marginLeft: 15 }}>Config changes for {configName}</HeaderModalTitle>
-        </section>
-      </HeaderModal>
-      <ModalBody style={{
-        paddingTop: '0.5rem', 
-        paddingBottom: '3rem'
-      }}>
-        <div className="container-fluid">
-          <section style={{ marginTop: 20 }}>
-            <ReactDiffViewer
-              oldValue={JSON.stringify(oldValue, null, 2)}
-              newValue={JSON.stringify(newValue, null, 2)}
-              splitView={true}
-              compareMethod={DiffMethod.WORDS}
-            />
-          </section>
-        </div>
+      <ModalHeader>
+        <ButtonText textColor="neutral800" as="h2" id="title">
+          Config changes for {configName}
+        </ButtonText>
+      </ModalHeader>
+      <ModalBody>
+        <Grid paddingBottom={4} style={{ textAlign: 'center' }}>
+          <GridItem col={6}>
+            <Typography variant="delta">Sync directory</Typography>
+          </GridItem>
+          <GridItem col={6}>
+            <Typography variant="delta">Database</Typography>
+          </GridItem>
+        </Grid>
+        <ReactDiffViewer
+          oldValue={JSON.stringify(oldValue, null, 2)}
+          newValue={JSON.stringify(newValue, null, 2)}
+          splitView
+          compareMethod={DiffMethod.WORDS}
+        />
       </ModalBody>
-      <ModalFooter>
-        <section style={{ alignItems: 'center' }}>
-          
-        </section>
-      </ModalFooter>
-    </Modal>
+    </ModalLayout>
   );
-}
- 
+};
+
 export default ConfigDiff;

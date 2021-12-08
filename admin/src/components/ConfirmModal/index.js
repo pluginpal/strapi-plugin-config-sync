@@ -1,34 +1,58 @@
 import React from 'react';
-import {
-  ModalConfirm,
-} from 'strapi-helper-plugin';
+import { useIntl } from 'react-intl';
 
-import getTrad from '../../helpers/getTrad';
+import { Dialog, DialogBody, DialogFooter } from '@strapi/design-system/Dialog';
+import { Flex } from '@strapi/design-system/Flex';
+import { Text } from '@strapi/design-system/Text';
+import { Stack } from '@strapi/design-system/Stack';
+import { Button } from '@strapi/design-system/Button';
+import ExclamationMarkCircle from '@strapi/icons/ExclamationMarkCircle';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
+  const { formatMessage } = useIntl();
+
   if (!isOpen) return null;
 
   return (
-    <ModalConfirm
-      confirmButtonLabel={{
-        id: getTrad(`popUpWarning.button.${type}`),
-      }}
+    <Dialog
+      onClose={onClose}
+      title="Confirmation"
       isOpen={isOpen}
-      toggle={onClose}
-      onClosed={onClose}
-      onConfirm={() => {
-        onClose();
-        onSubmit();
-      }}
-      type="success"
-      content={{
-        id: getTrad(`popUpWarning.warning.${type}`),
-        values: {
-          br: () => <br />,
-        },
-      }}
-    />
+    >
+      <DialogBody icon={<ExclamationMarkCircle />}>
+        <Stack size={2}>
+          <Flex justifyContent="center">
+            <Text id="confirm-description" style={{ textAlign: 'center' }}>
+              {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_1` })}<br />
+              {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_2` })}
+            </Text>
+          </Flex>
+        </Stack>
+      </DialogBody>
+      <DialogFooter
+        startAction={(
+          <Button
+            onClick={() => {
+              onClose();
+            }}
+            variant="tertiary"
+          >
+            {formatMessage({ id: 'config-sync.popUpWarning.button.cancel' })}
+          </Button>
+        )}
+        endAction={(
+          <Button
+            variant="secondary"
+            onClick={() => {
+              onClose();
+              onSubmit();
+            }}
+          >
+            {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
+          </Button>
+        )} />
+    </Dialog>
   );
-}
- 
+};
+
 export default ConfirmModal;
