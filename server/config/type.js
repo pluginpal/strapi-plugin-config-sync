@@ -1,4 +1,4 @@
-const { logMessage, sanitizeConfig, dynamicSort } = require('../utils');
+const { logMessage, sanitizeConfig, dynamicSort, noLimit } = require('../utils');
 const difference = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
@@ -40,7 +40,7 @@ const ConfigType = class ConfigType {
       });
 
       await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
-        const relations = await strapi.query(queryString).findMany({
+        const relations = await noLimit(strapi.query(queryString), {
           where: {
             [parentName]: entity.id,
           },
@@ -146,7 +146,7 @@ const ConfigType = class ConfigType {
    * @returns {object} Object with key value pairs of configs.
    */
    getAllFromDatabase = async () => {
-    const AllConfig = await strapi.query(this.queryString).findMany({ limit: 0 });
+    const AllConfig = await noLimit(strapi.query(this.queryString), {});
     const configs = {};
 
     await Promise.all(Object.values(AllConfig).map(async (config) => {
@@ -156,7 +156,7 @@ const ConfigType = class ConfigType {
 
       const formattedConfig = { ...sanitizeConfig(config) };
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortField, parentName }) => {
-        const relations = await strapi.query(queryString).findMany({
+        const relations = await noLimit(strapi.query(queryString), {
           where: { [parentName]: { [this.uid]: config[this.uid] } },
         });
 
