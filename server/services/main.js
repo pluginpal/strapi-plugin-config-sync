@@ -112,6 +112,7 @@ module.exports = () => ({
         if (
           configType && configType !== type
           || !strapi.config.get('plugin.config-sync.include').includes(type)
+          || !types(strapi)[type]
           || strapi.config.get('plugin.config-sync.exclude').includes(`${type}.${name}`)
         ) {
           return;
@@ -138,11 +139,11 @@ module.exports = () => ({
       let databaseConfigs = {};
 
       await Promise.all(strapi.config.get('plugin.config-sync.include').map(async (type) => {
-        if (configType && configType !== type) {
+        if (configType && configType !== type || !types(strapi)[type]) {
           return;
         }
 
-        const config = await types[type].getAllFromDatabase();
+        const config = await types(strapi)[type].getAllFromDatabase();
         databaseConfigs = Object.assign(config, databaseConfigs);
       }));
 
@@ -218,7 +219,7 @@ module.exports = () => ({
     const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
-      await types[type].importSingle(name, fileContents);
+      await types(strapi)[type].importSingle(name, fileContents);
       if (onSuccess) {
         onSuccess(`${type}.${name}`);
       }
@@ -242,7 +243,7 @@ module.exports = () => ({
     const [type, name] = configName.split('.'); // Split the configName.
 
     try {
-      await types[type].exportSingle(configName);
+      await types(strapi)[type].exportSingle(configName);
       if (onSuccess) {
         onSuccess(`${type}.${name}`);
       }
