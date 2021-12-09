@@ -88,5 +88,7 @@ module.exports = {
    * Get the current Strapi env.
    * @returns {string} The current Strapi environment.
    */
-  getAppEnv: async () => strapi.server.app.env,
+  getAppEnv: async () => {
+    return { env: strapi.server.app.env };
+  },
 };

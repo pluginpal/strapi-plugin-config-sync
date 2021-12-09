@@ -84,7 +84,7 @@ export function setLoadingState(value) {
 export function getAppEnv(toggleNotification) {
   return async function(dispatch) {
     try {
-      const env = await request('/config-sync/app-env', {
+      const { env } = await request('/config-sync/app-env', {
         method: 'GET',
       });
       dispatch(setAppEnvInState(env));
