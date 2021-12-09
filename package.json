@@ -46,6 +46,9 @@
     "strapi-admin.js",
     "strapi-server.js"
   ],
+  "peerDependencies": {
+    "@strapi/strapi": "^4.0.0"
+  },
   "devDependencies": {
     "@fortawesome/react-fontawesome": "^0.1.16",
     "@strapi/design-system": "0.0.1-alpha.70",
