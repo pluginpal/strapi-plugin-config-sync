@@ -261,9 +261,9 @@ In the example below you can see how, and also what the default settings are.
 	      importOnBootstrap: false,
 	      include: [
 	        "core-store",
-	        "user-role"
-	        "admin-role"
-	        "i18n-locale"
+	        "user-role",
+	        "admin-role",
+	        "i18n-locale",
 	      ],
 	      exclude: [
 	        "core-store.plugin_users-permissions_grant"
