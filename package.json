@@ -16,8 +16,7 @@
   "scripts": {
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
-    "test:unit": "jest --verbose",
-    "postinstall": "rm -rf node_modules/@strapi/helper-plugin"
+    "test:unit": "jest --verbose"
   },
   "dependencies": {
     "chalk": "^4.1.2",
