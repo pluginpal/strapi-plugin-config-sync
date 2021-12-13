@@ -168,7 +168,7 @@ module.exports = () => ({
 
     await Promise.all(Object.keys(diff).map(async (file) => {
       const type = file.split('.')[0]; // Grab the first part of the filename.
-      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
+      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename.
 
       if (configType && configType !== type) {
         return;
@@ -193,7 +193,7 @@ module.exports = () => ({
 
     await Promise.all(Object.keys(diff).map(async (file) => {
       const type = file.split('.')[0]; // Grab the first part of the filename.
-      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename minus the file extension.
+      const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename.
 
       if (configType && configType !== type) {
         return;
@@ -215,7 +215,8 @@ module.exports = () => ({
     const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
     if (shouldExclude) return;
 
-    const [type, name] = configName.split('.'); // Split the configName.
+    const type = configName.split('.')[0]; // Grab the first part of the filename.
+    const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename.
     const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
@@ -240,7 +241,8 @@ module.exports = () => ({
     const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
     if (shouldExclude) return;
 
-    const [type, name] = configName.split('.'); // Split the configName.
+    const type = configName.split('.')[0]; // Grab the first part of the filename.
+    const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename.
 
     try {
       await types(strapi)[type].exportSingle(configName);
