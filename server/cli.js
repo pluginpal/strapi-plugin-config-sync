@@ -125,7 +125,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
   // Preform the action.
   if (skipConfirm || answer.confirm) {
     if (syncType === 'import') {
-      const onSuccess = (name) => console.log(`${chalk.green.bold('[success]')} Imported ${name} (${getConfigState(diff, name, syncType)})`);
+      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Imported ${name} (${getConfigState(diff, name, syncType)})`);
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
           let warning;
@@ -137,17 +137,19 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
           await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess);
           if (warning) console.log(`${chalk.yellow.bold('[warning]')} ${warning}`);
         }));
+        console.log(`${chalk.green.bold('[success]')} Finished import`);
       } catch (e) {
         console.log(`${chalk.red.bold('[error]')} Something went wrong during the import. ${e}`);
       }
     }
     if (syncType === 'export') {
-      const onSuccess = (name) => console.log(`${chalk.green.bold('[success]')} Exported ${name} (${getConfigState(diff, name, syncType)})`);
+      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Exported ${name} (${getConfigState(diff, name, syncType)})`);
 
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
           await app.plugin('config-sync').service('main').exportSingleConfig(name, onSuccess);
         }));
+        console.log(`${chalk.green.bold('[success]')} Finished export`);
       } catch (e) {
         console.log(`${chalk.red.bold('[error]')} Something went wrong during the export. ${e}`);
       }
