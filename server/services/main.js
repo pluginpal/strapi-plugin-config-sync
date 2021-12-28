@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const util = require('util');
-const types = require('../config/types');
 const difference = require('../utils/getObjectDiff');
 
 /**
@@ -20,7 +19,7 @@ module.exports = () => ({
    */
   writeConfigFile: async (configType, configName, fileContents) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configType}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configType}.${configName}`);
     if (shouldExclude) return;
 
     // Replace ':' with '#' in filenames for Windows support.
@@ -31,12 +30,12 @@ module.exports = () => ({
       ? JSON.stringify(fileContents, null, 2)
       : JSON.stringify(fileContents);
 
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
-      fs.mkdirSync(strapi.config.get('plugin.config-sync.destination'), { recursive: true });
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
+      fs.mkdirSync(strapi.config.get('plugin.config-sync.syncDir'), { recursive: true });
     }
 
     const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${strapi.config.get('plugin.config-sync.destination')}${configType}.${configName}.json`, json)
+    await writeFile(`${strapi.config.get('plugin.config-sync.syncDir')}${configType}.${configName}.json`, json)
       .then(() => {
         // @TODO:
         // Add logging for successfull config export.
@@ -55,13 +54,13 @@ module.exports = () => ({
    */
    deleteConfigFile: async (configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configName}`);
     if (shouldExclude) return;
 
     // Replace ':' with '#' in filenames for Windows support.
     configName = configName.replace(/:/g, "#");
 
-    fs.unlinkSync(`${strapi.config.get('plugin.config-sync.destination')}${configName}.json`);
+    fs.unlinkSync(`${strapi.config.get('plugin.config-sync.syncDir')}${configName}.json`);
   },
 
   /**
@@ -76,7 +75,7 @@ module.exports = () => ({
     configName = configName.replace(/:/g, "#");
 
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.config.get('plugin.config-sync.destination')}${configType}.${configName}.json`)
+    return readFile(`${strapi.config.get('plugin.config-sync.syncDir')}${configType}.${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -93,11 +92,11 @@ module.exports = () => ({
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       return {};
     }
 
-    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync.destination'));
+    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync.syncDir'));
 
     const getConfigs = async () => {
       const fileConfigs = {};
@@ -111,9 +110,8 @@ module.exports = () => ({
 
         if (
           configType && configType !== type
-          || !strapi.config.get('plugin.config-sync.include').includes(type)
-          || !types(strapi)[type]
-          || strapi.config.get('plugin.config-sync.exclude').includes(`${type}.${name}`)
+          || !strapi.plugin('config-sync').types[type]
+          || strapi.config.get('plugin.config-sync.excludedConfig').includes(`${type}.${name}`)
         ) {
           return;
         }
@@ -138,12 +136,12 @@ module.exports = () => ({
     const getConfigs = async () => {
       let databaseConfigs = {};
 
-      await Promise.all(strapi.config.get('plugin.config-sync.include').map(async (type) => {
-        if (configType && configType !== type || !types(strapi)[type]) {
+      await Promise.all(Object.entries(strapi.plugin('config-sync').types).map(async ([name, type]) => {
+        if (configType && configType !== name) {
           return;
         }
 
-        const config = await types(strapi)[type].getAllFromDatabase();
+        const config = await type.getAllFromDatabase();
         databaseConfigs = Object.assign(config, databaseConfigs);
       }));
 
@@ -212,7 +210,7 @@ module.exports = () => ({
    */
   importSingleConfig: async (configName, onSuccess) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(configName);
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
@@ -220,7 +218,7 @@ module.exports = () => ({
     const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
-      await types(strapi)[type].importSingle(name, fileContents);
+      await strapi.plugin('config-sync').types[type].importSingle(name, fileContents);
       if (onSuccess) {
         onSuccess(`${type}.${name}`);
       }
@@ -238,14 +236,14 @@ module.exports = () => ({
    */
    exportSingleConfig: async (configName, onSuccess) => {
      // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(configName);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(configName);
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
     const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename.
 
     try {
-      await types(strapi)[type].exportSingle(configName);
+      await strapi.plugin('config-sync').types[type].exportSingle(configName);
       if (onSuccess) {
         onSuccess(`${type}.${name}`);
       }

@@ -25,7 +25,7 @@ module.exports = {
 
 
     ctx.send({
-      message: `Config was successfully exported to ${strapi.config.get('plugin.config-sync.destination')}.`,
+      message: `Config was successfully exported to ${strapi.config.get('plugin.config-sync.syncDir')}.`,
     });
   },
 
@@ -36,8 +36,8 @@ module.exports = {
    * @returns {void}
    */
   importAll: async (ctx) => {
-    // Check for existance of the config file destination dir.
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+    // Check for existance of the config file sync dir.
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       ctx.send({
         message: 'No config files were found.',
       });
@@ -72,8 +72,8 @@ module.exports = {
    * @returns {object} formattedDiff.diff - The diff between the file config and databse config.
    */
   getDiff: async (ctx) => {
-    // Check for existance of the config file destination dir.
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+    // Check for existance of the config file sync dir.
+    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       ctx.send({
         message: 'No config files were found.',
       });

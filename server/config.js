@@ -2,16 +2,12 @@
 
 module.exports = {
   default: {
-    destination: "src/extensions/config-sync/files/",
+    syncDir: "config/sync/",
     minify: false,
     importOnBootstrap: false,
-    include: [
-      "core-store",
-      "user-role",
-      "admin-role",
-      "i18n-locale",
-    ],
-    exclude: [
+    customTypes: [],
+    excludedTypes: [],
+    excludedConfig: [
       "core-store.plugin_users-permissions_grant",
     ],
   },

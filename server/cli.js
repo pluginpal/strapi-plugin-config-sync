@@ -172,10 +172,10 @@ program
   .alias('i')
   .option('-t, --type <type>', 'The type of config')
   .option('-p, --partial <partials>', 'A comma separated string of configs')
-  .option('-y', 'Skip the confirm prompt')
+  .option('-y, --yes', 'Skip the confirm prompt')
   .description('Import the config')
-  .action(async ({ y, type, partial }) => {
-    return handleAction('import', y, type, partial);
+  .action(async ({ yes, type, partial }) => {
+    return handleAction('import', yes, type, partial);
   });
 
 // `$ config-sync export`
@@ -184,10 +184,10 @@ program
   .alias('e')
   .option('-t, --type <type>', 'The type of config')
   .option('-p, --partial <partials>', 'A comma separated string of configs')
-  .option('-y', 'Skip the confirm prompt')
+  .option('-y, --yes', 'Skip the confirm prompt')
   .description('Export the config')
-  .action(async ({ y, type, partial }) => {
-    return handleAction('export', y, type, partial);
+  .action(async ({ yes, type, partial }) => {
+    return handleAction('export', yes, type, partial);
   });
 
 // `$ config-sync diff`

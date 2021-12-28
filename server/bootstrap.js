@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 
+const ConfigType = require('./config/type');
+const defaultTypes = require('./config/types');
+
 /**
  * An asynchronous bootstrap function that runs before
  * your application gets started.
@@ -15,10 +18,30 @@ const fs = require('fs');
 module.exports = async () => {
   // Import on bootstrap.
   if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
-    if (fs.existsSync(strapi.config.get('plugin.config-sync.destination'))) {
+    if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       await strapi.plugin('config-sync').service('main').importAllConfig();
     }
   }
+
+  // Register config types.
+  const registerTypes = () => {
+    const types = {};
+
+    defaultTypes(strapi).map((type) => {
+      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+        types[type.configName] = new ConfigType(type);
+      }
+    });
+
+    strapi.config.get('plugin.config-sync.customTypes').map((type) => {
+      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+        types[type.configName] = new ConfigType(type);
+      }
+    });
+
+    return types;
+  };
+  strapi.plugin('config-sync').types = registerTypes();
 
   // Register permission actions.
   const actions = [

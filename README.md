@@ -46,7 +46,7 @@ This way your app won't reload when you export the config in development.
 module.exports = ({ env }) => ({
   // ...
   watchIgnoreFiles: [
-    '**/config-sync/files/**',
+    '**/config/sync/**',
   ],
 });
 ```
@@ -73,8 +73,8 @@ Complete installation requirements are the exact same as for Strapi itself and c
 
 **Supported Strapi versions**:
 
-- Strapi 4.0.0 (recently tested)
-- Strapi ^4.x
+- Strapi 4.0.2 (recently tested)
+- Strapi ^4.x (use `strapi-plugin-config-sync@^1.0.0`)
 - Strapi ^3.4.x (use `strapi-plugin-config-sync@0.1.6`)
 
 (This plugin may work with older Strapi versions, but these are not tested nor officially supported at this time.)
@@ -138,7 +138,7 @@ npm run cs import
 npm run cs export
 ```
 
-##### Flag: `--yes` `-y`
+##### Flag: `-y`, `--yes`
 
 Use this flag to skip the confirm prompt and go straight to syncing the config.
 
@@ -146,7 +146,7 @@ Use this flag to skip the confirm prompt and go straight to syncing the config.
 [command] --yes
 ```
 
-##### Flag: `--type` `-t`
+##### Flag: `-t`, `--type`
 
 Use this flag to specify the type of config you want to sync.
 
@@ -154,7 +154,7 @@ Use this flag to specify the type of config you want to sync.
 [command] --type user-role
 ```
 
-##### Flag: `--partial` `-p`
+##### Flag: `-p`, `--partial`
 
 Use this flag to sync a specific set of configs by giving the CLI a comma-separated string of config names.
 
@@ -218,33 +218,88 @@ Try to avoid making config changes directly on production. You wouldn't want to 
 
 ## 🚀 Config types
 
-### Admin role
+This plugin allows you sync data from any type through the CLI & GUI. By default the plugin will track 4 (official) types. Custom types can be registered by setting some plugin config.
 
-> Prefix: `admin-role` | UID: `code` | Query string: `admin::role`
+### Default types
 
-### User role
+These 4 types are by default registered in the sync process. 
 
-> Prefix: `user-role` | UID: `type` | Query string: `plugin::users-permissions.role`
+#### Admin role
 
-### Core store
+> Config name: `admin-role` | UID: `code` | Query string: `admin::role`
 
-> Prefix: `core-store` | UID: `key` | Query string: `strapi::core-store`
+#### User role
 
-### I18n locale
+> Config name: `user-role` | UID: `type` | Query string: `plugin::users-permissions.role`
 
-> Prefix: `i81n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
+#### Core store
+
+> Config name: `core-store` | UID: `key` | Query string: `strapi::core-store`
+
+#### I18n locale
+
+> Config name: `i81n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
+
+### Custom types
+
+Your custom types can be registered through the `customTypes` plugin config. This is a setting that can be set in the `config/plugins.js` file in your project.
+
+You can register a type by giving the `customTypes` array an object which contains at least the following 3 properties:
+
+```
+customTypes: [{
+  configName: 'webhook',
+  queryString: 'webhook',
+  uid: 'name',
+}],
+```
+
+_The example above will register the Strapi webhook type._
+
+_Read more about the `config/plugins.js` file [here](#settings)._
+
+#### Config name
+
+The name of the config type. This value will be used as the first part of the filename for all config of this type. It should be unique from the other types and is preferably written in kebab-case.
+
+###### Key: `configName`
+
+> `required:` YES | `type:` string
+
+#### Query string
+
+This is the query string of the type. Each type in Strapi has its own query string you can use to programatically preform CRUD actions on the entries of the type. Often for custom types in Strapi the format is something like `api::custom-api.custom-type`.
+
+###### Key: `queryString`
+
+> `required:` YES | `type:` string
+
+#### UID
+
+The UID represents a field on the registered type. The value of this field will act as a unique identifier to identify the entries across environments. Therefor it should be unique and preferably un-editable after initial creation.
+
+Mind that you can not use an auto-incremental value like the `id` as auto-increment does not play nice when you try to match entries across different databases.
+
+###### Key: `uid`
+
+> `required:` YES | `type:` string
+
+#### JSON fields
+
+This property can accept an array of field names from the type. It is meant to specify the JSON fields on the type so the plugin can better format the field values when calculating the config difference.
+
+###### Key: `jsonFields`
+
+> `required:` NO | `type:` array
+
 
 ## 🔍 Naming convention
 All the config files written in the sync directory have the same naming convention. It goes as follows:
 
-	[config-type].[config-name].json
+	[config-type].[identifier].json
 
-- `config-type` - Corresponds to the `prefix` of the config type.
-- `config-name` - The unique identifier of the config. 
-	- 	For `core-store` config this is the `key` value.
-	-  	For `user-role` config this is the `type` value.
-	- 	For `admin-role` config this is the `code` value.
-	-  	For `i18n-locale` config this is the `code` value
+- `config-type` - Corresponds to the `configName` of the config type.
+- `identifier` - Corresponds to the value of the `uid` field of the config type.
 
 ## 🔧 Settings
 The settings of the plugin can be overridden in the `config/plugins.js` file. 
@@ -256,29 +311,73 @@ In the example below you can see how, and also what the default settings are.
 	  'config-sync': {
 	    enabled: true,
 	    config: {
-	      destination: "extensions/config-sync/files/",
+	      syncDir: "config/sync/",
 	      minify: false,
 	      importOnBootstrap: false,
-	      include: [
-	        "core-store",
-	        "user-role",
-	        "admin-role",
-	        "i18n-locale",
-	      ],
-	      exclude: [
+	      customTypes: [],
+	      excludedTypes: [],
+	      excludedConfig: [
 	        "core-store.plugin_users-permissions_grant"
 	      ],
 	    },
 	  },
 	});
 
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| destination | string | The path for reading and writing the sync files. |
-| minify | bool | When enabled all the exported JSON files will be minified. |
-| importOnBootstrap | bool | Allows you to let the config be imported automaticly when strapi is bootstrapping (on `strapi start`). This setting should only be used in production, and should be handled very carefully as it can unintendedly overwrite the changes in your database. PLEASE USE WITH CARE. |
-| include | array | Types you want to include in the syncing process. Allowed values: `core-store`, `user-role`, `admin-role`, `i18n-locale`. |
-| exclude | array | Specify the names of configs you want to exclude from the syncing process. By default the API tokens for users-permissions, which are stored in core_store, are excluded. This setting expects the config names to comply with the naming convention. |
+
+### Sync dir
+
+The path for reading and writing the sync files.
+
+###### Key: `syncDir`
+
+> `required:` YES | `type:` string | `default:` `config/sync/`
+
+### Minify
+
+When enabled all the exported JSON files will be minified.
+
+###### Key: `minify`
+
+> `required:` NO | `type:` bool | `default:` `false`
+
+### Import on bootstrap
+
+Allows you to let the config be imported automaticly when strapi is bootstrapping (on `strapi start`). This setting should never be used locally and should be handled very carefully as it can unintendedly overwrite the changes in your database. **PLEASE USE WITH CARE**.
+
+###### Key: `importOnBootstrap`
+
+> `required:` NO | `type:` bool | `default:` `false`
+
+### Custom types
+
+With this setting you can register your own custom config types. This is an array which expects objects with at least the `configName`, `queryString` and `uid` properties. Read more about registering custom types in the [Custom config types](#custom-types) documentation.
+
+###### Key: `customTypes`
+
+> `required:` NO | `type:` array | `default:` `[]`
+
+### Excluded types
+
+This setting will exclude all the config from a given type from the syncing process. The config types are specified by the `configName` of the type.
+
+For example:
+
+```
+excludedTypes: ['admin-role']
+```
+
+###### Key: `excludedTypes`
+
+> `required:` NO | `type:` array | `default:` `[]`
+
+### Excluded config
+
+Specify the names of configs you want to exclude from the syncing process. By default the API tokens for users-permissions, which are stored in core_store, are excluded. This setting expects the config names to comply with the naming convention.
+
+###### Key: `excludedConfig`
+
+> `required:` NO | `type:` array | `default:` `["core-store.plugin_users-permissions_grant"]`
+
 
 ## 🤝 Contributing
 

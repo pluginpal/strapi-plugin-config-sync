@@ -2,12 +2,21 @@ const { logMessage, sanitizeConfig, dynamicSort, noLimit } = require('../utils')
 const difference = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
-  constructor(queryString, configPrefix, uid, jsonFields, relations) {
+  constructor({ queryString, configName, uid, jsonFields, relations }) {
+    if (!configName) {
+      strapi.log.error(logMessage('A config type was registered without a config name.'));
+      return;
+    }
     if (!queryString) {
-      strapi.log.error(logMessage('Query string is missing for ConfigType'));
+      strapi.log.error(logMessage(`No query string found for the '${configName}' config type.`));
+      return;
+    }
+    if (!uid) {
+      strapi.log.error(logMessage(`No uid found for the '${configName}' config type.`));
+      return;
     }
     this.queryString = queryString;
-    this.configPrefix = configPrefix;
+    this.configPrefix = configName;
     this.uid = uid;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
@@ -22,7 +31,7 @@ const ConfigType = class ConfigType {
    */
    importSingle = async (configName, configContent) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${this.configPrefix}.${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${this.configPrefix}.${configName}`);
     if (shouldExclude) return;
 
     const queryAPI = strapi.query(this.queryString);
@@ -125,7 +134,7 @@ const ConfigType = class ConfigType {
     const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${configName}`);
+    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configName}`);
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
@@ -151,7 +160,7 @@ const ConfigType = class ConfigType {
 
     await Promise.all(Object.values(AllConfig).map(async (config) => {
       // Check if the config should be excluded.
-      const shouldExclude = strapi.config.get('plugin.config-sync.exclude').includes(`${this.configPrefix}.${config[this.uid]}`);
+      const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${this.configPrefix}.${config[this.uid]}`);
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig(config) };
