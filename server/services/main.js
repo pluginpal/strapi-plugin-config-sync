@@ -1,5 +1,6 @@
 'use strict';
 
+const { isEmpty } = require('lodash');
 const fs = require('fs');
 const util = require('util');
 const difference = require('../utils/getObjectDiff');
@@ -19,7 +20,7 @@ module.exports = () => ({
    */
   writeConfigFile: async (configType, configName, fileContents) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configType}.${configName}`);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
     // Replace ':' with '#' in filenames for Windows support.
@@ -54,7 +55,7 @@ module.exports = () => ({
    */
    deleteConfigFile: async (configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configName}`);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     // Replace ':' with '#' in filenames for Windows support.
@@ -111,7 +112,7 @@ module.exports = () => ({
         if (
           configType && configType !== type
           || !strapi.plugin('config-sync').types[type]
-          || strapi.config.get('plugin.config-sync.excludedConfig').includes(`${type}.${name}`)
+          || !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${type}.${name}`.startsWith(option)))
         ) {
           return;
         }
@@ -210,7 +211,7 @@ module.exports = () => ({
    */
   importSingleConfig: async (configName, onSuccess) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(configName);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
@@ -236,7 +237,7 @@ module.exports = () => ({
    */
    exportSingleConfig: async (configName, onSuccess) => {
      // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(configName);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.

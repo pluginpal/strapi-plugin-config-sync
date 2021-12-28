@@ -1,3 +1,4 @@
+const { isEmpty } = require('lodash');
 const { logMessage, sanitizeConfig, dynamicSort, noLimit } = require('../utils');
 const difference = require('../utils/getArrayDiff');
 
@@ -31,7 +32,7 @@ const ConfigType = class ConfigType {
    */
    importSingle = async (configName, configContent) => {
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${this.configPrefix}.${configName}`);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
     const queryAPI = strapi.query(this.queryString);
@@ -134,7 +135,7 @@ const ConfigType = class ConfigType {
     const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
     // Check if the config should be excluded.
-    const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${configName}`);
+    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
@@ -160,7 +161,7 @@ const ConfigType = class ConfigType {
 
     await Promise.all(Object.values(AllConfig).map(async (config) => {
       // Check if the config should be excluded.
-      const shouldExclude = strapi.config.get('plugin.config-sync.excludedConfig').includes(`${this.configPrefix}.${config[this.uid]}`);
+      const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${config[this.uid]}`.startsWith(option)));
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig(config) };
