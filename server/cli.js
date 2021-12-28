@@ -125,7 +125,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
   // Preform the action.
   if (skipConfirm || answer.confirm) {
     if (syncType === 'import') {
-      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Imported ${name} (${getConfigState(diff, name, syncType)})`);
+      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Imported ${name}`);
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
           let warning;
@@ -143,7 +143,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
       }
     }
     if (syncType === 'export') {
-      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Exported ${name} (${getConfigState(diff, name, syncType)})`);
+      const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Exported ${name}`);
 
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
