@@ -23,7 +23,7 @@ git clone git@github.com:YOUR_USERNAME/strapi-plugin-config-sync.git config-sync
 Go to the plugin and install it's dependencies.
 
 ```bash
-cd YOUR_STRAPI_PROJECT/src/plugins/config-sync/ && yarn install
+cd YOUR_STRAPI_PROJECT/src/plugins/config-sync/ && yarn install-local
 ```
 
 #### 4. Enable the plugin
