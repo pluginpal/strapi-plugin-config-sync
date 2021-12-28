@@ -72,7 +72,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
 
   // No changes.
   if (isEmpty(diff.diff)) {
-    console.log(`${chalk.blue.bold('[notice]')} There are no changes to ${syncType}.`);
+    console.log(`${chalk.cyan.bold('[notice]')} There are no changes to ${syncType}.`);
     process.exit(0);
   }
 
@@ -97,7 +97,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
 
   // No changes for partial diff.
   if ((partials || configType) && isEmpty(partialDiff)) {
-    console.log(`${chalk.blue.bold('[notice]')} There are no changes for the specified config.`);
+    console.log(`${chalk.cyan.bold('[notice]')} There are no changes for the specified config.`);
     process.exit(0);
   }
 
@@ -209,7 +209,7 @@ program
 
     // No changes.
     if (isEmpty(diff.diff)) {
-      console.log(`${chalk.blue.bold('[notice]')} No differences between DB and sync directory.`);
+      console.log(`${chalk.cyan.bold('[notice]')} No differences between DB and sync directory.`);
       process.exit(0);
     }
 
