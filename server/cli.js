@@ -7,6 +7,7 @@ const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
 const strapi = require('@strapi/strapi');
 
+const warnings = require('./warnings');
 const packageJSON = require('../package.json');
 
 const program = new Command();
@@ -71,7 +72,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
 
   // No changes.
   if (isEmpty(diff.diff)) {
-    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes to ${syncType}.`);
+    console.log(`${chalk.blue.bold('[notice]')} There are no changes to ${syncType}.`);
     process.exit(0);
   }
 
@@ -96,7 +97,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
 
   // No changes for partial diff.
   if ((partials || configType) && isEmpty(partialDiff)) {
-    console.log(`${chalk.bgCyan.bold('[notice]')} There are no changes for the specified config.`);
+    console.log(`${chalk.blue.bold('[notice]')} There are no changes for the specified config.`);
     process.exit(0);
   }
 
@@ -124,25 +125,31 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
   // Preform the action.
   if (skipConfirm || answer.confirm) {
     if (syncType === 'import') {
-      const onSuccess = (name) => console.log(`${chalk.bgGreen.bold('[success]')} Imported ${name}`);
-
+      const onSuccess = (name) => console.log(`${chalk.green.bold('[success]')} Imported ${name} (${getConfigState(diff, name, syncType)})`);
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
+          let warning;
+          if (
+            getConfigState(diff, name, syncType) === chalk.red('Delete')
+            && warnings.delete[name]
+          ) warning = warnings.delete[name];
+
           await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess);
+          if (warning) console.log(`${chalk.yellow.bold('[warning]')} ${warning}`);
         }));
       } catch (e) {
-        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the import. ${e}`);
+        console.log(`${chalk.red.bold('[error]')} Something went wrong during the import. ${e}`);
       }
     }
     if (syncType === 'export') {
-      const onSuccess = (name) => console.log(`${chalk.bgGreen.bold('[success]')} Exported ${name}`);
+      const onSuccess = (name) => console.log(`${chalk.green.bold('[success]')} Exported ${name} (${getConfigState(diff, name, syncType)})`);
 
       try {
         await Promise.all(Object.keys(finalDiff).map(async (name) => {
           await app.plugin('config-sync').service('main').exportSingleConfig(name, onSuccess);
         }));
       } catch (e) {
-        console.log(`${chalk.bgRed.bold('[error]')} Something went wrong during the export. ${e}`);
+        console.log(`${chalk.red.bold('[error]')} Something went wrong during the export. ${e}`);
       }
     }
   }
@@ -202,7 +209,7 @@ program
 
     // No changes.
     if (isEmpty(diff.diff)) {
-      console.log(`${chalk.bgCyan.bold('[notice]')} No differences between DB and sync directory.`);
+      console.log(`${chalk.blue.bold('[notice]')} No differences between DB and sync directory.`);
       process.exit(0);
     }
 
