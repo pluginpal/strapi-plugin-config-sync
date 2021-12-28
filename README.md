@@ -258,7 +258,7 @@ customTypes: [{
 
 _The example above will register the Strapi webhook type._
 
-_Read more about the `config/plugins.js` file [here](#settings)._
+_Read more about the `config/plugins.js` file [here](#-settings)._
 
 #### Config name
 
