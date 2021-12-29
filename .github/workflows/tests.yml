@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: yarn playground:install --ignore-scripts --frozen-lockfile
       - name: Install plugin
-        run: yarn add strapi-plugin-config-sync@boazpoolman/strapi-plugin-config-sync#${GITHUB_REF##*/}
+        run: cd playground && yarn add strapi-plugin-config-sync@boazpoolman/strapi-plugin-config-sync#${GITHUB_REF##*/}
       - name: Run test
         run: yarn run -s test:integration
   # unit:
