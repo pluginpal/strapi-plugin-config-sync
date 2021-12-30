@@ -18,7 +18,8 @@
     "@strapi/plugin-i18n": "4.0.2",
     "@strapi/plugin-users-permissions": "4.0.2",
     "@strapi/strapi": "4.0.2",
-    "sqlite3": "5.0.2"
+    "sqlite3": "5.0.2",
+    "strapi-plugin-config-sync": "boazpoolman/strapi-plugin-config-sync"
   },
   "author": {
     "name": "A Strapi developer"
