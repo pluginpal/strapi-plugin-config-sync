@@ -37,7 +37,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-      - name: Install dependencies
+      - name: Install dependencies plugin
+        run: yarn --ignore-scripts --frozen-lockfile
+      - name: Install dependencies playground
         run: yarn playground:install --ignore-scripts --frozen-lockfile
       - name: Run test
         run: yarn run -s test:integration
