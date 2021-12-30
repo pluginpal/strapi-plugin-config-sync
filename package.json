@@ -20,6 +20,7 @@
     "test:integration": "cd playground && jest --verbose",
     "plugin:install": "yarn install && rm -rf node_modules/@strapi/helper-plugin",
     "playground:install": "cd playground && yarn install",
+    "playground:build": "cd playground && yarn build --clean",
     "playground:develop": "cd playground && yarn develop"
   },
   "dependencies": {
