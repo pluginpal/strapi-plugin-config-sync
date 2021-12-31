@@ -1,7 +1,10 @@
 module.exports = ({ env }) => ({
   'config-sync': {
     config: {
-      customTypes: [],
+      excludedConfig: [
+        'core-store.plugin_users-permissions_grant',
+        'user-role.public',
+      ],
     },
   },
 });

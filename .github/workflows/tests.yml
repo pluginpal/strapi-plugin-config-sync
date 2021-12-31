@@ -41,8 +41,6 @@ jobs:
         run: yarn --frozen-lockfile --unsafe-perm
       - name: Install dependencies playground
         run: yarn playground:install --frozen-lockfile --unsafe-perm
-      - name: Build playground
-        run: yarn playground:build
       - name: Run test
         run: yarn run -s test:integration
   # unit:
