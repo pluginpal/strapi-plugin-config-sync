@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies plugin
         run: yarn --frozen-lockfile --unsafe-perm
       - name: Install dependencies playground
-        run: yarn playground:install --unsafe-perm
+        run: yarn playground:install --frozen-lockfile --unsafe-perm
       - name: Run test
         run: yarn run -s test:integration
       - name: Upload coverage to Codecov
