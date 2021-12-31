@@ -6,15 +6,15 @@ const ConfigType = class ConfigType {
   constructor({ queryString, configName, uid, jsonFields, relations }) {
     if (!configName) {
       strapi.log.error(logMessage('A config type was registered without a config name.'));
-      return;
+      process.exit(0);
     }
     if (!queryString) {
       strapi.log.error(logMessage(`No query string found for the '${configName}' config type.`));
-      return;
+      process.exit(0);
     }
     if (!uid) {
       strapi.log.error(logMessage(`No uid found for the '${configName}' config type.`));
-      return;
+      process.exit(0);
     }
     this.queryString = queryString;
     this.configPrefix = configName;

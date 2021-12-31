@@ -1,0 +1,35 @@
+{
+  "name": "playground",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi",
+    "cs": "config-sync"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1",
+    "jest-cli": "^26.0.1"
+  },
+  "dependencies": {
+    "@strapi/plugin-i18n": "4.0.2",
+    "@strapi/plugin-users-permissions": "4.0.2",
+    "@strapi/strapi": "4.0.2",
+    "sqlite3": "5.0.2",
+    "strapi-plugin-config-sync": "boazpoolman/strapi-plugin-config-sync"
+  },
+  "author": {
+    "name": "A Strapi developer"
+  },
+  "strapi": {
+    "uuid": "2e84e366-1e09-43c2-a99f-a0d0acbc2ca5"
+  },
+  "engines": {
+    "node": ">=12.x.x <=16.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}
