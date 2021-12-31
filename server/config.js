@@ -5,7 +5,7 @@ module.exports = {
     syncDir: "config/sync/",
     minify: false,
     importOnBootstrap: false,
-    customTypes: [],
+    customTypes: [{}],
     excludedTypes: [],
     excludedConfig: [
       "core-store.plugin_users-permissions_grant",
