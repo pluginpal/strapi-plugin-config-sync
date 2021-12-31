@@ -43,6 +43,13 @@ jobs:
         run: yarn playground:install --frozen-lockfile --unsafe-perm
       - name: Run test
         run: yarn run -s test:integration
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV }}
+          flags: unit
+          verbose: true
+          fail_ci_if_error: true
   # unit:
   #   name: 'unit'
   #   needs: [lint]
