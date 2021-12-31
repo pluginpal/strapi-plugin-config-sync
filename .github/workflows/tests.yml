@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - master
-      - develop
   pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   lint:
@@ -21,9 +23,35 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn --ignore-scripts --frozen-lockfile
+        run: yarn --frozen-lockfile
       - name: Run eslint
         run: yarn run eslint
+  integration:
+    name: 'integration'
+    needs: [lint]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+      - name: Install dependencies plugin
+        run: yarn --frozen-lockfile --unsafe-perm
+      - name: Install dependencies playground
+        run: yarn playground:install --frozen-lockfile --unsafe-perm
+      - name: Run test
+        run: yarn run -s test:integration
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV }}
+          flags: unit
+          verbose: true
+          fail_ci_if_error: true
   # unit:
   #   name: 'unit'
   #   needs: [lint]
