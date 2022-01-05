@@ -57,11 +57,11 @@ After successful installation you have to rebuild the admin UI so it'll include 
 
 ```bash
 # using yarn
-yarn build --clean
+yarn build
 yarn develop
 
 # using npm
-npm run build --clean
+npm run build
 npm run develop
 ```
 
@@ -75,7 +75,7 @@ Complete installation requirements are the exact same as for Strapi itself and c
 
 **Supported Strapi versions**:
 
-- Strapi 4.0.2 (recently tested)
+- Strapi 4.0.3 (recently tested)
 - Strapi ^4.x (use `strapi-plugin-config-sync@^1.0.0`)
 - Strapi ^3.4.x (use `strapi-plugin-config-sync@0.1.6`)
 
