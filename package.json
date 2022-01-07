@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "CLI & GUI for syncing config data across environments.",
   "strapi": {
     "displayName": "Config Sync",
