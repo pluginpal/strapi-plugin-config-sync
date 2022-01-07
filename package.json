@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "CLI & GUI for syncing config data across environments.",
   "strapi": {
     "displayName": "Config Sync",
@@ -27,8 +27,8 @@
     "chalk": "^4.1.2",
     "cli-table": "^0.3.6",
     "commander": "^8.3.0",
-    "inquirer": "^8.2.0",
     "immutable": "^3.8.2",
+    "inquirer": "^8.2.0",
     "react-diff-viewer": "^3.1.1",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0"
