@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "cli-table": "^0.3.6",
+    "immutable": "^3.8.2",
     "react-diff-viewer": "^3.1.1",
     "redux-thunk": "^2.3.0"
   },
@@ -70,7 +71,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^2.3.0",
-    "immutable": "^4.0.0-rc.14",
+    "immutable": "3.8.2",
     "jest": "^26.0.1",
     "jest-cli": "^26.0.1",
     "jest-styled-components": "^7.0.2",
