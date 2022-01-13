@@ -16,13 +16,6 @@ const defaultTypes = require('./config/types');
  */
 
 module.exports = async () => {
-  // Import on bootstrap.
-  if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
-    if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
-      await strapi.plugin('config-sync').service('main').importAllConfig();
-    }
-  }
-
   // Register config types.
   const registerTypes = () => {
     const types = {};
@@ -42,6 +35,13 @@ module.exports = async () => {
     return types;
   };
   strapi.plugin('config-sync').types = registerTypes();
+
+  // Import on bootstrap.
+  if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
+    if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
+      await strapi.plugin('config-sync').service('main').importAllConfig();
+    }
+  }
 
   // Register permission actions.
   const actions = [
