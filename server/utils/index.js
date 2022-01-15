@@ -1,5 +1,12 @@
 'use strict';
 
+const COMBINED_UID_JOINSTR = ', ';
+
+const escapeUid = (uid) => uid.replace(/\,/g,'').replace(COMBINED_UID_JOINSTR, '');
+const getCombinedUid = (uidKeys, params) => uidKeys.map((uidKey) => params[uidKey]).join(COMBINED_UID_JOINSTR);
+const getCombinedUidWhereFilter = (uidKeys, params) => uidKeys.reduce(((akku, uidKey) => ({ ...akku, [uidKey]: params[uidKey] })),{});
+const getUidParamsFromName = (uidKeys, configName) => configName.split(COMBINED_UID_JOINSTR).reduce((akku, param, i) => ({...akku, [uidKeys[i]]: param}), {});
+
 const getCoreStore = () => {
   return strapi.store({ type: 'plugin', name: 'config-sync' });
 };
@@ -83,6 +90,10 @@ const noLimit = async (query, parameters, limit = 100) => {
 };
 
 module.exports = {
+  escapeUid,
+  getCombinedUid,
+  getCombinedUidWhereFilter,
+  getUidParamsFromName,
   getService,
   getCoreStore,
   logMessage,

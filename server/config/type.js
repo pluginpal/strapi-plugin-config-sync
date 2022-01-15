@@ -1,5 +1,5 @@
 const { isEmpty } = require('lodash');
-const { logMessage, sanitizeConfig, dynamicSort, noLimit } = require('../utils');
+const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } = require('../utils');
 const difference = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
@@ -12,13 +12,17 @@ const ConfigType = class ConfigType {
       strapi.log.error(logMessage(`No query string found for the '${configName}' config type.`));
       process.exit(0);
     }
-    if (!uid) {
-      strapi.log.error(logMessage(`No uid found for the '${configName}' config type.`));
+    // uid could be a single key or an array for a combined uid. So the type of uid is either string or string[]
+    if(typeof uid === "string"){
+      this.uidKeys = [uid];
+    } else if(Array.isArray(uid)){
+      this.uidKeys = uid.sort();
+    } else {
+      strapi.log.error(logMessage(`Wrong uid config for the '${configName}' config type.`));
       process.exit(0);
     }
     this.queryString = queryString;
     this.configPrefix = configName;
-    this.uid = uid;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
   }
@@ -30,24 +34,29 @@ const ConfigType = class ConfigType {
    * @param {string} configContent - The JSON content of the config file.
    * @returns {void}
    */
-   importSingle = async (configName, configContent) => {
+  importSingle = async (configName, configContent) => {
     // Check if the config should be excluded.
     const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
     const queryAPI = strapi.query(this.queryString);
-
+    const uidParams = getUidParamsFromName(this.uidKeys, configName);
+    const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, uidParams);
     let existingConfig = await queryAPI
       .findOne({
-        where: { [this.uid]: configName },
+        where: combinedUidWhereFilter,
         populate: this.relations.map(({ relationName }) => relationName),
       });
 
-    if (existingConfig && configContent === null) {
-      const entity = await queryAPI.findOne({
-        where: { [this.uid]: configName },
-        populate: this.relations.map(({ relationName }) => relationName),
-      });
+    console.log("importSingle", configName, uidParams, existingConfig, configContent, combinedUidWhereFilter)
+
+    if (existingConfig && configContent === null) { // Config exists in DB but no configfile content --> delete config from DB
+      // was there a reason to fetch it again? Isn't this the same as existingConfig?
+      // const entity = await queryAPI.findOne({
+      //   where: combinedUidWhereFilter,
+      //   populate: this.relations.map(({ relationName }) => relationName),
+      // });
+      const entity = existingConfig;
 
       await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
@@ -70,7 +79,7 @@ const ConfigType = class ConfigType {
       return;
     }
 
-    if (!existingConfig) {
+    if (!existingConfig) { // Config does not exist in DB --> create config in DB
       // Format JSON fields.
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
@@ -88,7 +97,7 @@ const ConfigType = class ConfigType {
           await relationQueryApi.create({ data: relationQuery });
         }));
       }));
-    } else {
+    } else { // Config does exist in DB --> update config in DB
       // Format JSON fields.
       configContent = sanitizeConfig(configContent);
       const query = { ...configContent };
@@ -96,7 +105,7 @@ const ConfigType = class ConfigType {
 
       // Update entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const entity = await queryAPI.update({ where: { [this.uid]: configName }, data: query });
+      const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
 
       // Delete/create relations.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortField }) => {
@@ -139,6 +148,7 @@ const ConfigType = class ConfigType {
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
+    const combinedUid = getCombinedUid(this.uidKeys, currentConfig);
 
     if (
       !currentConfig
@@ -146,7 +156,7 @@ const ConfigType = class ConfigType {
     ) {
       await strapi.plugin('config-sync').service('main').deleteConfigFile(configName);
     } else {
-      await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, currentConfig[this.uid], currentConfig);
+      await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, combinedUid, currentConfig);
     }
   }
 
@@ -160,14 +170,16 @@ const ConfigType = class ConfigType {
     const configs = {};
 
     await Promise.all(Object.values(AllConfig).map(async (config) => {
+      const combinedUid = getCombinedUid(this.uidKeys, config);
+      const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, config);
       // Check if the config should be excluded.
-      const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${config[this.uid]}`.startsWith(option)));
+      const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig(config) };
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortField, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
-          where: { [parentName]: { [this.uid]: config[this.uid] } },
+          where: { [parentName]: combinedUidWhereFilter },
         });
 
         relations.map((relation) => sanitizeConfig(relation));
@@ -176,7 +188,7 @@ const ConfigType = class ConfigType {
       }));
 
       this.jsonFields.map((field) => formattedConfig[field] = JSON.parse(config[field]));
-      configs[`${this.configPrefix}.${config[this.uid]}`] = formattedConfig;
+      configs[`${this.configPrefix}.${combinedUid}`] = formattedConfig;
     }));
 
 
