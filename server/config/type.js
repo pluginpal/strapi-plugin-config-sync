@@ -13,9 +13,9 @@ const ConfigType = class ConfigType {
       process.exit(0);
     }
     // uid could be a single key or an array for a combined uid. So the type of uid is either string or string[]
-    if(typeof uid === "string"){
+    if (typeof uid === "string") {
       this.uidKeys = [uid];
-    } else if(Array.isArray(uid)){
+    } else if (Array.isArray(uid)) {
       this.uidKeys = uid.sort();
     } else {
       strapi.log.error(logMessage(`Wrong uid config for the '${configName}' config type.`));
@@ -139,7 +139,6 @@ const ConfigType = class ConfigType {
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
-    const combinedUid = getCombinedUid(this.uidKeys, currentConfig);
 
     if (
       !currentConfig
@@ -147,6 +146,7 @@ const ConfigType = class ConfigType {
     ) {
       await strapi.plugin('config-sync').service('main').deleteConfigFile(configName);
     } else {
+      const combinedUid = getCombinedUid(this.uidKeys, currentConfig);
       await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, combinedUid, currentConfig);
     }
   }
