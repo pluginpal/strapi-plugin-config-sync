@@ -4,17 +4,9 @@ const COMBINED_UID_JOINSTR = '+.+';
 
 const escapeUid = (uid) => typeof uid === "string" ? uid.replace(/\+\.\+/g, '+_._+') : uid;
 const unEscapeUid = (uid) => typeof uid === "string" ? uid.replace(/\+_\._\+_/g, '+.+') : uid;
-const getCombinedUid = (uidKeys, params) => {
-  const res = uidKeys.map((uidKey) => escapeUid(params[uidKey])).join(COMBINED_UID_JOINSTR);
-  console.log("getCombinedUid", res);
-  return res;
-};
+const getCombinedUid = (uidKeys, params) => uidKeys.map((uidKey) => escapeUid(params[uidKey])).join(COMBINED_UID_JOINSTR);
 const getCombinedUidWhereFilter = (uidKeys, params) => uidKeys.reduce(((akku, uidKey) => ({ ...akku, [uidKey]: params[uidKey] })), {});
-const getUidParamsFromName = (uidKeys, configName) => {
-  const res = configName.split(COMBINED_UID_JOINSTR).map(unEscapeUid).reduce((akku, param, i) => ({ ...akku, [uidKeys[i]]: param }), {});
-  console.log("getUidParamsFromName", res);
-  return res;
-};
+const getUidParamsFromName = (uidKeys, configName) => configName.split(COMBINED_UID_JOINSTR).map(unEscapeUid).reduce((akku, param, i) => ({ ...akku, [uidKeys[i]]: param }), {});
 
 const getCoreStore = () => {
   return strapi.store({ type: 'plugin', name: 'config-sync' });
