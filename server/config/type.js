@@ -48,20 +48,11 @@ const ConfigType = class ConfigType {
         populate: this.relations.map(({ relationName }) => relationName),
       });
 
-    console.log("importSingle", configName, uidParams, existingConfig, configContent, combinedUidWhereFilter)
-
     if (existingConfig && configContent === null) { // Config exists in DB but no configfile content --> delete config from DB
-      // was there a reason to fetch it again? Isn't this the same as existingConfig?
-      // const entity = await queryAPI.findOne({
-      //   where: combinedUidWhereFilter,
-      //   populate: this.relations.map(({ relationName }) => relationName),
-      // });
-      const entity = existingConfig;
-
       await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: {
-            [parentName]: entity.id,
+            [parentName]: existingConfig.id,
           },
         });
 
@@ -73,7 +64,7 @@ const ConfigType = class ConfigType {
       }));
 
       await queryAPI.delete({
-        where: { id: entity.id },
+        where: { id: existingConfig.id },
       });
 
       return;
