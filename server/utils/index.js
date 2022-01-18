@@ -1,9 +1,9 @@
 'use strict';
 
-const COMBINED_UID_JOINSTR = '+.+';
+const COMBINED_UID_JOINSTR = '.combine-uid.';
 
-const escapeUid = (uid) => typeof uid === "string" ? uid.replace(/\+\.\+/g, '+_._+') : uid;
-const unEscapeUid = (uid) => typeof uid === "string" ? uid.replace(/\+_\._\+/g, '+.+') : uid;
+const escapeUid = (uid) => typeof uid === "string" ? uid.replace(/\.combine-uid\./g, '.combine-uid-escape.') : uid;
+const unEscapeUid = (uid) => typeof uid === "string" ? uid.replace(/\.combine-uid-escape\./g, '.combine-uid.') : uid;
 const getCombinedUid = (uidKeys, params) => uidKeys.map((uidKey) => escapeUid(params[uidKey])).join(COMBINED_UID_JOINSTR);
 const getCombinedUidWhereFilter = (uidKeys, params) => uidKeys.reduce(((akku, uidKey) => ({ ...akku, [uidKey]: params[uidKey] })), {});
 const getUidParamsFromName = (uidKeys, configName) => configName.split(COMBINED_UID_JOINSTR).map(unEscapeUid).reduce((akku, param, i) => ({ ...akku, [uidKeys[i]]: param }), {});
