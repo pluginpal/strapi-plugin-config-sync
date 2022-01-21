@@ -104,8 +104,8 @@ const ConfigType = class ConfigType {
         existingConfig = sanitizeConfig(existingConfig, relationName, relationSortFields);
         configContent = sanitizeConfig(configContent, relationName, relationSortFields);
 
-        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields[0]);
-        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields[0]);
+        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
+        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
 
         await Promise.all(configToDelete.map(async (config) => {
           const whereClause = {};
