@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } = require('../utils');
-const difference = require('../utils/getArrayDiff');
+const { difference, same } = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
   constructor({ queryString, configName, uid, jsonFields, relations }) {
@@ -106,6 +106,7 @@ const ConfigType = class ConfigType {
 
         const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
         const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
+        const configToUpdate = same(configContent[relationName], existingConfig[relationName], relationSortFields);
 
         await Promise.all(configToDelete.map(async (config) => {
           const whereClause = {};
@@ -122,6 +123,21 @@ const ConfigType = class ConfigType {
 
         await Promise.all(configToAdd.map(async (config) => {
           await relationQueryApi.create({
+            data: { ...config, [parentName]: entity.id },
+          });
+        }));
+
+        await Promise.all(configToUpdate.map(async (config, index) => {
+          const whereClause = {};
+          relationSortFields.map((sortField) => {
+            whereClause[sortField] = config[sortField];
+          });
+
+          await relationQueryApi.update({
+            where: {
+              ...whereClause,
+              [parentName]: entity.id,
+            },
             data: { ...config, [parentName]: entity.id },
           });
         }));
