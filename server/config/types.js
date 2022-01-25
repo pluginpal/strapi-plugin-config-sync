@@ -17,7 +17,7 @@ const types = (strapi) => {
         queryString: 'admin::permission',
         relationName: 'permissions',
         parentName: 'role',
-        relationSortField: 'action',
+        relationSortFields: ['action', 'subject'],
       }],
     },
   ];
@@ -32,7 +32,7 @@ const types = (strapi) => {
         queryString: 'plugin::users-permissions.permission',
         relationName: 'permissions',
         parentName: 'role',
-        relationSortField: 'action',
+        relationSortFields: ['action'],
       }],
     });
   }

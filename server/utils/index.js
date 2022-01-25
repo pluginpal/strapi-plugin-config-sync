@@ -37,14 +37,16 @@ const dynamicSort = (property) => {
 
   return (a, b) => {
     if (sortOrder === -1) {
-      return b[property].localeCompare(a[property]);
-    } else {
+      if (b[property]) {
+        return b[property].localeCompare(a[property]);
+      }
+    } else if (a[property]) {
       return a[property].localeCompare(b[property]);
     }
   };
 };
 
-const sanitizeConfig = (config, relation, relationSortField) => {
+const sanitizeConfig = (config, relation, relationSortFields) => {
   delete config._id;
   delete config.id;
   delete config.updatedAt;
@@ -63,8 +65,10 @@ const sanitizeConfig = (config, relation, relationSortField) => {
       formattedRelations.push(relationEntity);
     });
 
-    if (relationSortField) {
-      formattedRelations.sort(dynamicSort(relationSortField));
+    if (relationSortFields) {
+      relationSortFields.map((sortField) => {
+        formattedRelations.sort(dynamicSort(sortField));
+      });
     }
 
     config[relation] = formattedRelations;

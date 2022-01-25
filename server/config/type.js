@@ -1,6 +1,6 @@
 const { isEmpty } = require('lodash');
 const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } = require('../utils');
-const difference = require('../utils/getArrayDiff');
+const { difference, same } = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
   constructor({ queryString, configName, uid, jsonFields, relations }) {
@@ -99,18 +99,23 @@ const ConfigType = class ConfigType {
       const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
 
       // Delete/create relations.
-      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortField }) => {
+      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
         const relationQueryApi = strapi.query(queryString);
-        existingConfig = sanitizeConfig(existingConfig, relationName, relationSortField);
-        configContent = sanitizeConfig(configContent, relationName, relationSortField);
+        existingConfig = sanitizeConfig(existingConfig, relationName, relationSortFields);
+        configContent = sanitizeConfig(configContent, relationName, relationSortFields);
 
-        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortField);
-        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortField);
+        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
+        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
+        const configToUpdate = same(configContent[relationName], existingConfig[relationName], relationSortFields);
 
         await Promise.all(configToDelete.map(async (config) => {
+          const whereClause = {};
+          relationSortFields.map((sortField) => {
+            whereClause[sortField] = config[sortField];
+          });
           await relationQueryApi.delete({
             where: {
-              [relationSortField]: config[relationSortField],
+              ...whereClause,
               [parentName]: entity.id,
             },
           });
@@ -118,6 +123,21 @@ const ConfigType = class ConfigType {
 
         await Promise.all(configToAdd.map(async (config) => {
           await relationQueryApi.create({
+            data: { ...config, [parentName]: entity.id },
+          });
+        }));
+
+        await Promise.all(configToUpdate.map(async (config, index) => {
+          const whereClause = {};
+          relationSortFields.map((sortField) => {
+            whereClause[sortField] = config[sortField];
+          });
+
+          await relationQueryApi.update({
+            where: {
+              ...whereClause,
+              [parentName]: entity.id,
+            },
             data: { ...config, [parentName]: entity.id },
           });
         }));
@@ -168,13 +188,15 @@ const ConfigType = class ConfigType {
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig(config) };
-      await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortField, parentName }) => {
+      await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: { [parentName]: combinedUidWhereFilter },
         });
 
         relations.map((relation) => sanitizeConfig(relation));
-        relations.sort(dynamicSort(relationSortField));
+        relationSortFields.map((sortField) => {
+          relations.sort(dynamicSort(sortField));
+        });
         formattedConfig[relationName] = relations;
       }));
 
