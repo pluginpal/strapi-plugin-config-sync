@@ -346,7 +346,7 @@ When enabled all the exported JSON files will be minified.
 
 ### Import on bootstrap
 
-Allows you to let the config be imported automaticly when strapi is bootstrapping (on `strapi start`). This setting should never be used locally and should be handled very carefully as it can unintendedly overwrite the changes in your database. **PLEASE USE WITH CARE**.
+Allows you to let the config be imported automaticly when strapi is bootstrapping (on `strapi start`). This setting can't be used locally and should be handled very carefully as it can unintendedly overwrite the changes in your database. **PLEASE USE WITH CARE**.
 
 ###### Key: `importOnBootstrap`
 

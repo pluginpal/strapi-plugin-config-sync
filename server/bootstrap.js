@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const ConfigType = require('./config/type');
 const defaultTypes = require('./config/types');
+const { logMessage } = require('./utils');
 
 /**
  * An asynchronous bootstrap function that runs before
@@ -38,6 +39,10 @@ module.exports = async () => {
 
   // Import on bootstrap.
   if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
+    if (strapi.server.app.env === 'development') {
+      strapi.log.warn(logMessage(`You can't use the 'importOnBootstrap' setting in the development env.`));
+      return;
+    }
     if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       await strapi.plugin('config-sync').service('main').importAllConfig();
     }
