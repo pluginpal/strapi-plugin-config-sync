@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Strapi config-sync plugin</h1>
 	
-<p style="margin-top: 0;">CLI & GUI for syncing config data across environments.</p>
+<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used for automated deployment, automated tests and data sharing for collaboration purposes.</p>
 	
 <p>
   <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
@@ -25,6 +25,7 @@
 - **GUI** (Settings page for syncing the config in Strapi admin)
 - **Partial sync** (Import or export only specific portions of config)
 - **Custom types** (Include your custom collection types in the sync process)
+- **Import on bootstrap** (Easy automated deployment with `importOnBootstrap`)
 - **Exclusion** (Exclude single config entries or all entries of a given type)
 - **Diff viewer** (A git-style diff viewer to inspect the config changes)
 
@@ -246,6 +247,8 @@ These 4 types are by default registered in the sync process.
 
 Your custom types can be registered through the `customTypes` plugin config. This is a setting that can be set in the `config/plugins.js` file in your project.
 
+_Read more about the `config/plugins.js` file [here](#-settings)._
+
 You can register a type by giving the `customTypes` array an object which contains at least the following 3 properties:
 
 ```
@@ -257,8 +260,6 @@ customTypes: [{
 ```
 
 _The example above will register the Strapi webhook type._
-
-_Read more about the `config/plugins.js` file [here](#-settings)._
 
 #### Config name
 
