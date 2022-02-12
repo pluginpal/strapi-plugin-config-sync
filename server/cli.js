@@ -5,7 +5,7 @@ const Table = require('cli-table');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
-const strapi = require('@strapi/strapi');
+const strapi = require('@strapi/strapi'); // eslint-disable-line
 
 const warnings = require('./warnings');
 const packageJSON = require('../package.json');

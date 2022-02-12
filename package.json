@@ -60,7 +60,6 @@
     "@strapi/design-system": "^0.0.1-alpha.75",
     "@strapi/helper-plugin": "^4.0.7",
     "@strapi/icons": "^0.0.1-alpha.75",
-    "@strapi/strapi": "^4.0.7",
     "@strapi/utils": "^4.0.7",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
