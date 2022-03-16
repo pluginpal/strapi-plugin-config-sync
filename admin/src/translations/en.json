@@ -10,5 +10,7 @@
   "Header.Title": "Config Sync",
   "Header.Description": "Manage your database config across environments.",
 
+  "Settings.Tool.Title": "Tool",
+
   "plugin.name": "Config Sync"
 }

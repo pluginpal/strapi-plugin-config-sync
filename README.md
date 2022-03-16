@@ -66,7 +66,17 @@ npm run build
 npm run develop
 ```
 
-The **Config Sync** plugin should appear in the **Plugins** section of Strapi sidebar after you run app again.
+The **Config Sync** plugin should now appear in the **Settings** section of your Strapi app.
+
+To start tracking your config changes you have to make the first export. This will dump all your configuration data to the `/config/sync` directory. To export, run:
+
+```bash
+# using yarn
+yarn config-sync export
+
+# using npm
+npm run config-sync export
+```
 
 Enjoy 🎉
 
@@ -76,7 +86,7 @@ Complete installation requirements are the exact same as for Strapi itself and c
 
 **Supported Strapi versions**:
 
-- Strapi 4.0.7 (recently tested)
+- Strapi 4.1.5 (recently tested)
 - Strapi ^4.x (use `strapi-plugin-config-sync@^1.0.0`)
 - Strapi ^3.4.x (use `strapi-plugin-config-sync@0.1.6`)
 

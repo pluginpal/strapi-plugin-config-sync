@@ -1,12 +1,12 @@
 {
   "name": "strapi-plugin-config-sync",
   "version": "1.0.0-beta.8",
-  "description": "CLI & GUI for syncing config data across environments.",
+  "description": "Migrate your config data across environments using the CLI or Strapi admin panel.",
   "strapi": {
     "displayName": "Config Sync",
     "name": "config-sync",
     "icon": "sync",
-    "description": "CLI & GUI for syncing config data across environments.",
+    "description": "Migrate your config data across environments using the CLI or Strapi admin panel.",
     "required": false,
     "kind": "plugin"
   },
@@ -57,10 +57,10 @@
   },
   "devDependencies": {
     "@fortawesome/react-fontawesome": "^0.1.16",
-    "@strapi/design-system": "^0.0.1-alpha.75",
-    "@strapi/helper-plugin": "^4.0.7",
-    "@strapi/icons": "^0.0.1-alpha.75",
-    "@strapi/utils": "^4.0.7",
+    "@strapi/design-system": "^0.0.1-alpha.79",
+    "@strapi/helper-plugin": "^4.1.5",
+    "@strapi/icons": "^0.0.1-alpha.79",
+    "@strapi/utils": "^4.1.5",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",

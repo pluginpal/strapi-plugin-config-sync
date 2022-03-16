@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const { Command } = require('commander');
 const Table = require('cli-table');
 const chalk = require('chalk');
@@ -68,6 +69,14 @@ const getConfigState = (diff, configName, syncType) => {
 
 const handleAction = async (syncType, skipConfirm, configType, partials) => {
   const app = await strapi().load();
+  const hasSyncDir = fs.existsSync(app.config.get('plugin.config-sync.syncDir'));
+
+  // No import with empty sync dir.
+  if (!hasSyncDir && syncType === 'import') {
+    console.log(`${chalk.yellow.bold('[warning]')} You can't import an empty sync directory. Please export before continuing.`);
+    process.exit(0);
+  }
+
   const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
   // No changes.
@@ -109,7 +118,9 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
   });
 
   // Print table.
-  console.log(table.toString(), '\n');
+  if (hasSyncDir) {
+    console.log(table.toString(), '\n');
+  }
 
   // Prompt to confirm.
   let answer = {};

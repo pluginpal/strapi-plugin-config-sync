@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 
 import { ModalLayout, ModalBody, ModalHeader } from '@strapi/design-system/ModalLayout';
-import { ButtonText } from '@strapi/design-system/Text';
 import { Grid, GridItem } from '@strapi/design-system/Grid';
 import { Typography } from '@strapi/design-system/Typography';
 
@@ -17,9 +16,9 @@ const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
       labelledBy="title"
     >
       <ModalHeader>
-        <ButtonText textColor="neutral800" as="h2" id="title">
+        <Typography variant="omega" fontWeight="bold" textColor="neutral800">
           Config changes for {configName}
-        </ButtonText>
+        </Typography>
       </ModalHeader>
       <ModalBody>
         <Grid paddingBottom={4} style={{ textAlign: 'center' }}>
