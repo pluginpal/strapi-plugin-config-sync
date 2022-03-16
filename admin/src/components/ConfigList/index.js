@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 
 import { Table, Thead, Tbody, Tr, Th } from '@strapi/design-system/Table';
-import { TableLabel } from '@strapi/design-system/Text';
+import { Typography } from '@strapi/design-system/Typography';
 import { BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
 import { Loader } from '@strapi/design-system/Loader';
 
@@ -127,13 +127,13 @@ const ConfigList = ({ diff, isLoading }) => {
               />
             </Th>
             <Th>
-              <TableLabel>Config name</TableLabel>
+              <Typography variant="sigma">Config name</Typography>
             </Th>
             <Th>
-              <TableLabel>Config type</TableLabel>
+              <Typography variant="sigma">Config type</Typography>
             </Th>
             <Th>
-              <TableLabel>State</TableLabel>
+              <Typography variant="sigma">State</Typography>
             </Th>
           </Tr>
         </Thead>

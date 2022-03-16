@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map } from 'immutable';
 import { Box } from '@strapi/design-system/Box';
+import { ContentLayout } from '@strapi/design-system/Layout';
 import { useNotification } from '@strapi/helper-plugin';
 import { Alert } from '@strapi/design-system/Alert';
 import { Typography } from '@strapi/design-system/Typography';
@@ -23,7 +24,7 @@ const ConfigPage = () => {
   }, []);
 
   return (
-    <Box paddingLeft={8} paddingRight={8} paddingBottom={8}>
+    <ContentLayout paddingBottom={8}>
       {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
@@ -35,7 +36,7 @@ const ConfigPage = () => {
       )}
       <ActionButtons />
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
-    </Box>
+    </ContentLayout>
   );
 };
 
