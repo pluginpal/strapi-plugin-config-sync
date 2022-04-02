@@ -46,7 +46,7 @@ const path = require('path');
 Rebuild your strapi project to build the admin part of the plugin.
 
 ```bash
-cd YOUR_STRAPI_PROJECT && yarn build --clean
+cd YOUR_STRAPI_PROJECT && yarn build
 ```
 
 #### 6. Running the administration panel in development mode
