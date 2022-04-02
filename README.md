@@ -68,15 +68,7 @@ npm run develop
 
 The **Config Sync** plugin should now appear in the **Settings** section of your Strapi app.
 
-To start tracking your config changes you have to make the first export. This will dump all your configuration data to the `/config/sync` directory. To export, run:
-
-```bash
-# using yarn
-yarn config-sync export
-
-# using npm
-npm run config-sync export
-```
+To start tracking your config changes you have to make the first export. This will dump all your configuration data to the `/config/sync` directory. You can export either through [the CLI](#-command-line-interface-cli) or [Strapi admin panel](#%EF%B8%8F-admin-panel-gui)
 
 Enjoy 🎉
 
@@ -191,7 +183,7 @@ npm run cs diff
 ```
 
 ## 🖥️ Admin panel (GUI)
-This plugin ships with a settings page which can be accessed from the admin panel of Strapi. On this page you can pretty much do the same as you can from the CLI. You can import, export and see the difference between the config as found in the sync directory, and the config as found in the database.
+This plugin ships with a React app which can be accessed from the settings page in Strapi admin panel. On this page you can pretty much do the same as you can from the CLI. You can import, export and see the difference between the config as found in the sync directory, and the config as found in the database.
 
 **Pro tip:**
 By clicking on one of the items in the diff table you can see the exact difference between sync dir and database in a git-style diff viewer.
