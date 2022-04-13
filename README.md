@@ -78,7 +78,7 @@ Complete installation requirements are the exact same as for Strapi itself and c
 
 **Supported Strapi versions**:
 
-- Strapi 4.1.5 (recently tested)
+- Strapi 4.1.8 (recently tested)
 - Strapi ^4.x (use `strapi-plugin-config-sync@^1.0.0`)
 - Strapi ^3.4.x (use `strapi-plugin-config-sync@0.1.6`)
 
