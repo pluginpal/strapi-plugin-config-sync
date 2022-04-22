@@ -87,6 +87,7 @@ const noLimit = async (query, parameters, limit = 100) => {
       ...parameters,
       limit: limit,
       offset: (i * limit),
+      orderBy: 'id',
     });
     entries = [...chunk, ...entries];
   }
