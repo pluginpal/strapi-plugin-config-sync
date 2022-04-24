@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
 const strapi = require('@strapi/strapi'); // eslint-disable-line
+const gitDiff = require('git-diff');
 
 const warnings = require('./warnings');
 const packageJSON = require('../package.json');
@@ -214,15 +215,33 @@ program
 program
   .command('diff')
   .alias('d')
-  // .option('-t, --type <type>', 'The type of config') // TODO: partial diff
   .description('The config diff')
-  .action(async ({ type }) => {
+  .action(async (options, { args }) => {
+    const single = args[0];
     const app = await strapi().load();
     const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
     // No changes.
     if (isEmpty(diff.diff)) {
       console.log(`${chalk.cyan.bold('[notice]')} No differences between DB and sync directory.`);
+      process.exit(0);
+    }
+
+    // Single config diff.
+    if (single) {
+      // No changes.
+      if (!diff.fileConfig[single] && !diff.databaseConfig[single]) {
+        console.log(`${chalk.cyan.bold('[notice]')} No differences between DB and sync directory for ${single}.`);
+        process.exit(0);
+      }
+
+      // Git diff.
+      console.log(gitDiff(
+        JSON.stringify(diff.fileConfig[single], null, 2),
+        JSON.stringify(diff.databaseConfig[single], null, 2),
+        { color: true },
+      ));
+
       process.exit(0);
     }
 

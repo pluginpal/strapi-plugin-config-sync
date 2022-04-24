@@ -182,6 +182,20 @@ yarn cs diff
 npm run cs diff
 ```
 
+##### Argument: `<single>`
+
+Add a single config name as the argument of the `diff` command to see the difference of that single file in a git-style diff viewer.
+
+_Example:_
+
+```bash
+# using yarn
+yarn cs diff user-role.public
+
+# using npm
+npm run cs diff user-role.public
+```
+
 ## 🖥️ Admin panel (GUI)
 This plugin ships with a React app which can be accessed from the settings page in Strapi admin panel. On this page you can pretty much do the same as you can from the CLI. You can import, export and see the difference between the config as found in the sync directory, and the config as found in the database.
 
