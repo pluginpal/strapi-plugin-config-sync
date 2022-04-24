@@ -4,6 +4,7 @@ const { isEmpty } = require('lodash');
 const fs = require('fs');
 const util = require('util');
 const difference = require('../utils/getObjectDiff');
+const { logMessage } = require('../utils');
 
 /**
  * Main services for config import/export.
@@ -118,6 +119,12 @@ module.exports = () => ({
         }
 
         const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
+
+        if (!fileContents) {
+          strapi.log.warn(logMessage(`An empty config file '${file}' was found in the sync directory`));
+          return;
+        }
+
         fileConfigs[`${type}.${formattedName}`] = fileContents;
       }));
 
