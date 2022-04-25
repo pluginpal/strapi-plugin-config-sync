@@ -183,6 +183,12 @@ const ConfigType = class ConfigType {
     await Promise.all(Object.values(AllConfig).map(async (config) => {
       const combinedUid = getCombinedUid(this.uidKeys, config);
       const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, config);
+
+      if (!combinedUid) {
+        strapi.log.warn(logMessage(`Missing data for entity with id ${config.id} of type ${this.configPrefix}`));
+        return;
+      }
+
       // Check if the config should be excluded.
       const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
       if (shouldExclude) return;
