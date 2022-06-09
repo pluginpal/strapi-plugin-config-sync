@@ -21,12 +21,21 @@ module.exports = async () => {
   const registerTypes = () => {
     const types = {};
 
+    // The default types provided by the plugin.
     defaultTypes(strapi).map((type) => {
       if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
         types[type.configName] = new ConfigType(type);
       }
     });
 
+    // The types provided by other plugins.
+    strapi.plugin('config-sync').pluginTypes.map((type) => {
+      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+        types[type.configName] = new ConfigType(type);
+      }
+    });
+
+    // The custom types provided by the user.
     strapi.config.get('plugin.config-sync.customTypes').map((type) => {
       if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
         types[type.configName] = new ConfigType(type);
