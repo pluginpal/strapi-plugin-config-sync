@@ -14,6 +14,33 @@ const packageJSON = require('../package.json');
 
 const program = new Command();
 
+const getStrapiApp = async () => {
+  try {
+    const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
+
+    const appDir = process.cwd();
+    const isTSProject = await tsUtils.isUsingTypeScript(appDir);
+    const outDir = await tsUtils.resolveOutDir(appDir);
+
+    if (isTSProject) {
+      await tsUtils.compile(appDir, {
+        watch: false,
+        configOptions: { options: { incremental: true } },
+      });
+    }
+
+    const distDir = isTSProject ? outDir : appDir;
+
+    const app = await strapi({ appDir, distDir }).load();
+
+    return app;
+  } catch (e) {
+    // Fallback for pre Strapi 4.2.
+    const app = await strapi().load();
+    return app;
+  }
+};
+
 const initTable = (head) => {
   return new Table({
     head: [chalk.green('Name'), chalk.green(head || 'State')],
@@ -69,7 +96,7 @@ const getConfigState = (diff, configName, syncType) => {
 };
 
 const handleAction = async (syncType, skipConfirm, configType, partials) => {
-  const app = await strapi().load();
+  const app = await getStrapiApp();
   const hasSyncDir = fs.existsSync(app.config.get('plugin.config-sync.syncDir'));
 
   // No import with empty sync dir.
@@ -218,7 +245,7 @@ program
   .description('The config diff')
   .action(async (options, { args }) => {
     const single = args[0];
-    const app = await strapi().load();
+    const app = await getStrapiApp();
     const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
     // No changes.
