@@ -24,8 +24,9 @@ module.exports = () => ({
     const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
-    // Replace ':' with '#' in filenames for Windows support.
+    // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#");
+    configName = configName.replace(/\//g, "$");
 
     // Check if the JSON content should be minified.
     const json = !strapi.config.get('plugin.config-sync').minify
@@ -59,8 +60,9 @@ module.exports = () => ({
     const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
-    // Replace ':' with '#' in filenames for Windows support.
+    // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#");
+    configName = configName.replace(/\//g, "$");
 
     fs.unlinkSync(`${strapi.config.get('plugin.config-sync.syncDir')}${configName}.json`);
   },
@@ -73,8 +75,9 @@ module.exports = () => ({
    * @returns {object} The JSON content of the config file.
    */
   readConfigFile: async (configType, configName) => {
-    // Replace ':' with '#' in filenames for Windows support.
+    // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#");
+    configName = configName.replace(/\//g, "$");
 
     const readFile = util.promisify(fs.readFile);
     return readFile(`${strapi.config.get('plugin.config-sync.syncDir')}${configType}.${configName}.json`)
@@ -107,8 +110,9 @@ module.exports = () => ({
         const type = file.split('.')[0]; // Grab the first part of the filename.
         const name = file.split(/\.(.+)/)[1].split('.').slice(0, -1).join('.'); // Grab the rest of the filename minus the file extension.
 
-        // Replace ':' with '#' in filenames for Windows support.
-        const formattedName = name.replace(/#/g, ":");
+        // Put back reserved characters from filenames.
+        let formattedName = name.replace(/#/g, ":");
+        formattedName = name.replace(/\$/g, "/");
 
         if (
           configType && configType !== type
