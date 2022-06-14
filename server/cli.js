@@ -7,7 +7,6 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
 const strapi = require('@strapi/strapi'); // eslint-disable-line
-const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
 const gitDiff = require('git-diff');
 
 const warnings = require('./warnings');
@@ -16,22 +15,30 @@ const packageJSON = require('../package.json');
 const program = new Command();
 
 const getStrapiApp = async () => {
-  const appDir = process.cwd();
-  const isTSProject = await tsUtils.isUsingTypeScript(appDir);
-  const outDir = await tsUtils.resolveOutDir(appDir);
+  try {
+    const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
 
-  if (isTSProject) {
-    await tsUtils.compile(appDir, {
-      watch: false,
-      configOptions: { options: { incremental: true } },
-    });
+    const appDir = process.cwd();
+    const isTSProject = await tsUtils.isUsingTypeScript(appDir);
+    const outDir = await tsUtils.resolveOutDir(appDir);
+
+    if (isTSProject) {
+      await tsUtils.compile(appDir, {
+        watch: false,
+        configOptions: { options: { incremental: true } },
+      });
+    }
+
+    const distDir = isTSProject ? outDir : appDir;
+
+    const app = await strapi({ appDir, distDir }).load();
+
+    return app;
+  } catch (e) {
+    // Fallback for pre Strapi 4.2.
+    const app = await strapi().load();
+    return app;
   }
-
-  const distDir = isTSProject ? outDir : appDir;
-
-  const app = await strapi({ appDir, distDir }).load();
-
-  return app;
 };
 
 const initTable = (head) => {
