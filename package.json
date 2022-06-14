@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Migrate your config data across environments using the CLI or Strapi admin panel.",
   "strapi": {
     "displayName": "Config Sync",
