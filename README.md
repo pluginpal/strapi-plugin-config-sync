@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Strapi config-sync plugin</h1>
 	
-<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used to version control config data for automated deployment, automated tests and data sharing for collaboration purposes.</p>
+<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used to version control [config data](#-config-types) for automated deployment, automated tests and data sharing for collaboration purposes.</p>
 	
 <p>
   <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
@@ -18,6 +18,19 @@
   </a>
 </p>
 </div>
+
+## Table of Contents
+
+- [Features](#-features)
+- [Installation](#-installation)
+- [Requirements](#-requirements)
+- [Motivation](#-motivation)
+- [CLI](#-command-line-interface-cli)
+- [Admin panel](#%EF%B8%8F-admin-panel-gui)
+- [Usage / Workflow](#%EF%B8%8F-usage--workflow)
+- [Config types](#-config-types)
+- [Naming convention](#-naming-convention)
+- [Settings](#-settings)
 
 ## ✨ Features
 
@@ -201,9 +214,15 @@ By clicking on one of the items in the diff table you can see the exact differen
 <img src="https://raw.githubusercontent.com/boazpoolman/strapi-plugin-config-sync/master/.github/config-diff.png" alt="Config diff in admin" />
 
 ## ⌨️ Usage / Workflow
-This plugin works best when you use `git` for the version control of your Strapi project. When you do so, with this plugin you are able to version control your config data through files.
+This plugin works best when you use `git` for the version control of your Strapi project.
 
 _The following workflows are assuming you're using `git`._
+
+### Intro
+All database records tracked with this plugin will be exported to JSON files. Once exported each change to the file or the record will be tracked. Meaning you can now do one of two things:
+
+- Change the file(s), and run an import. You have now imported from filesystem -> database.
+- Change the record(s), and run an export. You have now exported from database -> filesystem. 
 
 ### Local development
 When building a new feature locally for your Strapi project you'd use the following workflow:
@@ -220,20 +239,13 @@ When deploying the newly created feature - to either a server, or a co-worker's 
 - Import the config.
 
 ### Production deployment
-When deploying to production you'd use the same deployment workflow as described above. But before you do, you have to take some extra precautions to ensure no data will be lost:
-
-- Run `yarn cs diff` to verify there are no config changes that could be overwritten.
-- If there have been changes made;
-	- Export these before you pull the new config.
-	- Commit and push the exported files to git.
-	- If needed; merge into the branch you were about to pull.
-- Continue with the regular deployment workflow.
-
-Try to avoid making config changes directly on production. You wouldn't want to change something like API permissions (roles) on production without it being in your version control.
+The production deployment will be the same as a regular deployment. You just have to be careful before running the import. Ideally making sure the are no open changes before you pull the new code to the environment.
 
 ## 🚀 Config types
 
-This plugin allows you sync data from any type through the CLI & GUI. By default the plugin will track 4 (official) types. Custom types can be registered by setting some plugin config.
+By default the plugin will track 4 (official) types. 
+
+To track your own custom types you can register them by setting some plugin config.
 
 ### Default types
 
