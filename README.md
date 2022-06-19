@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Strapi config-sync plugin</h1>
 	
-<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used to version control [config data](#-config-types) for automated deployment, automated tests and data sharing for collaboration purposes.</p>
+<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used to version control <a href="#-config-types">config data</a> for automated deployment, automated tests and data sharing for collaboration purposes.</p>
 	
 <p>
   <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
