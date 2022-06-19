@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Strapi config-sync plugin</h1>
 	
-<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used for automated deployment, automated tests and data sharing for collaboration purposes.</p>
+<p style="margin-top: 0;">This plugin is a multi-purpose tool to manage your Strapi database records through JSON files. Mostly used to version control config data for automated deployment, automated tests and data sharing for collaboration purposes.</p>
 	
 <p>
   <a href="https://www.npmjs.org/package/strapi-plugin-config-sync">
@@ -21,13 +21,13 @@
 
 ## ✨ Features
 
-- **CLI** (`config-sync` CLI for syncing the config from the command line)
-- **GUI** (Settings page for syncing the config in Strapi admin)
-- **Partial sync** (Import or export only specific portions of config)
-- **Custom types** (Include your custom collection types in the sync process)
-- **Import on bootstrap** (Easy automated deployment with `importOnBootstrap`)
-- **Exclusion** (Exclude single config entries or all entries of a given type)
-- **Diff viewer** (A git-style diff viewer to inspect the config changes)
+- **CLI** - `config-sync` CLI for syncing the config from the command line
+- **GUI** - Settings page for syncing the config in Strapi admin
+- **Partial sync** - Import or export only specific portions of config
+- **Custom types** - Include your custom collection types in the sync process
+- **Import on bootstrap** - Easy automated deployment with `importOnBootstrap`
+- **Exclusion** - Exclude single config entries or all entries of a given type
+- **Diff viewer** - A git-style diff viewer to inspect the config changes
 
 ## ⏳ Installation
 
@@ -81,10 +81,6 @@ Complete installation requirements are the exact same as for Strapi itself and c
 - Strapi 4.1.8 (recently tested)
 - Strapi ^4.x (use `strapi-plugin-config-sync@^1.0.0`)
 - Strapi ^3.4.x (use `strapi-plugin-config-sync@0.1.6`)
-
-(This plugin may work with older Strapi versions, but these are not tested nor officially supported at this time.)
-
-**We recommend always using the latest version of Strapi to start your new projects**.
 
 ## 💡 Motivation
 In Strapi we come across what I would call config types. These are models of which the records are stored in our database, just like content types. Though the big difference here is that your code ofter relies on the database records of these types. 
