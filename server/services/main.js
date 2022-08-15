@@ -227,11 +227,9 @@ module.exports = () => ({
 
     try {
       await strapi.plugin('config-sync').types[type].importSingle(name, fileContents);
-      if (onSuccess) {
-        onSuccess(`${type}.${name}`);
-      }
+      if (onSuccess) onSuccess(`${type}.${name}`);
     } catch (e) {
-      throw new Error(e);
+      throw new Error(`Error when trying to import ${type}.${name}. ${e}`);
     }
   },
 
@@ -240,6 +238,7 @@ module.exports = () => ({
    *
    * @param {string} configName - The name of the config file.
    * @param {object} onSuccess - Success callback to run on each single successfull import.
+   *
    * @returns {void}
    */
    exportSingleConfig: async (configName, onSuccess) => {
@@ -252,11 +251,9 @@ module.exports = () => ({
 
     try {
       await strapi.plugin('config-sync').types[type].exportSingle(configName);
-      if (onSuccess) {
-        onSuccess(`${type}.${name}`);
-      }
+      if (onSuccess) onSuccess(`${type}.${name}`);
     } catch (e) {
-      throw new Error(e);
+      throw new Error(`Error when trying to export ${type}.${name}. ${e}`);
     }
   },
 

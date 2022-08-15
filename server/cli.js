@@ -178,7 +178,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
         }));
         console.log(`${chalk.green.bold('[success]')} Finished import`);
       } catch (e) {
-        console.log(`${chalk.red.bold('[error]')} Something went wrong during the import. ${e}`);
+        console.log(`${chalk.red.bold('[error]')} ${e}`);
       }
     }
     if (syncType === 'export') {
@@ -190,7 +190,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
         }));
         console.log(`${chalk.green.bold('[success]')} Finished export`);
       } catch (e) {
-        console.log(`${chalk.red.bold('[error]')} Something went wrong during the export. ${e}`);
+        console.log(`${chalk.red.bold('[error]')} ${e}`);
       }
     }
   }
