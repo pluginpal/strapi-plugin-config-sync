@@ -26,4 +26,16 @@ describe('Test the config-sync CLI', () => {
     const { stdout } = await exec('yarn cs diff');
     expect(stdout).toContain('No differences between DB and sync directory');
   });
+  test('Non-empty diff returns 1', async () => {
+    await exec('rm -rf config/sync/admin-role.strapi-author.json');
+    // Work around Jest not supporting custom error matching.
+    // https://github.com/facebook/jest/issues/8140
+    let error;
+    try {
+      await exec('yarn cs diff');
+    } catch(e) {
+     error = e;
+    }
+    expect(error).toHaveProperty('code', 1);
+  });
 });

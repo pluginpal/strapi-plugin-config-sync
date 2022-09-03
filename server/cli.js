@@ -269,7 +269,7 @@ program
         { color: true },
       ));
 
-      process.exit(0);
+      process.exit(1);
     }
 
     // Init table.
@@ -283,7 +283,7 @@ program
     // Print table.
     console.log(table.toString());
 
-    process.exit(0);
+    process.exit(1);
   });
 
 program.parseAsync(process.argv);
