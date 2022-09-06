@@ -102,6 +102,7 @@ yarn.lock
 
 testApp
 coverage
+/config/sync
 
 ############################
 # Strapi
