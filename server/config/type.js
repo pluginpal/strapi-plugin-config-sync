@@ -195,9 +195,10 @@ const ConfigType = class ConfigType {
 
       const formattedConfig = { ...sanitizeConfig(config) };
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields, parentName }) => {
-        const relations = await noLimit(strapi.query(queryString), {
-          where: { [parentName]: combinedUidWhereFilter },
-        });
+        const relations = await noLimit(strapi.query(this.queryString), {
+          where: combinedUidWhereFilter,
+          populate: [relationName]
+        }).then(rows => rows.flatMap(r => r[relationName]));
 
         relations.map((relation) => sanitizeConfig(relation));
         relationSortFields.map((sortField) => {
