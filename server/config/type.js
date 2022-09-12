@@ -49,20 +49,6 @@ const ConfigType = class ConfigType {
       });
 
     if (existingConfig && configContent === null) { // Config exists in DB but no configfile content --> delete config from DB
-      await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
-        const relations = await noLimit(strapi.query(queryString), {
-          where: {
-            [parentName]: existingConfig.id,
-          },
-        });
-
-        await Promise.all(relations.map(async (relation) => {
-          await strapi.query(queryString).delete({
-            where: { id: relation.id },
-          });
-        }));
-      }));
-
       await queryAPI.delete({
         where: { id: existingConfig.id },
       });
@@ -104,32 +90,26 @@ const ConfigType = class ConfigType {
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
 
       // Update entity.
-      // TODO: See if this is redundaunt now?
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
 
       // Delete/create relations.
-      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
+      const relationRows = await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
         const relationQueryApi = strapi.query(queryString);
-        existingConfig = sanitizeConfig(existingConfig, relationName, relationSortFields);
         configContent = sanitizeConfig(configContent, relationName, relationSortFields);
 
-        const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
-
-        const existingRows = await relationQueryApi.findMany({
+        return relationQueryApi.findMany({
           where: {
-            $and: relationSortFields.map((field) => ({ [field]: { $in: configToAdd.map(c => c[field] ) } }))
+            $and: relationSortFields.map((field) => ({ [field]: { $in: configContent[relationName].map(c => c[field] ) } }))
           }
         })
-
-        await queryAPI.update({
-          where: combinedUidWhereFilter,
-          data: {
-            ...configContent,
-            [relationName]: existingRows.map(r => r.id)
-          }
-        });
       }));
+
+      const data = this.relations.reduce((acc, { relationName }, index) => {
+        acc[relationName] = relationRows[index].map(r => r.id)
+        return acc
+      }, { ...query })
+
+      await queryAPI.update({ where: combinedUidWhereFilter, data });
     }
   }
 
