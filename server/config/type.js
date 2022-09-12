@@ -79,15 +79,24 @@ const ConfigType = class ConfigType {
       this.relations.map(({ relationName }) => delete query[relationName]);
       const newEntity = await queryAPI.create({ data: query });
 
-      // Create relation entities.
-      await Promise.all(this.relations.map(async ({ queryString, relationName, parentName }) => {
+      await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields }) => {
         const relationQueryApi = strapi.query(queryString);
 
-        await Promise.all(configContent[relationName].map(async (relationEntity) => {
-          const relationQuery = { ...relationEntity, [parentName]: newEntity };
-          await relationQueryApi.create({ data: relationQuery });
-        }));
-      }));
+        const existingRows = await relationQueryApi.findMany({
+          where: {
+            $and: relationSortFields.map((field) => ({ [field]: { $in: configContent[relationName].map(c => c[field] ) } }))
+          }
+        })
+
+        // Create relation entities.
+        await queryAPI.update({
+          where: { id: newEntity.id },
+          data: {
+            ...configContent,
+            [relationName]: existingRows.map(r => r.id)
+          }
+        });
+      }))
     } else { // Config does exist in DB --> update config in DB
       // Format JSON fields.
       configContent = sanitizeConfig(configContent);
@@ -95,6 +104,7 @@ const ConfigType = class ConfigType {
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
 
       // Update entity.
+      // TODO: See if this is redundaunt now?
       this.relations.map(({ relationName }) => delete query[relationName]);
       const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
 
@@ -105,42 +115,20 @@ const ConfigType = class ConfigType {
         configContent = sanitizeConfig(configContent, relationName, relationSortFields);
 
         const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
-        const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
-        const configToUpdate = same(configContent[relationName], existingConfig[relationName], relationSortFields);
 
-        await Promise.all(configToDelete.map(async (config) => {
-          const whereClause = {};
-          relationSortFields.map((sortField) => {
-            whereClause[sortField] = config[sortField];
-          });
-          await relationQueryApi.delete({
-            where: {
-              ...whereClause,
-              [parentName]: entity.id,
-            },
-          });
-        }));
+        const existingRows = await relationQueryApi.findMany({
+          where: {
+            $and: relationSortFields.map((field) => ({ [field]: { $in: configToAdd.map(c => c[field] ) } }))
+          }
+        })
 
-        await Promise.all(configToAdd.map(async (config) => {
-          await relationQueryApi.create({
-            data: { ...config, [parentName]: entity.id },
-          });
-        }));
-
-        await Promise.all(configToUpdate.map(async (config, index) => {
-          const whereClause = {};
-          relationSortFields.map((sortField) => {
-            whereClause[sortField] = config[sortField];
-          });
-
-          await relationQueryApi.update({
-            where: {
-              ...whereClause,
-              [parentName]: entity.id,
-            },
-            data: { ...config, [parentName]: entity.id },
-          });
-        }));
+        await queryAPI.update({
+          where: combinedUidWhereFilter,
+          data: {
+            ...configContent,
+            [relationName]: existingRows.map(r => r.id)
+          }
+        });
       }));
     }
   }
