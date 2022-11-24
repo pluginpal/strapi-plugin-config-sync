@@ -21,8 +21,9 @@ const getStrapiApp = async () => {
     const appDir = process.cwd();
     const isTSProject = await tsUtils.isUsingTypeScript(appDir);
     const outDir = await tsUtils.resolveOutDir(appDir);
+    const alreadyCompiled = await fs.existsSync(outDir);
 
-    if (isTSProject) {
+    if (isTSProject && !alreadyCompiled) {
       await tsUtils.compile(appDir, {
         watch: false,
         configOptions: { options: { incremental: true } },
