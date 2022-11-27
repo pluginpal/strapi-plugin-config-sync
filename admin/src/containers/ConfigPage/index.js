@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map } from 'immutable';
-import { Box } from '@strapi/design-system/Box';
-import { ContentLayout } from '@strapi/design-system/Layout';
+import {
+  Box,
+  ContentLayout,
+  Alert,
+  Typography,
+} from '@strapi/design-system';
 import { useNotification } from '@strapi/helper-plugin';
-import { Alert } from '@strapi/design-system/Alert';
-import { Typography } from '@strapi/design-system/Typography';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';

@@ -1,12 +1,16 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-import { Dialog, DialogBody, DialogFooter } from '@strapi/design-system/Dialog';
-import { Flex } from '@strapi/design-system/Flex';
-import { Typography } from '@strapi/design-system/Typography';
-import { Stack } from '@strapi/design-system/Stack';
-import { Button } from '@strapi/design-system/Button';
-import ExclamationMarkCircle from '@strapi/icons/ExclamationMarkCircle';
+import {
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  Flex,
+  Typography,
+  Stack,
+  Button,
+} from '@strapi/design-system';
+import { ExclamationMarkCircle } from '@strapi/icons';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   const { formatMessage } = useIntl();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { NoContent, useNotification } from '@strapi/helper-plugin';
-import { Button } from '@strapi/design-system/Button';
+import { Button } from '@strapi/design-system';
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';

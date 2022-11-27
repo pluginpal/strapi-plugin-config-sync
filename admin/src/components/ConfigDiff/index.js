@@ -1,9 +1,14 @@
 import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 
-import { ModalLayout, ModalBody, ModalHeader } from '@strapi/design-system/ModalLayout';
-import { Grid, GridItem } from '@strapi/design-system/Grid';
-import { Typography } from '@strapi/design-system/Typography';
+import {
+  ModalLayout,
+  ModalBody,
+  ModalHeader,
+  Grid,
+  GridItem,
+  Typography,
+} from '@strapi/design-system';
 
 const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
   if (!isOpen) {

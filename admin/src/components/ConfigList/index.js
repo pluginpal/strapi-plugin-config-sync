@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 
-import { Table, Thead, Tbody, Tr, Th } from '@strapi/design-system/Table';
-import { Typography } from '@strapi/design-system/Typography';
-import { BaseCheckbox } from '@strapi/design-system/BaseCheckbox';
-import { Loader } from '@strapi/design-system/Loader';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Typography,
+  BaseCheckbox,
+  Loader,
+} from '@strapi/design-system';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
