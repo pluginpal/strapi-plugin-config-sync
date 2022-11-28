@@ -64,7 +64,7 @@ export function importAllConfig(partialDiff, force, toggleNotification) {
         body: {
           force,
           config: partialDiff,
-        }
+        },
       });
       toggleNotification({ type: 'success', message });
       dispatch(getAllConfigDiff(toggleNotification));
