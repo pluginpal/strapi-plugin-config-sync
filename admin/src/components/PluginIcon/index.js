@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Icon } from '@strapi/design-system/Icon';
+import { Icon } from '@strapi/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import pluginPkg from '../../../../package.json';
