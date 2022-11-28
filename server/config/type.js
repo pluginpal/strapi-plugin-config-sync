@@ -32,13 +32,15 @@ const ConfigType = class ConfigType {
    *
    * @param {string} configName - The name of the config file.
    * @param {string} configContent - The JSON content of the config file.
+   * @param {boolean} force - Ignore the soft setting.
    * @returns {void}
    */
-  importSingle = async (configName, configContent) => {
+  importSingle = async (configName, configContent, force) => {
     // Check if the config should be excluded.
     const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
+    const softImport = strapi.config.get('plugin.config-sync.soft');
     const queryAPI = strapi.query(this.queryString);
     const uidParams = getUidParamsFromName(this.uidKeys, configName);
     const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, uidParams);
@@ -48,7 +50,11 @@ const ConfigType = class ConfigType {
         populate: this.relations.map(({ relationName }) => relationName),
       });
 
-    if (existingConfig && configContent === null) { // Config exists in DB but no configfile content --> delete config from DB
+    // Config exists in DB but no configfile content --> delete config from DB
+    if (existingConfig && configContent === null) {
+      // Don't preform action when soft setting is true.
+      if (softImport && !force) return false;
+
       await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: {
@@ -70,7 +76,8 @@ const ConfigType = class ConfigType {
       return;
     }
 
-    if (!existingConfig) { // Config does not exist in DB --> create config in DB
+    // Config does not exist in DB --> create config in DB
+    if (!existingConfig) {
       // Format JSON fields.
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
@@ -89,6 +96,9 @@ const ConfigType = class ConfigType {
         }));
       }));
     } else { // Config does exist in DB --> update config in DB
+      // Don't preform action when soft setting is true.
+      if (softImport && !force) return false;
+
       // Format JSON fields.
       configContent = sanitizeConfig(configContent);
       const query = { ...configContent };

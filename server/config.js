@@ -4,6 +4,7 @@ module.exports = {
   default: {
     syncDir: "config/sync/",
     minify: false,
+    soft: false,
     importOnBootstrap: false,
     customTypes: [],
     excludedTypes: [],

@@ -37,7 +37,7 @@ const ActionButtons = () => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         type={actionType}
-        onSubmit={() => actionType === 'import' ? dispatch(importAllConfig(partialDiff, toggleNotification)) : dispatch(exportAllConfig(partialDiff, toggleNotification))}
+        onSubmit={(force) => actionType === 'import' ? dispatch(importAllConfig(partialDiff, force, toggleNotification)) : dispatch(exportAllConfig(partialDiff, toggleNotification))}
       />
     </ActionButtonsStyling>
   );

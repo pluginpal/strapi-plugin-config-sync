@@ -55,13 +55,16 @@ export function exportAllConfig(partialDiff, toggleNotification) {
   };
 }
 
-export function importAllConfig(partialDiff, toggleNotification) {
+export function importAllConfig(partialDiff, force, toggleNotification) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
       const { message } = await request('/config-sync/import', {
         method: 'POST',
-        body: partialDiff,
+        body: {
+          force,
+          config: partialDiff,
+        }
       });
       toggleNotification({ type: 'success', message });
       dispatch(getAllConfigDiff(toggleNotification));
@@ -84,10 +87,10 @@ export function setLoadingState(value) {
 export function getAppEnv(toggleNotification) {
   return async function(dispatch) {
     try {
-      const { env } = await request('/config-sync/app-env', {
+      const envVars = await request('/config-sync/app-env', {
         method: 'GET',
       });
-      dispatch(setAppEnvInState(env));
+      dispatch(setAppEnvInState(envVars));
     } catch (err) {
       toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
     }

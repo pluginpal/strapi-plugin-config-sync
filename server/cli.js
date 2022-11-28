@@ -95,7 +95,7 @@ const getConfigState = (diff, configName, syncType) => {
   }
 };
 
-const handleAction = async (syncType, skipConfirm, configType, partials) => {
+const handleAction = async (syncType, skipConfirm, configType, partials, force) => {
   const app = await getStrapiApp();
   const hasSyncDir = fs.existsSync(app.config.get('plugin.config-sync.syncDir'));
 
@@ -173,7 +173,7 @@ const handleAction = async (syncType, skipConfirm, configType, partials) => {
             && warnings.delete[name]
           ) warning = warnings.delete[name];
 
-          await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess);
+          await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess, force);
           if (warning) console.log(`${chalk.yellow.bold('[warning]')} ${warning}`);
         }));
         console.log(`${chalk.green.bold('[success]')} Finished import`);
@@ -221,9 +221,10 @@ program
   .option('-t, --type <type>', 'The type of config')
   .option('-p, --partial <partials>', 'A comma separated string of configs')
   .option('-y, --yes', 'Skip the confirm prompt')
+  .option('-f, --force', 'Ignore the soft setting')
   .description('Import the config')
-  .action(async ({ yes, type, partial }) => {
-    return handleAction('import', yes, type, partial);
+  .action(async ({ yes, type, partial, force }) => {
+    return handleAction('import', yes, type, partial, force);
   });
 
 // `$ config-sync export`

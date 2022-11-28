@@ -6,6 +6,7 @@
   "popUpWarning.button.import": "Yes, import",
   "popUpWarning.button.export": "Yes, export",
   "popUpWarning.button.cancel": "Cancel",
+  "popUpWarning.force": "Force",
 
   "Header.Title": "Config Sync",
   "Header.Description": "Manage your database config across environments.",

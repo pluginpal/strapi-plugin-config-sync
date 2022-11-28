@@ -214,9 +214,10 @@ module.exports = () => ({
    *
    * @param {string} configName - The name of the config file.
    * @param {object} onSuccess - Success callback to run on each single successfull import.
+   * @param {boolean} force - Ignore the soft setting.
    * @returns {void}
    */
-  importSingleConfig: async (configName, onSuccess) => {
+  importSingleConfig: async (configName, onSuccess, force) => {
     // Check if the config should be excluded.
     const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
@@ -226,8 +227,8 @@ module.exports = () => ({
     const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
-      await strapi.plugin('config-sync').types[type].importSingle(name, fileContents);
-      if (onSuccess) onSuccess(`${type}.${name}`);
+      const importState = await strapi.plugin('config-sync').types[type].importSingle(name, fileContents, force);
+      if (onSuccess && importState !== false) onSuccess(`${type}.${name}`);
     } catch (e) {
       throw new Error(`Error when trying to import ${type}.${name}. ${e}`);
     }

@@ -18,7 +18,7 @@ const ConfigPage = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], Map({})));
   const configDiff = useSelector((state) => state.getIn(['config', 'configDiff'], Map({})));
-  const appEnv = useSelector((state) => state.getIn(['config', 'appEnv']));
+  const appEnv = useSelector((state) => state.getIn(['config', 'appEnv', 'env']));
 
   useEffect(() => {
     dispatch(getAllConfigDiff(toggleNotification));

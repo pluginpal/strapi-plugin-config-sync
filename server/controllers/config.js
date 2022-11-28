@@ -45,16 +45,16 @@ module.exports = {
       return;
     }
 
-    if (!ctx.request.body) {
+    if (!ctx.request.body.config) {
       ctx.send({
-        message: 'No config was specified for the export endpoint.',
+        message: 'No config was specified for the import endpoint.',
       });
 
       return;
     }
 
-    await Promise.all(ctx.request.body.map(async (configName) => {
-      await strapi.plugin('config-sync').service('main').importSingleConfig(configName);
+    await Promise.all(ctx.request.body.config.map(async (configName) => {
+      await strapi.plugin('config-sync').service('main').importSingleConfig(configName, null, ctx.request.body.force);
     }));
 
     ctx.send({
@@ -89,6 +89,9 @@ module.exports = {
    * @returns {string} The current Strapi environment.
    */
   getAppEnv: async () => {
-    return { env: strapi.server.app.env };
+    return {
+      env: strapi.server.app.env,
+      config: strapi.config.get('plugin.config-sync'),
+    };
   },
 };
