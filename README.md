@@ -175,6 +175,15 @@ Use this flag to sync a specific set of configs by giving the CLI a comma-separa
 ```bash
 [command] --partial user-role.public,i18n-locale.en
 ```
+
+##### Flag: `-f`, `--force`
+
+If you're using the soft setting to gracefully import config, you can use this flag to ignore the setting for the current command and forcefully import all changes anyway.
+
+```bash
+[command] --force
+```
+
 ### ↔️ Diff
 
 > _Command:_ `diff` | _Alias:_ `d`
@@ -342,6 +351,7 @@ In the example below you can see how, and also what the default settings are.
 	    config: {
 	      syncDir: "config/sync/",
 	      minify: false,
+	      soft: false,
 	      importOnBootstrap: false,
 	      customTypes: [],
 	      excludedTypes: [],
@@ -366,6 +376,14 @@ The path for reading and writing the sync files.
 When enabled all the exported JSON files will be minified.
 
 ###### Key: `minify`
+
+> `required:` NO | `type:` bool | `default:` `false`
+
+### Soft
+
+When enabled the import action will be limited to only create new entries. Entries to be deleted, or updated will be skipped from the import process and will remain in it's original state.
+
+###### Key: `soft`
 
 > `required:` NO | `type:` bool | `default:` `false`
 

@@ -16,7 +16,7 @@ const initialState = fromJS({
   configDiff: Map({}),
   partialDiff: List([]),
   isLoading: false,
-  appEnv: 'development',
+  appEnv: Map({}),
 });
 
 export default function configReducer(state = initialState, action) {

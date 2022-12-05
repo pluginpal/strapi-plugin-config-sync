@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 import {
   Dialog,
@@ -9,10 +10,15 @@ import {
   Typography,
   Stack,
   Button,
+  Checkbox,
+  Divider,
+  Box,
 } from '@strapi/design-system';
 import { ExclamationMarkCircle } from '@strapi/icons';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
+  const soft = useSelector((state) => state.getIn(['config', 'appEnv', 'config', 'soft'], false));
+  const [force, setForce] = useState(false);
   const { formatMessage } = useIntl();
 
   if (!isOpen) return null;
@@ -33,6 +39,21 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
           </Flex>
         </Stack>
       </DialogBody>
+      {(soft && type === 'import') && (
+        <React.Fragment>
+          <Divider />
+          <Box padding={4}>
+            <Checkbox
+              onValueChange={(value) => setForce(value)}
+              value={force}
+              name="force"
+              hint="Check this to ignore the soft setting."
+            >
+              {formatMessage({ id: 'config-sync.popUpWarning.force' })}
+            </Checkbox>
+          </Box>
+        </React.Fragment>
+      )}
       <DialogFooter
         startAction={(
           <Button
@@ -49,7 +70,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
             variant="secondary"
             onClick={() => {
               onClose();
-              onSubmit();
+              onSubmit(force);
             }}
           >
             {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
