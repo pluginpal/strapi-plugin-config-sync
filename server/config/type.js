@@ -55,6 +55,11 @@ const ConfigType = class ConfigType {
       // Don't preform action when soft setting is true.
       if (softImport && !force) return false;
 
+      // Exit when trying to delete the super-admin role.
+      if (this.configPrefix === 'admin-role' && configName === 'strapi-super-admin') {
+        return false;
+      }
+
       await Promise.all(this.relations.map(async ({ queryString, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: {
