@@ -46,7 +46,7 @@ jobs:
       - name: Build playground
         run: yarn playground:build
       - name: Run test
-        run: yarn run -s test:integration
+        run: cd playground && jest --verbose
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
