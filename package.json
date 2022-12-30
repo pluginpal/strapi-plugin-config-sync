@@ -17,7 +17,7 @@
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
-    "test:integration": "cd playground && jest --verbose",
+    "test:integration": "cd playground && node_modules/.bin/jest --verbose",
     "plugin:install": "yarn install && rm -rf node_modules/@strapi/helper-plugin",
     "playground:install": "cd playground && yarn install",
     "playground:build": "cd playground && yarn build",
