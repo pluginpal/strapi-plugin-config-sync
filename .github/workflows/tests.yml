@@ -40,7 +40,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
       - name: Install dependencies plugin
-        run: yarn --frozen-lockfile --unsafe-perm
+        run: yarn --frozen-lockfile --unsafe-perm --production
       - name: Install dependencies playground
         run: yarn playground:install --frozen-lockfile --unsafe-perm
       - name: Build playground
