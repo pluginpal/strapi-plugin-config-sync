@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button } from '@strapi/design-system';
+import { Button } from '@strapi/design-system/Button';
 import { Map } from 'immutable';
 import { useNotification } from '@strapi/helper-plugin';
 
