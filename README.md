@@ -356,7 +356,8 @@ In the example below you can see how, and also what the default settings are.
 	      customTypes: [],
 	      excludedTypes: [],
 	      excludedConfig: [
-	        "core-store.plugin_users-permissions_grant"
+	        "core-store.plugin_users-permissions_grant",
+          "core-store.plugin_upload_metrics"
 	      ],
 	    },
 	  },
