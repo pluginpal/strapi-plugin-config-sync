@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: 16
           cache: 'yarn'
+          always-auth: true
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Get the release tag version
