@@ -11,9 +11,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
+          always-auth: true
           node-version: 16
           cache: 'yarn'
-          always-auth: true
+          registry-url: 'https://registry.npmjs.org/'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Get the release tag version
