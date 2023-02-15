@@ -357,7 +357,8 @@ In the example below you can see how, and also what the default settings are.
 	      excludedTypes: [],
 	      excludedConfig: [
 	        "core-store.plugin_users-permissions_grant",
-          "core-store.plugin_upload_metrics"
+          "core-store.plugin_upload_metrics",
+          "core-store.strapi_content_types_schema",
 	      ],
 	    },
 	  },
@@ -424,7 +425,7 @@ Specify the names of configs you want to exclude from the syncing process. By de
 
 ###### Key: `excludedConfig`
 
-> `required:` NO | `type:` array | `default:` `['core-store.plugin_users-permissions_grant', 'core-store.plugin_upload_metrics']`
+> `required:` NO | `type:` array | `default:` `['core-store.plugin_users-permissions_grant', 'core-store.plugin_upload_metrics', 'core-store.strapi_content_types_schema']`
 
 
 ## 🤝 Contributing
