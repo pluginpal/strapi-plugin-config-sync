@@ -426,7 +426,7 @@ Specify the names of configs you want to exclude from the syncing process. By de
 
 ###### Key: `excludedConfig`
 
-> `required:` NO | `type:` array | `default:` `['core-store.plugin_users-permissions_grant', 'core-store.plugin_upload_metrics', 'core-store.strapi_content_types_schema']`
+> `required:` NO | `type:` array | `default:` `['core-store.plugin_users-permissions_grant', 'core-store.plugin_upload_metrics', 'core-store.strapi_content_types_schema', 'core-store.ee_information',]`
 
 
 ## 🤝 Contributing
