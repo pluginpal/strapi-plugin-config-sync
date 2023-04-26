@@ -274,7 +274,7 @@ These 4 types are by default registered in the sync process.
 
 #### I18n locale
 
-> Config name: `i81n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
+> Config name: `i18n-locale` | UID: `code` | Query string: `plugin::i18n.locale`
 
 ### Custom types
 
