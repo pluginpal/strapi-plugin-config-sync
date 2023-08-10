@@ -47,11 +47,6 @@ const dynamicSort = (property) => {
 };
 
 const sanitizeConfig = (config, relation, relationSortFields) => {
-  delete config._id;
-  delete config.id;
-  delete config.updatedAt;
-  delete config.createdAt;
-
   if (relation) {
     const formattedRelations = [];
 
@@ -73,6 +68,20 @@ const sanitizeConfig = (config, relation, relationSortFields) => {
 
     config[relation] = formattedRelations;
   }
+
+  const sanitizeRecursive = (config) => {
+    delete config._id;
+    delete config.id;
+    delete config.updatedAt;
+    delete config.createdAt;
+
+    Object.keys(config).map((key, index) => {
+      if (config[key] && typeof config[key] === "object") {
+        sanitizeRecursive(config[key]);
+      }
+    });
+  };
+  sanitizeRecursive(config);
 
   return config;
 };

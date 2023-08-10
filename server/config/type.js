@@ -25,7 +25,7 @@ const ConfigType = class ConfigType {
     this.configPrefix = configName;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
-    this.populate = populate || [];
+    this.populate = populate || null;
   }
 
   /**
@@ -111,19 +111,15 @@ const ConfigType = class ConfigType {
       // Update entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
 
-      let entity;
-      switch (this.queryString) {
-          case "strapi::core-store":
-            entity = await queryAPI.update({
-              where: combinedUidWhereFilter,
-              data: query,
-            });
-            break;
-          default:
-            entity = await queryAPI.findOne({ where: combinedUidWhereFilter });
-            await strapi.entityService.update(this.queryString, entity.id, {
-              data: query,
-            });
+      const entity = await queryAPI.findOne({ where: combinedUidWhereFilter });
+      try {
+        await strapi.entityService.update(this.queryString, entity.id, {
+          data: query,
+        });
+      } catch(error) {
+        console.warn(error);
+        console.log("Use Query Engine API instead of Entity Service API");
+        await queryAPI.update({ where: combinedUidWhereFilter, data: query });
       }
 
       // Delete/create relations.
@@ -206,7 +202,7 @@ const ConfigType = class ConfigType {
    */
    getAllFromDatabase = async () => {
     const AllConfig = await noLimit(strapi.query(this.queryString), {
-      populate: this.populate || null,
+      populate: this.populate,
     });
     const configs = {};
 
@@ -236,24 +232,18 @@ const ConfigType = class ConfigType {
         formattedConfig[relationName] = relations;
       }));
 
-      this.populate
-        .filter((populatedFields) => !populatedFields.includes("."))
-        .map((populatedFields) => {
+      if (Array.isArray(this.populate)) {
+        this.populate
+          .filter((populatedFields) => !populatedFields.includes("."))
+          .map((populatedFields) => {
             formattedConfig[populatedFields] = formattedConfig[
               populatedFields
             ].map((fields) => {
-              const sanitizeObjects = (fields) => {
-                sanitizeConfig(fields);
-                Object.keys(fields).map((key, index) => {
-                  if (fields[key] && typeof fields[key] === "object") {
-                    sanitizeObjects(fields[key]);
-                  }
-                });
-              };
-              sanitizeObjects(fields);
+              sanitizeConfig(fields);
               return fields;
             });
-        });
+          });
+      }
 
       this.jsonFields.map((field) => formattedConfig[field] = JSON.parse(config[field]));
       configs[`${this.configPrefix}.${combinedUid}`] = formattedConfig;
