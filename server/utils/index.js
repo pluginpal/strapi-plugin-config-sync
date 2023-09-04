@@ -69,19 +69,19 @@ const sanitizeConfig = (config, relation, relationSortFields) => {
     config[relation] = formattedRelations;
   }
 
-  const sanitizeRecursive = (config) => {
-    delete config._id;
-    delete config.id;
-    delete config.updatedAt;
-    delete config.createdAt;
+  const recursiveSanitizeConfig = (recursivedSanitizedConfig) => {
+    delete recursivedSanitizedConfig._id;
+    delete recursivedSanitizedConfig.id;
+    delete recursivedSanitizedConfig.updatedAt;
+    delete recursivedSanitizedConfig.createdAt;
 
-    Object.keys(config).map((key, index) => {
-      if (config[key] && typeof config[key] === "object") {
-        sanitizeRecursive(config[key]);
+    Object.keys(recursivedSanitizedConfig).map((key, index) => {
+      if (recursivedSanitizedConfig[key] && typeof recursivedSanitizedConfig[key] === "object") {
+        recursiveSanitizeConfig(recursivedSanitizedConfig[key]);
       }
     });
   };
-  sanitizeRecursive(config);
+  recursiveSanitizeConfig(config);
 
   return config;
 };

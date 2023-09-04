@@ -3,7 +3,7 @@ const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCom
 const { difference, same } = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
-  constructor({ queryString, configName, uid, jsonFields, relations, populate }) {
+  constructor({ queryString, configName, uid, jsonFields, relations, components }) {
     if (!configName) {
       strapi.log.error(logMessage('A config type was registered without a config name.'));
       process.exit(0);
@@ -25,7 +25,7 @@ const ConfigType = class ConfigType {
     this.configPrefix = configName;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
-    this.populate = populate || null;
+    this.components = components || null;
   }
 
   /**
@@ -202,7 +202,7 @@ const ConfigType = class ConfigType {
    */
    getAllFromDatabase = async () => {
     const AllConfig = await noLimit(strapi.query(this.queryString), {
-      populate: this.populate,
+      populate: this.components,
     });
     const configs = {};
 
@@ -232,12 +232,12 @@ const ConfigType = class ConfigType {
         formattedConfig[relationName] = relations;
       }));
 
-      if (Array.isArray(this.populate)) {
-        this.populate
-          .filter((populatedFields) => !populatedFields.includes("."))
-          .map((populatedFields) => {
-            formattedConfig[populatedFields] = formattedConfig[
-              populatedFields
+      if (Array.isArray(this.components)) {
+        this.components
+          .filter((componentFields) => !componentFields.includes("."))
+          .map((componentFields) => {
+            formattedConfig[componentFields] = formattedConfig[
+              componentFields
             ].map((fields) => {
               sanitizeConfig(fields);
               return fields;
