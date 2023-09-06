@@ -116,9 +116,8 @@ const ConfigType = class ConfigType {
         await strapi.entityService.update(this.queryString, entity.id, {
           data: query,
         });
-      } catch(error) {
-        console.warn(error);
-        console.log("Use Query Engine API instead of Entity Service API");
+      } catch (error) {
+        strapi.log.warn(logMessage(`Use Query Engine API instead of Entity Service API for type ${this.configPrefix}`));
         await queryAPI.update({ where: combinedUidWhereFilter, data: query });
       }
 
