@@ -232,19 +232,6 @@ const ConfigType = class ConfigType {
         formattedConfig[relationName] = relations;
       }));
 
-      if (Array.isArray(this.components)) {
-        this.components
-          .filter((componentFields) => !componentFields.includes("."))
-          .map((componentFields) => {
-            formattedConfig[componentFields] = formattedConfig[
-              componentFields
-            ].map((fields) => {
-              sanitizeConfig(fields);
-              return fields;
-            });
-          });
-      }
-
       this.jsonFields.map((field) => formattedConfig[field] = JSON.parse(config[field]));
       configs[`${this.configPrefix}.${combinedUid}`] = formattedConfig;
     }));
