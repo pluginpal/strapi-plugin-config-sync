@@ -31,3 +31,4 @@ jobs:
         with:
           commit_message: 'chore: Bump version to ${{ steps.get_version.outputs.VERSION }}'
           file_pattern: 'package.json'
+          branch: master
