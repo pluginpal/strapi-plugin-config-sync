@@ -322,6 +322,30 @@ If you do not have a single unique value, you can also pass in a array of keys f
 
 > `required:` YES | `type:` string | string[]
 
+#### Relations
+
+The relations array specifies the relations you want to include in the sync process.
+This feature is used to sync the relations between `roles` and `permissions`. See https://github.com/boazpoolman/strapi-plugin-config-sync/blob/master/server/config/types.js#L16.
+
+Example:
+```
+{
+  configName: 'admin-role',
+  queryString: 'admin::role',
+  uid: 'code',
+  relations: [{
+    queryString: 'admin::permission',
+    relationName: 'permissions',
+    parentName: 'role',
+    relationSortFields: ['action', 'subject'],
+  }],
+},
+```
+
+###### Key: `relations`
+
+> `required:` NO | `type:` array
+
 #### JSON fields
 
 This property can accept an array of field names from the type. It is meant to specify the JSON fields on the type so the plugin can better format the field values when calculating the config difference.
