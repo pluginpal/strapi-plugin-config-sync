@@ -316,7 +316,7 @@ The UID represents a field on the registered type. The value of this field will 
 
 Mind that you can not use an auto-incremental value like the `id` as auto-increment does not play nice when you try to match entries across different databases.
 
-If you do not have a single unique value, you can also pass in a array of keys for a combined uid key. This is for example the case for all content types which use i18n features (An example config would be `uid: ['productId', 'locale']`).
+If you do not have a single unique value, you can also pass in an array of keys for a combined uid key. This is for example the case for all content types which use i18n features (An example config would be `uid: ['productId', 'locale']`).
 
 ###### Key: `uid`
 
