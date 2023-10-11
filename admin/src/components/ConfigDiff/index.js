@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer-continued';
+import { useIntl } from 'react-intl';
 
 import {
   ModalLayout,
@@ -11,9 +12,8 @@ import {
 } from '@strapi/design-system';
 
 const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
+  const { formatMessage } = useIntl();
 
   return (
     <ModalLayout
@@ -22,16 +22,16 @@ const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
     >
       <ModalHeader>
         <Typography variant="omega" fontWeight="bold" textColor="neutral800">
-          Config changes for {configName}
+          {formatMessage({ id: 'config-sync.ConfigDiff.Title' })} {configName}
         </Typography>
       </ModalHeader>
       <ModalBody>
         <Grid paddingBottom={4} style={{ textAlign: 'center' }}>
           <GridItem col={6}>
-            <Typography variant="delta">Sync directory</Typography>
+            <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}</Typography>
           </GridItem>
           <GridItem col={6}>
-            <Typography variant="delta">Database</Typography>
+            <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.Database' })}</Typography>
           </GridItem>
         </Grid>
         <ReactDiffViewer

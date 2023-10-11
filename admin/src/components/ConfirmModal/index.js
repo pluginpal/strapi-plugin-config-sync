@@ -26,7 +26,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   return (
     <Dialog
       onClose={onClose}
-      title="Confirmation"
+      title={formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}
       isOpen={isOpen}
     >
       <DialogBody icon={<ExclamationMarkCircle />}>

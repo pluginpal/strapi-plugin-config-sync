@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import { Button } from '@strapi/design-system';
 import { Map } from 'immutable';
 import { useNotification } from '@strapi/helper-plugin';
+import { useIntl } from 'react-intl';
 
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
@@ -15,6 +16,7 @@ const ActionButtons = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [actionType, setActionType] = useState('');
   const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
+  const { formatMessage } = useIntl();
 
   const closeModal = () => {
     setActionType('');
@@ -28,8 +30,12 @@ const ActionButtons = () => {
 
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('import')}>Import</Button>
-      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('export')}>Export</Button>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('import')}>
+        {formatMessage({ id: 'config-sync.Buttons.Import' })}
+      </Button>
+      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('export')}>
+        {formatMessage({ id: 'config-sync.Buttons.Export' })}
+      </Button>
       {!isEmpty(partialDiff) && (
         <h4 style={{ display: 'inline' }}>{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</h4>
       )}

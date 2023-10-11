@@ -5,11 +5,13 @@ import { Button } from '@strapi/design-system';
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
+import { useIntl } from 'react-intl';
 
 const FirstExport = () => {
   const toggleNotification = useNotification();
   const dispatch = useDispatch();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { formatMessage } = useIntl();
 
   return (
     <div>
@@ -23,9 +25,9 @@ const FirstExport = () => {
         content={{
           id: 'emptyState',
           defaultMessage:
-            'Looks like this is your first time using config-sync for this project.',
+          formatMessage({ id: 'config-sync.FirstExport.Message' }),
         }}
-        action={<Button onClick={() => setModalIsOpen(true)}>Make the initial export</Button>}
+        action={<Button onClick={() => setModalIsOpen(true)}>{formatMessage({ id: 'config-sync.FirstExport.Button' })}</Button>}
       />
     </div>
   );
