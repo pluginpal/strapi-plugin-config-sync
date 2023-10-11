@@ -69,7 +69,9 @@ const ConfigType = class ConfigType {
         });
 
         await Promise.all(relations.map(async (relation) => {
-          await strapi.entityService.delete(this.queryString, relation.id);
+          await strapi.query(queryString).delete({
+            where: { id: relation.id },
+          });
         }));
       }));
 
@@ -117,7 +119,7 @@ const ConfigType = class ConfigType {
           data: query,
         });
       } catch (error) {
-        strapi.log.warn(logMessage(`Use Query Engine API instead of Entity Service API for type ${this.configPrefix}`));
+        console.warn(logMessage(`Use Query Engine API instead of Entity Service API for type ${this.configPrefix}`));
         await queryAPI.update({ where: combinedUidWhereFilter, data: query });
       }
 
