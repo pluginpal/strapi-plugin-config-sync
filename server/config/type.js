@@ -3,7 +3,7 @@ const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCom
 const { difference, same } = require('../utils/getArrayDiff');
 
 const ConfigType = class ConfigType {
-  constructor({ queryString, configName, uid, jsonFields, relations }) {
+  constructor({ queryString, configName, uid, jsonFields, relations, components }) {
     if (!configName) {
       strapi.log.error(logMessage('A config type was registered without a config name.'));
       process.exit(0);
@@ -25,6 +25,7 @@ const ConfigType = class ConfigType {
     this.configPrefix = configName;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
+    this.components = components || null;
   }
 
   /**
@@ -68,15 +69,11 @@ const ConfigType = class ConfigType {
         });
 
         await Promise.all(relations.map(async (relation) => {
-          await strapi.query(queryString).delete({
-            where: { id: relation.id },
-          });
+          await strapi.entityService.delete(queryString, relation.id);
         }));
       }));
 
-      await queryAPI.delete({
-        where: { id: existingConfig.id },
-      });
+      await strapi.entityService.delete(this.queryString, existingConfig.id);
 
       return;
     }
@@ -89,15 +86,17 @@ const ConfigType = class ConfigType {
 
       // Create entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const newEntity = await queryAPI.create({ data: query });
+      const newEntity = await strapi.entityService.create(this.queryString, {
+        data: query,
+      });
 
       // Create relation entities.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName }) => {
-        const relationQueryApi = strapi.query(queryString);
-
         await Promise.all(configContent[relationName].map(async (relationEntity) => {
           const relationQuery = { ...relationEntity, [parentName]: newEntity };
-          await relationQueryApi.create({ data: relationQuery });
+          await strapi.entityService.create(queryString, {
+            data: relationQuery,
+          });
         }));
       }));
     } else { // Config does exist in DB --> update config in DB
@@ -111,7 +110,16 @@ const ConfigType = class ConfigType {
 
       // Update entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
+
+      const entity = await queryAPI.findOne({ where: combinedUidWhereFilter });
+      try {
+        await strapi.entityService.update(this.queryString, entity.id, {
+          data: query,
+        });
+      } catch (error) {
+        console.warn(logMessage(`Use Query Engine API instead of Entity Service API for type ${this.configPrefix}`));
+        await queryAPI.update({ where: combinedUidWhereFilter, data: query });
+      }
 
       // Delete/create relations.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
@@ -137,7 +145,7 @@ const ConfigType = class ConfigType {
         }));
 
         await Promise.all(configToAdd.map(async (config) => {
-          await relationQueryApi.create({
+          await strapi.entityService.create(queryString, {
             data: { ...config, [parentName]: entity.id },
           });
         }));
@@ -192,7 +200,9 @@ const ConfigType = class ConfigType {
    * @returns {object} Object with key value pairs of configs.
    */
    getAllFromDatabase = async () => {
-    const AllConfig = await noLimit(strapi.query(this.queryString), {});
+    const AllConfig = await noLimit(strapi.query(this.queryString), {
+      populate: this.components,
+    });
     const configs = {};
 
     await Promise.all(Object.values(AllConfig).map(async (config) => {

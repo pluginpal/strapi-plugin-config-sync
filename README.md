@@ -354,6 +354,21 @@ This property can accept an array of field names from the type. It is meant to s
 
 > `required:` NO | `type:` array
 
+#### Components
+
+This property can accept an array of component names from the type. Strapi Components can be included in the export/import process. With "." nested components can also be included in the process.
+```
+customTypes: [{
+  configName: 'webhook',
+  queryString: 'webhook',
+  uid: 'name',
+  components: ['ParentComponentA', 'ParentComponentA.ChildComponent', 'ParentComponentB']
+}],
+
+###### Key: `components`
+
+> `required:` NO | `type:` array
+
 
 ## 🔍 Naming convention
 All the config files written in the sync directory have the same naming convention. It goes as follows:
