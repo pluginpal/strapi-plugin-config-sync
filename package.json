@@ -88,7 +88,7 @@
   },
   "homepage": "https://github.com/boazpoolman/strapi-plugin-config-sync#readme",
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "npm": ">=6.0.0"
   },
   "license": "MIT",
