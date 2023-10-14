@@ -15,9 +15,9 @@
     "jest-cli": "^26.0.1"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "^4.0.0",
-    "@strapi/plugin-users-permissions": "^4.0.0",
-    "@strapi/strapi": "^4.0.0",
+    "@strapi/plugin-i18n": "^4.14.4",
+    "@strapi/plugin-users-permissions": "^4.14.4",
+    "@strapi/strapi": "^4.14.4",
     "better-sqlite3": "^8.6.0",
     "strapi-plugin-config-sync": "./.."
   },
