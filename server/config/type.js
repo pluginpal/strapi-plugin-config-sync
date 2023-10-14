@@ -69,9 +69,7 @@ const ConfigType = class ConfigType {
         });
 
         await Promise.all(relations.map(async (relation) => {
-          await strapi.query(queryString).delete({
-            where: { id: relation.id },
-          });
+          await strapi.entityService.delete(queryString, relation.id);
         }));
       }));
 
