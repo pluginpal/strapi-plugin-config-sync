@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useIntl } from 'react-intl';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 
@@ -19,6 +20,7 @@ import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
+
 const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
@@ -27,23 +29,24 @@ const ConfigList = ({ diff, isLoading }) => {
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
   const dispatch = useDispatch();
+  const { formatMessage } = useIntl();
 
   const getConfigState = (configName) => {
     if (
       diff.fileConfig[configName]
       && diff.databaseConfig[configName]
     ) {
-      return 'Different';
+      return formatMessage({ id: 'config-sync.ConfigList.Different' });
     } else if (
       diff.fileConfig[configName]
       && !diff.databaseConfig[configName]
     ) {
-      return 'Only in sync dir';
+      return formatMessage({ id: 'config-sync.ConfigList.OnlyDir' });
     } else if (
       !diff.fileConfig[configName]
       && diff.databaseConfig[configName]
     ) {
-      return 'Only in DB';
+      return formatMessage({ id: 'config-sync.ConfigList.OnlyDB' });
     }
   };
 
@@ -96,7 +99,7 @@ const ConfigList = ({ diff, isLoading }) => {
   if (isLoading) {
     return (
       <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <Loader>Loading content...</Loader>
+        <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
       </div>
     );
   }
@@ -126,20 +129,20 @@ const ConfigList = ({ diff, isLoading }) => {
           <Tr>
             <Th>
               <BaseCheckbox
-                aria-label="Select all entries"
+                aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
                 indeterminate={isIndeterminate}
                 onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}
                 value={allChecked}
               />
             </Th>
             <Th>
-              <Typography variant="sigma">Config name</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">Config type</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">State</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
             </Th>
           </Tr>
         </Thead>
