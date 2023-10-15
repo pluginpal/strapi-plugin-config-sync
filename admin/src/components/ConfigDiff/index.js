@@ -12,8 +12,8 @@ import {
 } from '@strapi/design-system';
 
 const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
-  if (!isOpen) return null;
   const { formatMessage } = useIntl();
+  if (!isOpen) return null;
 
   return (
     <ModalLayout

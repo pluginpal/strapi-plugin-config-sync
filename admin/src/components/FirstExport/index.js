@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { NoContent, useNotification } from '@strapi/helper-plugin';
 import { Button } from '@strapi/design-system';
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
-import { useIntl } from 'react-intl';
 
 const FirstExport = () => {
   const toggleNotification = useNotification();

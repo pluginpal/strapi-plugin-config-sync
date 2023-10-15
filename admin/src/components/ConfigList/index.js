@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useIntl } from 'react-intl';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 
@@ -19,7 +20,6 @@ import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
-import { useIntl } from 'react-intl';
 
 const ConfigList = ({ diff, isLoading }) => {
   const [openModal, setOpenModal] = useState(false);
