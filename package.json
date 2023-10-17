@@ -30,7 +30,7 @@
     "git-diff": "^2.0.6",
     "immutable": "^3.8.2",
     "inquirer": "^8.2.0",
-    "react-diff-viewer-continued": "^3.2.3",
+    "react-diff-viewer-continued": "3.2.6",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0"
   },
