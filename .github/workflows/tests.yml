@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
-        run: yarn
+        run: yarn --no-lockfile
       - name: Run eslint
         run: yarn run eslint
   integration:
@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies plugin
-        run: yarn --unsafe-perm --production
+        run: yarn --no-lockfile --unsafe-perm --production
       - name: Install dependencies playground
         run: yarn playground:install --unsafe-perm
       - name: Build playground
