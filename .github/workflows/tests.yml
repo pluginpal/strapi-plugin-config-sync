@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
-        run: yarn --no-lockfile
+        run: yarn
       - name: Run eslint
         run: yarn run eslint
   integration:
