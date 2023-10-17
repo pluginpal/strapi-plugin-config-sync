@@ -4932,7 +4932,7 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
-react-diff-viewer-continued@^3.2.3:
+react-diff-viewer-continued@3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/react-diff-viewer-continued/-/react-diff-viewer-continued-3.2.6.tgz#96382463b5de6838d95323c407442349b1c3a26e"
   integrity sha512-GrzyqQnjIMoej+jMjWvtVSsQqhXgzEGqpXlJ2dAGfOk7Q26qcm8Gu6xtI430PBUyZsERe8BJSQf+7VZZo8IBNQ==
