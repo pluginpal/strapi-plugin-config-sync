@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn
       - name: Run eslint
@@ -38,7 +37,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn'
       - name: Install dependencies plugin
         run: yarn --unsafe-perm --production
       - name: Install dependencies playground
