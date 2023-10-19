@@ -5,7 +5,7 @@ const { setupStrapi, cleanupStrapi } = require('./helpers');
 
 jest.setTimeout(20000);
 
-afterAll(async () => {
+afterEach(async () => {
   // Disable importOnBootstrap
   await exec('sed -i "s/importOnBootstrap: true/importOnBootstrap: false/g" config/plugins.js');
 
