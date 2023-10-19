@@ -1,7 +1,9 @@
 const queryFallBack = {
   create: async (queryString, options) => {
     try {
-      return strapi.entityService.create(queryString, options);
+      const newEntity = await strapi.entityService.create(queryString, options);
+
+      return newEntity;
     } catch (e) {
       return strapi.query(queryString).create(options);
     }
@@ -9,7 +11,9 @@ const queryFallBack = {
   update: async (queryString, options) => {
     try {
       const entity = await strapi.query(queryString).findOne(options.where);
-      return strapi.entityService.update(queryString, entity.id);
+      const updatedEntity = await strapi.entityService.update(queryString, entity.id);
+
+      return updatedEntity;
     } catch (e) {
       return strapi.query(queryString).update(options);
     }
