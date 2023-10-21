@@ -6,7 +6,6 @@ const exec = util.promisify(require('child_process').exec);
 jest.setTimeout(20000);
 
 describe('Test the config-sync CLI', () => {
-
   afterAll(async () => {
     // Remove the generated files and the DB.
     await exec('rm -rf config/sync');
@@ -33,8 +32,8 @@ describe('Test the config-sync CLI', () => {
     let error;
     try {
       await exec('yarn cs diff');
-    } catch(e) {
-     error = e;
+    } catch (e) {
+      error = e;
     }
     expect(error).toHaveProperty('code', 1);
   });
