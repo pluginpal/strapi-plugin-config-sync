@@ -3,6 +3,7 @@ module.exports = {
     enabled: true,
     config: {
       importOnBootstrap: false,
+      minify: true,
     },
   },
 };
