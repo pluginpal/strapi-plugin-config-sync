@@ -70,11 +70,15 @@ const ConfigType = class ConfigType {
         });
 
         await Promise.all(relations.map(async (relation) => {
-          await queryFallBack.delete(queryString, relation.id);
+          await queryFallBack.delete(queryString, { where: {
+            id: relation.id,
+          }});
         }));
       }));
 
-      await queryFallBack.delete(this.queryString, existingConfig.id);
+      await queryFallBack.delete(this.queryString, { where: {
+        id: existingConfig.id,
+      }});
 
       return;
     }
@@ -111,7 +115,7 @@ const ConfigType = class ConfigType {
 
       // Update entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const entity = queryFallBack.update(this.queryString, { where: combinedUidWhereFilter, data: query });
+      const entity = await queryFallBack.update(this.queryString, { where: combinedUidWhereFilter, data: query });
 
       // Delete/create relations.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {

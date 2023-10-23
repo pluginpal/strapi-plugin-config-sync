@@ -10,21 +10,20 @@ const queryFallBack = {
   },
   update: async (queryString, options) => {
     try {
-      const entity = await strapi.query(queryString).findOne(options.where);
-      const updatedEntity = await strapi.entityService.update(queryString, entity.id);
+      const entity = await strapi.query(queryString).findOne(options);
+      const updatedEntity = await strapi.entityService.update(queryString, entity.id, options);
 
       return updatedEntity;
     } catch (e) {
       return strapi.query(queryString).update(options);
     }
   },
-  delete: async (queryString, id) => {
+  delete: async (queryString, options) => {
     try {
-      await strapi.entityService.delete(queryString, id);
+      const entity = await strapi.query(queryString).findOne(options);
+      await strapi.entityService.delete(queryString, entity.id);
     } catch (e) {
-      await strapi.query(queryString).delete({
-        where: { id },
-      });
+      await strapi.query(queryString).delete(options);
     }
   },
 };
