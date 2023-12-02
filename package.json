@@ -57,10 +57,10 @@
     "@strapi/strapi": "^4.0.0"
   },
   "devDependencies": {
-    "@strapi/design-system": "^1.11.0",
-    "@strapi/helper-plugin": "^4.14.4",
-    "@strapi/icons": "^1.11.0",
-    "@strapi/utils": "^4.14.4",
+    "@strapi/design-system": "^1.13.2",
+    "@strapi/helper-plugin": "^4.15.5",
+    "@strapi/icons": "^1.13.2",
+    "@strapi/utils": "^4.15.5",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
