@@ -20,7 +20,11 @@
     "@strapi/plugin-users-permissions": "^4.14.4",
     "@strapi/strapi": "^4.14.4",
     "better-sqlite3": "^8.6.0",
-    "strapi-plugin-config-sync": "./.."
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^5.2.0",
+    "strapi-plugin-config-sync": "./..",
+    "styled-components": "^5.2.1"
   },
   "author": {
     "name": "A Strapi developer"
