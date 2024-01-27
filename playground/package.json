@@ -16,9 +16,9 @@
     "supertest": "^6.3.3"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "^4.14.4",
-    "@strapi/plugin-users-permissions": "^4.14.4",
-    "@strapi/strapi": "^4.14.4",
+    "@strapi/plugin-i18n": "^4.19.0",
+    "@strapi/plugin-users-permissions": "^4.19.0",
+    "@strapi/strapi": "^4.19.0",
     "better-sqlite3": "^8.6.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
