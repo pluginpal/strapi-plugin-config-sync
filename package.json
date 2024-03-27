@@ -84,7 +84,7 @@
     "styled-components": "^5.2.3"
   },
   "bugs": {
-    "url": "https://github.com/boazpoolman/strapi-plugin-config-sync/issues"
+    "url": "https://github.com/pluginpal/strapi-plugin-config-sync/issues"
   },
   "homepage": "https://www.pluginpal.io/plugin/config-sync",
   "engines": {
