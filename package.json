@@ -36,13 +36,13 @@
   },
   "author": {
     "name": "Boaz Poolman",
-    "email": "info@boazpoolman.nl",
+    "email": "boaz@pluginpal.io",
     "url": "https://github.com/boazpoolman"
   },
   "maintainers": [
     {
       "name": "Boaz Poolman",
-      "email": "info@boazpoolman.nl",
+      "email": "boaz@pluginpal.io",
       "url": "https://github.com/boazpoolman"
     }
   ],
@@ -86,7 +86,7 @@
   "bugs": {
     "url": "https://github.com/boazpoolman/strapi-plugin-config-sync/issues"
   },
-  "homepage": "https://github.com/boazpoolman/strapi-plugin-config-sync#readme",
+  "homepage": "https://www.pluginpal.io/plugin/config-sync",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=6.0.0"
