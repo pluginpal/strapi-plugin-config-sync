@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button } from '@strapi/design-system';
 import { Map } from 'immutable';
-import { useNotification } from '@strapi/helper-plugin';
+import { useNotification } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 
 import ConfirmModal from '../ConfirmModal';

@@ -1,11 +1,11 @@
 import React from 'react';
-import { NoContent } from '@strapi/helper-plugin';
+import { EmptyStateLayout } from '@strapi/design-system';
 import { useIntl } from 'react-intl';
 
 const NoChanges = () => {
   const { formatMessage } = useIntl();
   return (
-    <NoContent
+    <EmptyStateLayout
       content={{
         id: 'emptyState',
         defaultMessage:

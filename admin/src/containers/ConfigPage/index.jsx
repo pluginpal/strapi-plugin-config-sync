@@ -7,7 +7,7 @@ import {
   Alert,
   Typography,
 } from '@strapi/design-system';
-import { useNotification } from '@strapi/helper-plugin';
+import { useNotification } from '@strapi/strapi/admin';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';

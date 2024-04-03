@@ -4,13 +4,14 @@
  *
  */
 
-import { request } from '@strapi/helper-plugin';
+import { useFetchClient } from '@strapi/admin/strapi-admin';
 
 export function getAllConfigDiff(toggleNotification) {
   return async function(dispatch) {
+    const { get } = useFetchClient();
     dispatch(setLoadingState(true));
     try {
-      const configDiff = await request('/config-sync/diff', { method: 'GET' });
+      const configDiff = await get('/config-sync/diff');
       dispatch(setConfigPartialDiffInState([]));
       dispatch(setConfigDiffInState(configDiff));
       dispatch(setLoadingState(false));
@@ -39,13 +40,11 @@ export function setConfigPartialDiffInState(config) {
 
 export function exportAllConfig(partialDiff, toggleNotification) {
   return async function(dispatch) {
+    const { post } = useFetchClient();
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/export', {
-        method: 'POST',
-        body: partialDiff,
-      });
-      toggleNotification({ type: 'success', message });
+      const response = await post('/config-sync/export', partialDiff);
+      toggleNotification({ type: 'success', response });
       dispatch(getAllConfigDiff(toggleNotification));
       dispatch(setLoadingState(false));
     } catch (err) {
@@ -57,16 +56,14 @@ export function exportAllConfig(partialDiff, toggleNotification) {
 
 export function importAllConfig(partialDiff, force, toggleNotification) {
   return async function(dispatch) {
+    const { post } = useFetchClient();
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/import', {
-        method: 'POST',
-        body: {
-          force,
-          config: partialDiff,
-        },
+      const response = await post('/config-sync/import', {
+        force,
+        config: partialDiff,
       });
-      toggleNotification({ type: 'success', message });
+      toggleNotification({ type: 'success', response });
       dispatch(getAllConfigDiff(toggleNotification));
       dispatch(setLoadingState(false));
     } catch (err) {
@@ -86,10 +83,9 @@ export function setLoadingState(value) {
 
 export function getAppEnv(toggleNotification) {
   return async function(dispatch) {
+    const { get } = useFetchClient();
     try {
-      const envVars = await request('/config-sync/app-env', {
-        method: 'GET',
-      });
+      const envVars = await get('/config-sync/app-env');
       dispatch(setAppEnvInState(envVars));
     } catch (err) {
       toggleNotification({ type: 'warning', message: { id: 'notification.error' } });

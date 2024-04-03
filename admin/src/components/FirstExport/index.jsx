@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { NoContent, useNotification } from '@strapi/helper-plugin';
-import { Button } from '@strapi/design-system';
+import { useNotification } from '@strapi/strapi/admin';
+import { Button, EmptyStateLayout } from '@strapi/design-system';
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
@@ -21,7 +21,7 @@ const FirstExport = () => {
         type="export"
         onSubmit={() => dispatch(exportAllConfig([], toggleNotification))}
       />
-      <NoContent
+      <EmptyStateLayout
         content={{
           id: 'emptyState',
           defaultMessage:
