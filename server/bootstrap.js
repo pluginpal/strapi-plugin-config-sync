@@ -50,7 +50,7 @@ module.exports = async () => {
   if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
     if (strapi.server.app.env === 'development') {
       strapi.log.warn(logMessage(`You can't use the 'importOnBootstrap' setting in the development env.`));
-    } else if (process.env.CONFIG_SYNC_CLI === true) {
+    } else if (process.env.CONFIG_SYNC_CLI === 'true') {
       strapi.log.warn(logMessage(`The 'importOnBootstrap' setting was ignored because Strapi was started from the config-sync CLI itself.`));
     } else if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
       await strapi.plugin('config-sync').service('main').importAllConfig();
