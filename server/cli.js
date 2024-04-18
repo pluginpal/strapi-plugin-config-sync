@@ -15,6 +15,8 @@ const packageJSON = require('../package.json');
 const program = new Command();
 
 const getStrapiApp = async () => {
+  process.env.CONFIG_SYNC_CLI = true;
+
   try {
     const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
 
