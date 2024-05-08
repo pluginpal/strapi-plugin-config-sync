@@ -21,23 +21,23 @@ module.exports = () => ({
    */
   writeConfigFile: async (configType, configName, fileContents) => {
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
     // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
     // Check if the JSON content should be minified.
-    const json = !strapi.config.get('plugin.config-sync').minify
+    const json = !strapi.config.get('plugin::config-sync').minify
       ? JSON.stringify(fileContents, null, 2)
       : JSON.stringify(fileContents);
 
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
-      fs.mkdirSync(strapi.config.get('plugin.config-sync.syncDir'), { recursive: true });
+    if (!fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
+      fs.mkdirSync(strapi.config.get('plugin::config-sync.syncDir'), { recursive: true });
     }
 
     const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${strapi.config.get('plugin.config-sync.syncDir')}${configType}.${configName}.json`, json)
+    await writeFile(`${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`, json)
       .then(() => {
         // @TODO:
         // Add logging for successfull config export.
@@ -56,13 +56,13 @@ module.exports = () => ({
    */
    deleteConfigFile: async (configName) => {
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
-    fs.unlinkSync(`${strapi.config.get('plugin.config-sync.syncDir')}${configName}.json`);
+    fs.unlinkSync(`${strapi.config.get('plugin::config-sync.syncDir')}${configName}.json`);
   },
 
   /**
@@ -77,7 +77,7 @@ module.exports = () => ({
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.config.get('plugin.config-sync.syncDir')}${configType}.${configName}.json`)
+    return readFile(`${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`)
       .then((data) => {
         return JSON.parse(data);
       })
@@ -94,11 +94,11 @@ module.exports = () => ({
    * @returns {object} Object with key value pairs of configs.
    */
   getAllConfigFromFiles: async (configType = null) => {
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
+    if (!fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
       return {};
     }
 
-    const configFiles = fs.readdirSync(strapi.config.get('plugin.config-sync.syncDir'));
+    const configFiles = fs.readdirSync(strapi.config.get('plugin::config-sync.syncDir'));
 
     const getConfigs = async () => {
       const fileConfigs = {};
@@ -113,7 +113,7 @@ module.exports = () => ({
         if (
           configType && configType !== type
           || !strapi.plugin('config-sync').types[type]
-          || !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${type}.${name}`.startsWith(option)))
+          || !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${type}.${name}`.startsWith(option)))
         ) {
           return;
         }
@@ -219,7 +219,7 @@ module.exports = () => ({
    */
   importSingleConfig: async (configName, onSuccess, force) => {
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
@@ -244,7 +244,7 @@ module.exports = () => ({
    */
    exportSingleConfig: async (configName, onSuccess) => {
      // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.

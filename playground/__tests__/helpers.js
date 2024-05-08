@@ -1,11 +1,12 @@
 const fs = require('fs');
-const Strapi = require('@strapi/strapi');
+const { createStrapi, compileStrapi } = require('@strapi/strapi');
 
 let instance;
 
 async function setupStrapi() {
   if (!instance) {
-    await Strapi().load();
+    const appContext = await compileStrapi();
+    await createStrapi(appContext).load();
     instance = strapi;
 
     await instance.server.mount();

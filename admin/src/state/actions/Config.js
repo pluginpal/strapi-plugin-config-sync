@@ -4,18 +4,16 @@
  *
  */
 
-import { request } from '@strapi/helper-plugin';
-
-export function getAllConfigDiff(toggleNotification) {
+export function getAllConfigDiff(toggleNotification, formatMessage, get) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const configDiff = await request('/config-sync/diff', { method: 'GET' });
+      const configDiff = await get('/config-sync/diff');
       dispatch(setConfigPartialDiffInState([]));
-      dispatch(setConfigDiffInState(configDiff));
+      dispatch(setConfigDiffInState(configDiff.data));
       dispatch(setLoadingState(false));
     } catch (err) {
-      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
     }
   };
@@ -37,40 +35,34 @@ export function setConfigPartialDiffInState(config) {
   };
 }
 
-export function exportAllConfig(partialDiff, toggleNotification) {
+export function exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/export', {
-        method: 'POST',
-        body: partialDiff,
-      });
-      toggleNotification({ type: 'success', message });
-      dispatch(getAllConfigDiff(toggleNotification));
+      const response = await post('/config-sync/export', partialDiff);
+      toggleNotification({ type: 'success', message: response.data.message });
+      dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       dispatch(setLoadingState(false));
     } catch (err) {
-      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
     }
   };
 }
 
-export function importAllConfig(partialDiff, force, toggleNotification) {
+export function importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message } = await request('/config-sync/import', {
-        method: 'POST',
-        body: {
-          force,
-          config: partialDiff,
-        },
+      const response = await post('/config-sync/import', {
+        force,
+        config: partialDiff,
       });
-      toggleNotification({ type: 'success', message });
-      dispatch(getAllConfigDiff(toggleNotification));
+      toggleNotification({ type: 'success', message: response.data.message });
+      dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       dispatch(setLoadingState(false));
     } catch (err) {
-      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
     }
   };
@@ -84,15 +76,13 @@ export function setLoadingState(value) {
   };
 }
 
-export function getAppEnv(toggleNotification) {
+export function getAppEnv(toggleNotification, formatMessage, get) {
   return async function(dispatch) {
     try {
-      const envVars = await request('/config-sync/app-env', {
-        method: 'GET',
-      });
-      dispatch(setAppEnvInState(envVars));
+      const envVars = await get('/config-sync/app-env');
+      dispatch(setAppEnvInState(envVars.data));
     } catch (err) {
-      toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
     }
   };
 }
