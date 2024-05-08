@@ -1,16 +1,14 @@
 import React from 'react';
 import { EmptyStateLayout } from '@strapi/design-system';
 import { useIntl } from 'react-intl';
+import { EmptyDocuments } from '@strapi/icons';
 
 const NoChanges = () => {
   const { formatMessage } = useIntl();
   return (
     <EmptyStateLayout
-      content={{
-        id: 'emptyState',
-        defaultMessage:
-          formatMessage({ id: 'config-sync.NoChanges.Message' }),
-      }}
+      content={formatMessage({ id: 'config-sync.NoChanges.Message', defaultMessage: 'No differences between DB and sync directory. You are up-to-date!' })}
+      icon={<EmptyDocuments width={160} />}
     />
   );
 };

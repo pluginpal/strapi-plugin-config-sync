@@ -22,12 +22,9 @@ const FirstExport = () => {
         onSubmit={() => dispatch(exportAllConfig([], toggleNotification))}
       />
       <EmptyStateLayout
-        content={{
-          id: 'emptyState',
-          defaultMessage:
-          formatMessage({ id: 'config-sync.FirstExport.Message' }),
-        }}
+        content={formatMessage({ id: 'config-sync.FirstExport.Message' })}
         action={<Button onClick={() => setModalIsOpen(true)}>{formatMessage({ id: 'config-sync.FirstExport.Button' })}</Button>}
+        icon={<EmptyDocuments width={160} />}
       />
     </div>
   );
