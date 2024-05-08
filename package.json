@@ -55,13 +55,13 @@
     "strapi-server.js"
   ],
   "peerDependencies": {
-    "@strapi/strapi": "^5.0.0-beta.5"
+    "@strapi/strapi": "^5.0.0-beta.2"
   },
   "devDependencies": {
     "@strapi/design-system": "^1.16.0",
     "@strapi/icons": "^1.16.0",
-    "@strapi/utils": "5.0.0-beta.5",
-    "@strapi/strapi": "5.0.0-beta.5",
+    "@strapi/utils": "5.0.0-beta.2",
+    "@strapi/strapi": "5.0.0-beta.2",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",

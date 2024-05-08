@@ -6,7 +6,7 @@ const Table = require('cli-table');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
-const { createStrapi } = require('@strapi/strapi');
+const { createStrapi, compileStrapi } = require('@strapi/strapi');
 const gitDiff = require('git-diff');
 
 const warnings = require('./warnings');
@@ -17,31 +17,9 @@ const program = new Command();
 const getStrapiApp = async () => {
   process.env.CONFIG_SYNC_CLI = 'true';
 
-  try {
-    const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
-
-    const appDir = process.cwd();
-    const isTSProject = await tsUtils.isUsingTypeScript(appDir);
-    const outDir = await tsUtils.resolveOutDir(appDir);
-    const alreadyCompiled = await fs.existsSync(outDir);
-
-    if (isTSProject && !alreadyCompiled) {
-      await tsUtils.compile(appDir, {
-        watch: false,
-        configOptions: { options: { incremental: true } },
-      });
-    }
-
-    const distDir = isTSProject ? outDir : appDir;
-
-    const app = await createStrapi({ appDir, distDir }).load();
-
-    return app;
-  } catch (e) {
-    // Fallback for pre Strapi 4.2.
-    const app = await createStrapi().load();
-    return app;
-  }
+  const appContext = await compileStrapi();
+  const app = await createStrapi(appContext).load();
+  return app;
 };
 
 const initTable = (head) => {
