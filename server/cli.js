@@ -98,7 +98,7 @@ const getConfigState = (diff, configName, syncType) => {
 
 const handleAction = async (syncType, skipConfirm, configType, partials, force) => {
   const app = await getStrapiApp();
-  const hasSyncDir = fs.existsSync(app.config.get('plugin.config-sync.syncDir'));
+  const hasSyncDir = fs.existsSync(app.config.get('plugin::config-sync.syncDir'));
 
   // No import with empty sync dir.
   if (!hasSyncDir && syncType === 'import') {

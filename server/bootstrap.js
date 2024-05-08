@@ -23,21 +23,21 @@ module.exports = async () => {
 
     // The default types provided by the plugin.
     defaultTypes(strapi).map((type) => {
-      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
         types[type.configName] = new ConfigType(type);
       }
     });
 
     // The types provided by other plugins.
     strapi.plugin('config-sync').pluginTypes.map((type) => {
-      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
         types[type.configName] = new ConfigType(type);
       }
     });
 
     // The custom types provided by the user.
-    strapi.config.get('plugin.config-sync.customTypes').map((type) => {
-      if (!strapi.config.get('plugin.config-sync.excludedTypes').includes(type.configName)) {
+    strapi.config.get('plugin::config-sync.customTypes').map((type) => {
+      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
         types[type.configName] = new ConfigType(type);
       }
     });
@@ -47,10 +47,10 @@ module.exports = async () => {
   strapi.plugin('config-sync').types = registerTypes();
 
   // Import on bootstrap.
-  if (strapi.config.get('plugin.config-sync.importOnBootstrap')) {
+  if (strapi.config.get('plugin::config-sync.importOnBootstrap')) {
     if (strapi.server.app.env === 'development') {
       strapi.log.warn(logMessage(`You can't use the 'importOnBootstrap' setting in the development env.`));
-    } else if (fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
+    } else if (fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
       await strapi.plugin('config-sync').service('main').importAllConfig();
     }
   }

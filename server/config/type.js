@@ -39,10 +39,10 @@ const ConfigType = class ConfigType {
    */
   importSingle = async (configName, configContent, force) => {
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
-    const softImport = strapi.config.get('plugin.config-sync.soft');
+    const softImport = strapi.config.get('plugin::config-sync.soft');
     const queryAPI = strapi.query(this.queryString);
     const uidParams = getUidParamsFromName(this.uidKeys, configName);
     const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, uidParams);
@@ -174,7 +174,7 @@ const ConfigType = class ConfigType {
     const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
@@ -211,7 +211,7 @@ const ConfigType = class ConfigType {
       }
 
       // Check if the config should be excluded.
-      const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
+      const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig(config) };
