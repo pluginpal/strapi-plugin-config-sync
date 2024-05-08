@@ -9,11 +9,11 @@ import {
 } from '@strapi/design-system';
 import { useNotification } from '@strapi/strapi/admin';
 import { getFetchClient } from '@strapi/admin/strapi-admin';
+import { useIntl } from 'react-intl';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
 import ActionButtons from '../../components/ActionButtons';
-import { useIntl } from 'react-intl';
 
 const ConfigPage = () => {
   const { toggleNotification } = useNotification();
