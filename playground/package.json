@@ -10,7 +10,11 @@
     "strapi": "strapi",
     "cs": "config-sync"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
   "dependencies": {
     "@strapi/strapi": "5.0.0-beta.2",
     "@strapi/plugin-users-permissions": "5.0.0-beta.2",
