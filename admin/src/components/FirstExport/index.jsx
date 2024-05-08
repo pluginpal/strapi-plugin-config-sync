@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { useNotification } from '@strapi/strapi/admin';
+import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { Button, EmptyStateLayout } from '@strapi/design-system';
 import { EmptyDocuments } from '@strapi/icons';
 
@@ -9,7 +9,8 @@ import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
 
 const FirstExport = () => {
-  const toggleNotification = useNotification();
+  const { post, get } = getFetchClient();
+  const { toggleNotification } = useNotification();
   const dispatch = useDispatch();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { formatMessage } = useIntl();
@@ -20,7 +21,7 @@ const FirstExport = () => {
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
         type="export"
-        onSubmit={() => dispatch(exportAllConfig([], toggleNotification))}
+        onSubmit={() => dispatch(exportAllConfig([], toggleNotification, formatMessage, post, get))}
       />
       <EmptyStateLayout
         content={formatMessage({ id: 'config-sync.FirstExport.Message' })}

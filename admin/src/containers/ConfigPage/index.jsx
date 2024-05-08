@@ -8,21 +8,26 @@ import {
   Typography,
 } from '@strapi/design-system';
 import { useNotification } from '@strapi/strapi/admin';
+import { getFetchClient } from '@strapi/admin/strapi-admin';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
 import ActionButtons from '../../components/ActionButtons';
+import { useIntl } from 'react-intl';
 
 const ConfigPage = () => {
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
+  const { get } = getFetchClient();
+  const { formatMessage } = useIntl();
+
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], Map({})));
   const configDiff = useSelector((state) => state.getIn(['config', 'configDiff'], Map({})));
   const appEnv = useSelector((state) => state.getIn(['config', 'appEnv', 'env']));
 
   useEffect(() => {
-    dispatch(getAllConfigDiff(toggleNotification));
-    dispatch(getAppEnv(toggleNotification));
+    dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
+    dispatch(getAppEnv(toggleNotification, formatMessage, get));
   }, []);
 
   return (
