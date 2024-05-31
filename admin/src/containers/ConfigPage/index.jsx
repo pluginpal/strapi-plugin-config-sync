@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Map } from 'immutable';
 import {
   Box,
-  ContentLayout,
   Alert,
   Typography,
 } from '@strapi/design-system';
 import { useNotification } from '@strapi/strapi/admin';
-import { getFetchClient } from '@strapi/admin/strapi-admin';
+import { getFetchClient, Layouts } from '@strapi/admin/strapi-admin';
 import { useIntl } from 'react-intl';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
@@ -31,7 +30,7 @@ const ConfigPage = () => {
   }, []);
 
   return (
-    <ContentLayout paddingBottom={8}>
+    <Layouts.Content paddingBottom={8}>
       {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
@@ -43,7 +42,7 @@ const ConfigPage = () => {
       )}
       <ActionButtons />
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
-    </ContentLayout>
+    </Layouts.Content>
   );
 };
 

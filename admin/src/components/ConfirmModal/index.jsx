@@ -8,13 +8,12 @@ import {
   DialogFooter,
   Flex,
   Typography,
-  Stack,
   Button,
   Checkbox,
   Divider,
   Box,
 } from '@strapi/design-system';
-import { ExclamationMarkCircle } from '@strapi/icons';
+import { WarningCircle } from '@strapi/icons';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   const soft = useSelector((state) => state.getIn(['config', 'appEnv', 'config', 'soft'], false));
@@ -29,15 +28,15 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
       title={formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}
       isOpen={isOpen}
     >
-      <DialogBody icon={<ExclamationMarkCircle />}>
-        <Stack size={2}>
+      <DialogBody icon={<WarningCircle />}>
+        <Flex size={2}>
           <Flex justifyContent="center">
             <Typography variant="omega" id="confirm-description" style={{ textAlign: 'center' }}>
               {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_1` })}<br />
               {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_2` })}
             </Typography>
           </Flex>
-        </Stack>
+        </Flex>
       </DialogBody>
       {(soft && type === 'import') && (
         <React.Fragment>

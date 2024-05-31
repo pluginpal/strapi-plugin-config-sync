@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { Button, EmptyStateLayout } from '@strapi/design-system';
-import { EmptyDocuments } from '@strapi/icons';
+import { EmptyDocuments } from '@strapi/icons/symbols';
+
 
 import { exportAllConfig } from '../../state/actions/Config';
 import ConfirmModal from '../ConfirmModal';
