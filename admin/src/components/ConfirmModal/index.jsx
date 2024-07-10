@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 
 import {
   Dialog,
-  DialogBody,
-  DialogFooter,
   Flex,
   Typography,
   Button,
@@ -23,12 +21,12 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   if (!isOpen) return null;
 
   return (
-    <Dialog
+    <Dialog.Root
       onClose={onClose}
       title={formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}
       isOpen={isOpen}
     >
-      <DialogBody icon={<WarningCircle />}>
+      <Dialog.Body icon={<WarningCircle />}>
         <Flex size={2}>
           <Flex justifyContent="center">
             <Typography variant="omega" id="confirm-description" style={{ textAlign: 'center' }}>
@@ -37,7 +35,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
             </Typography>
           </Flex>
         </Flex>
-      </DialogBody>
+      </Dialog.Body>
       {(soft && type === 'import') && (
         <React.Fragment>
           <Divider />
@@ -53,7 +51,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
           </Box>
         </React.Fragment>
       )}
-      <DialogFooter
+      <Dialog.Footer
         startAction={(
           <Button
             onClick={() => {
@@ -75,7 +73,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
             {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
           </Button>
         )} />
-    </Dialog>
+    </Dialog.Root>
   );
 };
 
