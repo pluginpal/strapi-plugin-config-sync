@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_core_profiles",
+  "info": {
+    "displayName": "Profile",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "ContactInfo": {
+      "type": "component",
+      "repeatable": true,
+      "component": "core.contact-info"
+    }
+  }
+}
