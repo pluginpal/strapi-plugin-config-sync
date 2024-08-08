@@ -109,7 +109,10 @@ const ConfigType = class ConfigType {
       if (softImport && !force) return false;
 
       // Format JSON fields.
-      configContent = sanitizeConfig(configContent);
+      configContent = sanitizeConfig({
+        config: configContent,
+        configName,
+      });
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
 
@@ -120,8 +123,8 @@ const ConfigType = class ConfigType {
       // Delete/create relations.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
         const relationQueryApi = strapi.query(queryString);
-        existingConfig = sanitizeConfig(existingConfig, relationName, relationSortFields);
-        configContent = sanitizeConfig(configContent, relationName, relationSortFields);
+        existingConfig = sanitizeConfig({ config: existingConfig, configName, relation: relationName, relationSortFields });
+        configContent = sanitizeConfig({ config: configContent, configName, relation: relationName, relationSortFields });
 
         const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
         const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
@@ -201,7 +204,7 @@ const ConfigType = class ConfigType {
     });
     const configs = {};
 
-    await Promise.all(Object.values(AllConfig).map(async (config) => {
+    await Promise.all(Object.entries(AllConfig).map(async ([configName, config]) => {
       const combinedUid = getCombinedUid(this.uidKeys, config);
       const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, config);
 
@@ -214,13 +217,13 @@ const ConfigType = class ConfigType {
       const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
       if (shouldExclude) return;
 
-      const formattedConfig = { ...sanitizeConfig(config) };
+      const formattedConfig = { ...sanitizeConfig({ config, configName }) };
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: { [parentName]: combinedUidWhereFilter },
         });
 
-        relations.map((relation) => sanitizeConfig(relation));
+        relations.map((relation) => sanitizeConfig({ config: relation, configName: relationName }));
         relationSortFields.map((sortField) => {
           relations.sort(dynamicSort(sortField));
         });
