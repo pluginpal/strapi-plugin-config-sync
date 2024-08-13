@@ -46,7 +46,12 @@ const dynamicSort = (property) => {
   };
 };
 
-const sanitizeConfig = (config, relation, relationSortFields) => {
+const sanitizeConfig = ({
+  config,
+  relation,
+  relationSortFields,
+  configName,
+}) => {
   delete config._id;
   delete config.id;
   delete config.updatedAt;
@@ -74,6 +79,26 @@ const sanitizeConfig = (config, relation, relationSortFields) => {
     }
 
     config[relation] = formattedRelations;
+  }
+
+  // We recursively sanitize the config to remove environment specific data.
+  // Except for the plugin_content_manager_configuration.
+  // This is because that stores the "edit the view" data which includes only configuration, not content.
+  if (configName && !configName.startsWith('plugin_content_manager_configuration_')) {
+    const recursiveSanitizeConfig = (recursivedSanitizedConfig) => {
+      delete recursivedSanitizedConfig._id;
+      delete recursivedSanitizedConfig.id;
+      delete recursivedSanitizedConfig.updatedAt;
+      delete recursivedSanitizedConfig.createdAt;
+
+      Object.keys(recursivedSanitizedConfig).map((key, index) => {
+        if (recursivedSanitizedConfig[key] && typeof recursivedSanitizedConfig[key] === "object") {
+          recursiveSanitizeConfig(recursivedSanitizedConfig[key]);
+        }
+      });
+    };
+
+    recursiveSanitizeConfig(config);
   }
 
   return config;
