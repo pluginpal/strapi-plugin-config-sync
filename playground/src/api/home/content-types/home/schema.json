@@ -15,11 +15,6 @@
     "title": {
       "type": "string"
     },
-    "Profile": {
-      "type": "component",
-      "repeatable": false,
-      "component": "core.profile"
-    },
     "slug": {
       "type": "uid",
       "targetField": "title"
