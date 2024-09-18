@@ -3,11 +3,8 @@ import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer-continued';
 import { useIntl } from 'react-intl';
 
 import {
-  ModalLayout,
-  ModalBody,
-  ModalHeader,
+  Modal,
   Grid,
-  GridItem,
   Typography,
 } from '@strapi/design-system';
 
@@ -16,32 +13,32 @@ const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
   if (!isOpen) return null;
 
   return (
-    <ModalLayout
+    <Modal.Root
       onClose={onClose}
       labelledBy="title"
     >
-      <ModalHeader>
+      <Modal.Header>
         <Typography variant="omega" fontWeight="bold" textColor="neutral800">
           {formatMessage({ id: 'config-sync.ConfigDiff.Title' })} {configName}
         </Typography>
-      </ModalHeader>
-      <ModalBody>
-        <Grid paddingBottom={4} style={{ textAlign: 'center' }}>
-          <GridItem col={6}>
+      </Modal.Header>
+      <Modal.Body>
+        <Grid.Root paddingBottom={4} style={{ textAlign: 'center' }}>
+          <Grid.Item col={6}>
             <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}</Typography>
-          </GridItem>
-          <GridItem col={6}>
+          </Grid.Item>
+          <Grid.Item col={6}>
             <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.Database' })}</Typography>
-          </GridItem>
-        </Grid>
+          </Grid.Item>
+        </Grid.Root>
         <ReactDiffViewer
           oldValue={JSON.stringify(oldValue, null, 2)}
           newValue={JSON.stringify(newValue, null, 2)}
           splitView
           compareMethod={DiffMethod.WORDS}
         />
-      </ModalBody>
-    </ModalLayout>
+      </Modal.Body>
+    </Modal.Root>
   );
 };
 

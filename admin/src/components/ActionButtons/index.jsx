@@ -4,15 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button } from '@strapi/design-system';
 import { Map } from 'immutable';
-import { useNotification } from '@strapi/helper-plugin';
+import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
 const ActionButtons = () => {
+  const { post, get } = getFetchClient();
   const dispatch = useDispatch();
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [actionType, setActionType] = useState('');
   const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
@@ -43,7 +44,7 @@ const ActionButtons = () => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         type={actionType}
-        onSubmit={(force) => actionType === 'import' ? dispatch(importAllConfig(partialDiff, force, toggleNotification)) : dispatch(exportAllConfig(partialDiff, toggleNotification))}
+        onSubmit={(force) => actionType === 'import' ? dispatch(importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get)) : dispatch(exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get))}
       />
     </ActionButtonsStyling>
   );

@@ -1,5 +1,5 @@
 {
-  "name": "playground",
+  "name": "strapi-5-beta",
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
@@ -16,24 +16,24 @@
     "supertest": "^6.3.3"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "^4.19.0",
-    "@strapi/plugin-users-permissions": "^4.19.0",
-    "@strapi/strapi": "^4.19.0",
-    "better-sqlite3": "^8.6.0",
+    "@strapi/strapi": "5.0.0-rc.2",
+    "@strapi/plugin-users-permissions": "5.0.0-rc.2",
+    "@strapi/plugin-cloud": "5.0.0-rc.2",
+    "better-sqlite3": "9.4.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.0.0",
     "strapi-plugin-config-sync": "./..",
-    "styled-components": "^5.2.1"
+    "styled-components": "^6.0.0"
   },
   "author": {
     "name": "A Strapi developer"
   },
   "strapi": {
-    "uuid": "2e84e366-1e09-43c2-a99f-a0d0acbc2ca5"
+    "uuid": "edadddbd-0f25-4da7-833b-d4cd7dcae2fc"
   },
   "engines": {
-    "node": ">=18.x.x <=20.x.x",
+    "node": ">=18.0.0 <=20.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT"

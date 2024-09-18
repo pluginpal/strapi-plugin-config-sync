@@ -6,7 +6,7 @@ const Table = require('cli-table');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const { isEmpty } = require('lodash');
-const strapi = require('@strapi/strapi'); // eslint-disable-line
+const { createStrapi, compileStrapi } = require('@strapi/strapi');
 const gitDiff = require('git-diff');
 
 const warnings = require('./warnings');
@@ -15,33 +15,11 @@ const packageJSON = require('../package.json');
 const program = new Command();
 
 const getStrapiApp = async () => {
-  process.env.CONFIG_SYNC_CLI = true;
+  process.env.CONFIG_SYNC_CLI = 'true';
 
-  try {
-    const tsUtils = require('@strapi/typescript-utils'); // eslint-disable-line
-
-    const appDir = process.cwd();
-    const isTSProject = await tsUtils.isUsingTypeScript(appDir);
-    const outDir = await tsUtils.resolveOutDir(appDir);
-    const alreadyCompiled = await fs.existsSync(outDir);
-
-    if (isTSProject && !alreadyCompiled) {
-      await tsUtils.compile(appDir, {
-        watch: false,
-        configOptions: { options: { incremental: true } },
-      });
-    }
-
-    const distDir = isTSProject ? outDir : appDir;
-
-    const app = await strapi({ appDir, distDir }).load();
-
-    return app;
-  } catch (e) {
-    // Fallback for pre Strapi 4.2.
-    const app = await strapi().load();
-    return app;
-  }
+  const appContext = await compileStrapi();
+  const app = await createStrapi(appContext).load();
+  return app;
 };
 
 const initTable = (head) => {
@@ -100,7 +78,7 @@ const getConfigState = (diff, configName, syncType) => {
 
 const handleAction = async (syncType, skipConfirm, configType, partials, force) => {
   const app = await getStrapiApp();
-  const hasSyncDir = fs.existsSync(app.config.get('plugin.config-sync.syncDir'));
+  const hasSyncDir = fs.existsSync(app.config.get('plugin::config-sync.syncDir'));
 
   // No import with empty sync dir.
   if (!hasSyncDir && syncType === 'import') {

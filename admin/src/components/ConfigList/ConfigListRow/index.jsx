@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tr, Td, BaseCheckbox } from '@strapi/design-system';
+import { Tr, Td, Checkbox } from '@strapi/design-system';
 
 const CustomRow = ({ row, checked, updateValue }) => {
   const { configName, configType, state, onClick } = row;
@@ -42,7 +42,7 @@ const CustomRow = ({ row, checked, updateValue }) => {
       style={{ cursor: 'pointer' }}
     >
       <Td>
-        <BaseCheckbox
+        <Checkbox
           aria-label={`Select ${configName}`}
           value={checked}
           onValueChange={updateValue}

@@ -4,17 +4,14 @@ import { useSelector } from 'react-redux';
 
 import {
   Dialog,
-  DialogBody,
-  DialogFooter,
   Flex,
   Typography,
-  Stack,
   Button,
   Checkbox,
   Divider,
   Box,
 } from '@strapi/design-system';
-import { ExclamationMarkCircle } from '@strapi/icons';
+import { WarningCircle } from '@strapi/icons';
 
 const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   const soft = useSelector((state) => state.getIn(['config', 'appEnv', 'config', 'soft'], false));
@@ -24,21 +21,21 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
   if (!isOpen) return null;
 
   return (
-    <Dialog
+    <Dialog.Root
       onClose={onClose}
       title={formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}
       isOpen={isOpen}
     >
-      <DialogBody icon={<ExclamationMarkCircle />}>
-        <Stack size={2}>
+      <Dialog.Body icon={<WarningCircle />}>
+        <Flex size={2}>
           <Flex justifyContent="center">
             <Typography variant="omega" id="confirm-description" style={{ textAlign: 'center' }}>
               {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_1` })}<br />
               {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_2` })}
             </Typography>
           </Flex>
-        </Stack>
-      </DialogBody>
+        </Flex>
+      </Dialog.Body>
       {(soft && type === 'import') && (
         <React.Fragment>
           <Divider />
@@ -54,7 +51,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
           </Box>
         </React.Fragment>
       )}
-      <DialogFooter
+      <Dialog.Footer
         startAction={(
           <Button
             onClick={() => {
@@ -76,7 +73,7 @@ const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
             {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
           </Button>
         )} />
-    </Dialog>
+    </Dialog.Root>
   );
 };
 

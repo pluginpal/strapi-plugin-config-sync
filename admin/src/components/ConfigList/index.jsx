@@ -10,7 +10,7 @@ import {
   Tr,
   Th,
   Typography,
-  BaseCheckbox,
+  Checkbox,
   Loader,
 } from '@strapi/design-system';
 
@@ -128,7 +128,7 @@ const ConfigList = ({ diff, isLoading }) => {
         <Thead>
           <Tr>
             <Th>
-              <BaseCheckbox
+              <Checkbox
                 aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
                 indeterminate={isIndeterminate}
                 onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}

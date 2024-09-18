@@ -56,6 +56,7 @@ const sanitizeConfig = ({
   delete config.id;
   delete config.updatedAt;
   delete config.createdAt;
+  delete config.publishedAt;
 
   if (relation) {
     const formattedRelations = [];
@@ -64,6 +65,7 @@ const sanitizeConfig = ({
       delete relationEntity._id;
       delete relationEntity.id;
       delete relationEntity.updatedAt;
+      delete config.publishedAt;
       delete relationEntity.createdAt;
       relationEntity = sortByKeys(relationEntity);
 

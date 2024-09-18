@@ -1,10 +1,7 @@
 module.exports = ({ env }) => ({
   auth: {
-    secret: env('ADMIN_JWT_SECRET', 'c27c3833823a12b0761e32b22dc0113a'),
+    secret: env('ADMIN_JWT_SECRET'),
   },
-  watchIgnoreFiles: [
-    '**/config/sync/**',
-  ],
   apiToken: {
     salt: env('API_TOKEN_SALT'),
   },
@@ -12,5 +9,9 @@ module.exports = ({ env }) => ({
     token: {
       salt: env('TRANSFER_TOKEN_SALT'),
     },
+  },
+  flags: {
+    nps: env.bool('FLAG_NPS', true),
+    promoteEE: env.bool('FLAG_PROMOTE_EE', true),
   },
 });
