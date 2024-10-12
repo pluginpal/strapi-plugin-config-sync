@@ -41,7 +41,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
       - name: Install dependencies plugin
-        run: yarn --no-lockfile --unsafe-perm --production
+        run: yarn --no-lockfile --unsafe-perm
       - name: Install dependencies playground
         run: yarn playground:install --unsafe-perm
       - name: Build playground
