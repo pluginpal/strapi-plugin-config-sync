@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button } from '@strapi/design-system';
+import { Button, Typography } from '@strapi/design-system';
 import { Map } from 'immutable';
 import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
@@ -14,38 +14,32 @@ const ActionButtons = () => {
   const { post, get } = getFetchClient();
   const dispatch = useDispatch();
   const { toggleNotification } = useNotification();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [actionType, setActionType] = useState('');
   const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
   const { formatMessage } = useIntl();
 
-  const closeModal = () => {
-    setActionType('');
-    setModalIsOpen(false);
-  };
-
-  const openModal = (type) => {
-    setActionType(type);
-    setModalIsOpen(true);
-  };
-
   return (
     <ActionButtonsStyling>
-      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('import')}>
-        {formatMessage({ id: 'config-sync.Buttons.Import' })}
-      </Button>
-      <Button disabled={isEmpty(partialDiff)} onClick={() => openModal('export')}>
-        {formatMessage({ id: 'config-sync.Buttons.Export' })}
-      </Button>
-      {!isEmpty(partialDiff) && (
-        <h4 style={{ display: 'inline' }}>{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</h4>
-      )}
       <ConfirmModal
-        isOpen={modalIsOpen}
-        onClose={closeModal}
-        type={actionType}
-        onSubmit={(force) => actionType === 'import' ? dispatch(importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get)) : dispatch(exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get))}
+        type="import"
+        trigger={(
+          <Button disabled={isEmpty(partialDiff)}>
+            {formatMessage({ id: 'config-sync.Buttons.Import' })}
+          </Button>
+        )}
+        onSubmit={(force) => dispatch(importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get))}
       />
+      <ConfirmModal
+        type="export"
+        trigger={(
+          <Button disabled={isEmpty(partialDiff)}>
+            {formatMessage({ id: 'config-sync.Buttons.Export' })}
+          </Button>
+        )}
+        onSubmit={(force) => dispatch(exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get))}
+      />
+      {!isEmpty(partialDiff) && (
+        <Typography variant="epsilon">{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</Typography>
+      )}
     </ActionButtonsStyling>
   );
 };

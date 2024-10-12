@@ -10,69 +10,69 @@ import {
   Checkbox,
   Divider,
   Box,
+  Field,
 } from '@strapi/design-system';
 import { WarningCircle } from '@strapi/icons';
 
-const ConfirmModal = ({ isOpen, onClose, onSubmit, type }) => {
+const ConfirmModal = ({ onClose, onSubmit, type, trigger }) => {
   const soft = useSelector((state) => state.getIn(['config', 'appEnv', 'config', 'soft'], false));
   const [force, setForce] = useState(false);
   const { formatMessage } = useIntl();
 
-  if (!isOpen) return null;
-
   return (
-    <Dialog.Root
-      onClose={onClose}
-      title={formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}
-      isOpen={isOpen}
-    >
-      <Dialog.Body icon={<WarningCircle />}>
-        <Flex size={2}>
-          <Flex justifyContent="center">
-            <Typography variant="omega" id="confirm-description" style={{ textAlign: 'center' }}>
-              {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_1` })}<br />
-              {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_2` })}
-            </Typography>
+    <Dialog.Root>
+      <Dialog.Trigger>
+        {trigger}
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Header>{formatMessage({ id: "config-sync.popUpWarning.Confirmation" })}</Dialog.Header>
+        <Dialog.Body>
+          <WarningCircle fill="danger600" width="32px" height="32px" />
+          <Flex size={2}>
+            <Flex justifyContent="center">
+              <Typography variant="omega" id="confirm-description" style={{ textAlign: 'center' }}>
+                {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_1` })}<br />
+                {formatMessage({ id: `config-sync.popUpWarning.warning.${type}_2` })}
+              </Typography>
+            </Flex>
           </Flex>
-        </Flex>
-      </Dialog.Body>
-      {(soft && type === 'import') && (
-        <React.Fragment>
-          <Divider />
-          <Box padding={4}>
-            <Checkbox
-              onValueChange={(value) => setForce(value)}
-              value={force}
-              name="force"
-              hint="Check this to ignore the soft setting."
+          {(soft && type === 'import') && (
+            <Box width="100%">
+              <Divider marginTop={4} />
+              <Box paddingTop={6}>
+                <Field.Root hint="Check this to ignore the soft setting.">
+                  <Checkbox
+                    onValueChange={(value) => setForce(value)}
+                    value={force}
+                    name="force"
+                  >
+                    {formatMessage({ id: 'config-sync.popUpWarning.force' })}
+                  </Checkbox>
+                  <Field.Hint />
+                </Field.Root>
+              </Box>
+            </Box>
+          )}
+        </Dialog.Body>
+        <Dialog.Footer>
+          <Dialog.Cancel>
+            <Button fullWidth variant="tertiary">
+              {formatMessage({ id: 'config-sync.popUpWarning.button.cancel' })}
+            </Button>
+          </Dialog.Cancel>
+          <Dialog.Action>
+            <Button
+              fullWidth
+              variant="secondary"
+              onClick={() => {
+                onSubmit(force);
+              }}
             >
-              {formatMessage({ id: 'config-sync.popUpWarning.force' })}
-            </Checkbox>
-          </Box>
-        </React.Fragment>
-      )}
-      <Dialog.Footer
-        startAction={(
-          <Button
-            onClick={() => {
-              onClose();
-            }}
-            variant="tertiary"
-          >
-            {formatMessage({ id: 'config-sync.popUpWarning.button.cancel' })}
-          </Button>
-        )}
-        endAction={(
-          <Button
-            variant="secondary"
-            onClick={() => {
-              onClose();
-              onSubmit(force);
-            }}
-          >
-            {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
-          </Button>
-        )} />
+              {formatMessage({ id: `config-sync.popUpWarning.button.${type}` })}
+            </Button>
+          </Dialog.Action>
+        </Dialog.Footer>
+      </Dialog.Content>
     </Dialog.Root>
   );
 };

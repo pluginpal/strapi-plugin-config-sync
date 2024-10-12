@@ -14,12 +14,15 @@
     "config-sync": "./bin/config-sync"
   },
   "scripts": {
+    "develop": "nodemon -e js,jsx --ignore playground --exec \"yalc publish && yalc push\"",
+    "build": "yalc push --publish",
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
     "test:integration": "cd playground && node_modules/.bin/jest --verbose  --forceExit --detectOpenHandles",
-    "plugin:install": "yarn install && rm -rf node_modules/@strapi/helper-plugin",
-    "playground:install": "cd playground && yarn install",
+    "playground:install": "yarn playground:yalc-add-link && cd playground && yarn install",
+    "playground:yalc-add": "cd playground && yalc add strapi-plugin-config-sync",
+    "playground:yalc-add-link": "cd playground && yalc add --link strapi-plugin-config-sync",
     "playground:build": "cd playground && yarn build",
     "playground:develop": "cd playground && yarn develop"
   },
@@ -55,13 +58,13 @@
     "strapi-server.js"
   ],
   "peerDependencies": {
-    "@strapi/strapi": "^5.0.0-rc.2"
+    "@strapi/strapi": "^5.0.0"
   },
   "devDependencies": {
-    "@strapi/design-system": "2.0.0-rc.7",
-    "@strapi/icons": "2.0.0-rc.7",
-    "@strapi/strapi": "5.0.0-rc.2",
-    "@strapi/utils": "5.0.0-rc.2",
+    "@strapi/design-system": "2.0.0-rc.11",
+    "@strapi/icons": "2.0.0-rc.11",
+    "@strapi/strapi": "5.0.4",
+    "@strapi/utils": "5.0.4",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -78,10 +81,12 @@
     "jest-cli": "^29.3.1",
     "jest-styled-components": "^7.0.2",
     "lodash": "^4.17.11",
+    "nodemon": "^3.1.7",
     "react": "^17.0.2",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
-    "styled-components": "^5.2.3"
+    "styled-components": "^5.2.3",
+    "yalc": "^1.0.0-pre.53"
   },
   "bugs": {
     "url": "https://github.com/pluginpal/strapi-plugin-config-sync/issues"

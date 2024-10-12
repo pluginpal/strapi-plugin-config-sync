@@ -13,17 +13,18 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "jest-cli": "^29.7.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "yalc": "^1.0.0-pre.53"
   },
   "dependencies": {
-    "@strapi/strapi": "5.0.0-rc.2",
-    "@strapi/plugin-users-permissions": "5.0.0-rc.2",
-    "@strapi/plugin-cloud": "5.0.0-rc.2",
+    "@strapi/plugin-cloud": "5.0.4",
+    "@strapi/plugin-users-permissions": "5.0.4",
+    "@strapi/strapi": "5.0.4",
     "better-sqlite3": "9.4.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
-    "strapi-plugin-config-sync": "./..",
+    "strapi-plugin-config-sync": "link:.yalc/strapi-plugin-config-sync",
     "styled-components": "^6.0.0"
   },
   "author": {

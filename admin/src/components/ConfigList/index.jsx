@@ -22,7 +22,6 @@ import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
 
 const ConfigList = ({ diff, isLoading }) => {
-  const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
@@ -72,7 +71,6 @@ const ConfigList = ({ diff, isLoading }) => {
           setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
           setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
-          setOpenModal(true);
         },
       });
     });
@@ -88,13 +86,6 @@ const ConfigList = ({ diff, isLoading }) => {
     });
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
-
-  const closeModal = () => {
-    setOriginalConfig({});
-    setNewConfig({});
-    setCname('');
-    setOpenModal(false);
-  };
 
   if (isLoading) {
     return (
@@ -117,22 +108,14 @@ const ConfigList = ({ diff, isLoading }) => {
 
   return (
     <div>
-      <ConfigDiff
-        isOpen={openModal}
-        oldValue={originalConfig}
-        newValue={newConfig}
-        onClose={closeModal}
-        configName={cName}
-      />
       <Table colCount={4} rowCount={rows.length + 1}>
         <Thead>
           <Tr>
             <Th>
               <Checkbox
                 aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
-                indeterminate={isIndeterminate}
-                onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}
-                value={allChecked}
+                checked={isIndeterminate ? "indeterminate" : allChecked}
+                onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
               />
             </Th>
             <Th>
@@ -148,14 +131,21 @@ const ConfigList = ({ diff, isLoading }) => {
         </Thead>
         <Tbody>
           {rows.map((row, index) => (
-            <ConfigListRow
+            <ConfigDiff
               key={row.configName}
-              row={row}
-              checked={checkedItems[index]}
-              updateValue={() => {
-                checkedItems[index] = !checkedItems[index];
-                setCheckedItems([...checkedItems]);
-              }}
+              oldValue={originalConfig}
+              newValue={newConfig}
+              configName={cName}
+              trigger={(
+                <ConfigListRow
+                  row={row}
+                  checked={checkedItems[index]}
+                  updateValue={() => {
+                    checkedItems[index] = !checkedItems[index];
+                    setCheckedItems([...checkedItems]);
+                  }}
+                />
+              )}
             />
           ))}
         </Tbody>
