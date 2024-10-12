@@ -1,7 +1,7 @@
 import React from 'react';
-import { Tr, Td, Checkbox } from '@strapi/design-system';
+import { Tr, Td, Checkbox, Typography } from '@strapi/design-system';
 
-const CustomRow = ({ row, checked, updateValue }) => {
+const CustomRow = ({ row, checked, updateValue, ...props }) => {
   const { configName, configType, state, onClick } = row;
 
   const stateStyle = (stateStr) => {
@@ -34,9 +34,13 @@ const CustomRow = ({ row, checked, updateValue }) => {
 
   return (
     <Tr
+      {...props}
       onClick={(e) => {
         if (e.target.type !== 'checkbox') {
           onClick(configType, configName);
+        }
+        if (props.onClick) {
+          props.onClick(e);
         }
       }}
       style={{ cursor: 'pointer' }}
@@ -49,13 +53,13 @@ const CustomRow = ({ row, checked, updateValue }) => {
         />
       </Td>
       <Td>
-        <p>{configName}</p>
+        <Typography variant="omega">{configName}</Typography>
       </Td>
       <Td>
-        <p>{configType}</p>
+        <Typography variant="omega">{configType}</Typography>
       </Td>
       <Td>
-        <p style={stateStyle(state)}>{state}</p>
+        <Typography variant="omega" style={stateStyle(state)}>{state}</Typography>
       </Td>
     </Tr>
   );

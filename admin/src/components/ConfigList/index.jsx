@@ -117,13 +117,6 @@ const ConfigList = ({ diff, isLoading }) => {
 
   return (
     <div>
-      <ConfigDiff
-        isOpen={openModal}
-        oldValue={originalConfig}
-        newValue={newConfig}
-        onClose={closeModal}
-        configName={cName}
-      />
       <Table colCount={4} rowCount={rows.length + 1}>
         <Thead>
           <Tr>
@@ -148,14 +141,21 @@ const ConfigList = ({ diff, isLoading }) => {
         </Thead>
         <Tbody>
           {rows.map((row, index) => (
-            <ConfigListRow
+            <ConfigDiff
               key={row.configName}
-              row={row}
-              checked={checkedItems[index]}
-              updateValue={() => {
-                checkedItems[index] = !checkedItems[index];
-                setCheckedItems([...checkedItems]);
-              }}
+              oldValue={originalConfig}
+              newValue={newConfig}
+              configName={cName}
+              trigger={(
+                <ConfigListRow
+                  row={row}
+                  checked={checkedItems[index]}
+                  updateValue={() => {
+                    checkedItems[index] = !checkedItems[index];
+                    setCheckedItems([...checkedItems]);
+                  }}
+                />
+              )}
             />
           ))}
         </Tbody>

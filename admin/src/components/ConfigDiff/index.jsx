@@ -8,36 +8,39 @@ import {
   Typography,
 } from '@strapi/design-system';
 
-const ConfigDiff = ({ isOpen, onClose, oldValue, newValue, configName }) => {
+const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
   const { formatMessage } = useIntl();
-  if (!isOpen) return null;
 
   return (
-    <Modal.Root
-      onClose={onClose}
-      labelledBy="title"
-    >
-      <Modal.Header>
-        <Typography variant="omega" fontWeight="bold" textColor="neutral800">
-          {formatMessage({ id: 'config-sync.ConfigDiff.Title' })} {configName}
-        </Typography>
-      </Modal.Header>
-      <Modal.Body>
-        <Grid.Root paddingBottom={4} style={{ textAlign: 'center' }}>
-          <Grid.Item col={6}>
-            <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}</Typography>
-          </Grid.Item>
-          <Grid.Item col={6}>
-            <Typography variant="delta">{formatMessage({ id: 'config-sync.ConfigDiff.Database' })}</Typography>
-          </Grid.Item>
-        </Grid.Root>
-        <ReactDiffViewer
-          oldValue={JSON.stringify(oldValue, null, 2)}
-          newValue={JSON.stringify(newValue, null, 2)}
-          splitView
-          compareMethod={DiffMethod.WORDS}
-        />
-      </Modal.Body>
+    <Modal.Root>
+      <Modal.Trigger>
+        {trigger}
+      </Modal.Trigger>
+      <Modal.Content>
+        <Modal.Header>
+          <Typography variant="omega" fontWeight="bold" textColor="neutral800">
+            {formatMessage({ id: 'config-sync.ConfigDiff.Title' })} {configName}
+          </Typography>
+        </Modal.Header>
+        <Modal.Body>
+          <Grid.Root paddingBottom={4} style={{ textAlign: 'center' }}>
+            <Grid.Item col={6}>
+              <Typography variant="delta" style={{ width: '100%' }}>{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}</Typography>
+            </Grid.Item>
+            <Grid.Item col={6}>
+              <Typography variant="delta" style={{ width: '100%' }}>{formatMessage({ id: 'config-sync.ConfigDiff.Database' })}</Typography>
+            </Grid.Item>
+          </Grid.Root>
+          <Typography variant="pi">
+            <ReactDiffViewer
+              oldValue={JSON.stringify(oldValue, null, 2)}
+              newValue={JSON.stringify(newValue, null, 2)}
+              splitView
+              compareMethod={DiffMethod.WORDS}
+            />
+          </Typography>
+        </Modal.Body>
+      </Modal.Content>
     </Modal.Root>
   );
 };

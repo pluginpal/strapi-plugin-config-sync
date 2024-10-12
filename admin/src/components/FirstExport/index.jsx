@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { getFetchClient, useNotification } from '@strapi/strapi/admin';
@@ -13,20 +13,21 @@ const FirstExport = () => {
   const { post, get } = getFetchClient();
   const { toggleNotification } = useNotification();
   const dispatch = useDispatch();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const { formatMessage } = useIntl();
 
   return (
     <div>
-      <ConfirmModal
-        isOpen={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
-        type="export"
-        onSubmit={() => dispatch(exportAllConfig([], toggleNotification, formatMessage, post, get))}
-      />
       <EmptyStateLayout
         content={formatMessage({ id: 'config-sync.FirstExport.Message' })}
-        action={<Button onClick={() => setModalIsOpen(true)}>{formatMessage({ id: 'config-sync.FirstExport.Button' })}</Button>}
+        action={(
+          <ConfirmModal
+            type="export"
+            onSubmit={() => dispatch(exportAllConfig([], toggleNotification, formatMessage, post, get))}
+            trigger={(
+              <Button>{formatMessage({ id: 'config-sync.FirstExport.Button' })}</Button>
+            )}
+          />
+        )}
         icon={<EmptyDocuments width={160} />}
       />
     </div>
