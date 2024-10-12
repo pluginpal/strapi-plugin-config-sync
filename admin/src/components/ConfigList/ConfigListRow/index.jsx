@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tr, Td, Checkbox, Typography, Box } from '@strapi/design-system';
+import { Tr, Td, Checkbox, Typography } from '@strapi/design-system';
 
 const CustomRow = ({ row, checked, updateValue, ...props }) => {
   const { configName, configType, state, onClick } = row;

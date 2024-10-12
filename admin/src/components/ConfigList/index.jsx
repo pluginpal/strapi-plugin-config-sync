@@ -22,7 +22,6 @@ import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
 
 const ConfigList = ({ diff, isLoading }) => {
-  const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
@@ -72,7 +71,6 @@ const ConfigList = ({ diff, isLoading }) => {
           setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
           setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
-          setOpenModal(true);
         },
       });
     });
@@ -88,13 +86,6 @@ const ConfigList = ({ diff, isLoading }) => {
     });
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
-
-  const closeModal = () => {
-    setOriginalConfig({});
-    setNewConfig({});
-    setCname('');
-    setOpenModal(false);
-  };
 
   if (isLoading) {
     return (
