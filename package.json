@@ -15,6 +15,7 @@
   },
   "scripts": {
     "develop": "nodemon -e js,jsx --ignore playground --exec \"yalc publish && yalc push\"",
+    "build": "yalc push --publish",
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
