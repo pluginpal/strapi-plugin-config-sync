@@ -123,9 +123,8 @@ const ConfigList = ({ diff, isLoading }) => {
             <Th>
               <Checkbox
                 aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
-                indeterminate={isIndeterminate}
-                onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}
-                value={allChecked}
+                checked={isIndeterminate ? "indeterminate" : allChecked}
+                onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
               />
             </Th>
             <Th>

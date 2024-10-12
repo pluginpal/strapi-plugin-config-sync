@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tr, Td, Checkbox, Typography } from '@strapi/design-system';
+import { Tr, Td, Checkbox, Typography, Box } from '@strapi/design-system';
 
 const CustomRow = ({ row, checked, updateValue, ...props }) => {
   const { configName, configType, state, onClick } = row;
@@ -39,26 +39,23 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
         if (e.target.type !== 'checkbox') {
           onClick(configType, configName);
         }
-        if (props.onClick) {
-          props.onClick(e);
-        }
       }}
       style={{ cursor: 'pointer' }}
     >
       <Td>
         <Checkbox
           aria-label={`Select ${configName}`}
-          value={checked}
-          onValueChange={updateValue}
+          checked={checked}
+          onCheckedChange={updateValue}
         />
       </Td>
-      <Td>
+      <Td onClick={(e) => props.onClick(e)}>
         <Typography variant="omega">{configName}</Typography>
       </Td>
-      <Td>
+      <Td onClick={(e) => props.onClick(e)}>
         <Typography variant="omega">{configType}</Typography>
       </Td>
-      <Td>
+      <Td onClick={(e) => props.onClick(e)}>
         <Typography variant="omega" style={stateStyle(state)}>{state}</Typography>
       </Td>
     </Tr>
