@@ -114,3 +114,7 @@ exports
 *.cache
 build
 .strapi-updater.json
+
+# yalc
+.yalc
+yalc.lock
