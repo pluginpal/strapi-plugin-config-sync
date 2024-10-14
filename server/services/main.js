@@ -78,19 +78,9 @@ module.exports = () => ({
       cwd: strapi.config.get('plugin.config-sync.syncDir')
     });
     const fullFilePath = `${strapi.config.get('plugin.config-sync.syncDir')}${fileName}`
-    const stats = fs.statSync(fullFilePath);
-
-    const result = await strapi.plugins.upload.services.upload.upload({
-      data: {}, //mandatory declare the data(can be empty), otherwise it will give you an undefined error. This parameters will be used to relate the file with a collection.
-      files: {
-        path: fullFilePath,
-        name: `configs/${fileName}`,
-        type: 'application/zip', // mime type of the file
-        size: stats.size,
-      },
-    });
+    const base64Data = fs.readFileSync(fullFilePath, { encoding: 'base64' });
     fs.unlinkSync(fullFilePath);
-    return { url: result[0].url, message: 'Success' };
+    return { base64Data, name: fileName, message: 'Success' };
   },
 
   /**

@@ -5,6 +5,7 @@
  */
 
 import { request } from '@strapi/helper-plugin';
+import { saveAs } from 'file-saver';
 
 export function getAllConfigDiff(toggleNotification) {
   return async function (dispatch) {
@@ -59,12 +60,21 @@ export function downloadZip(toggleNotification) {
   return async function (dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message, url } = await request('/config-sync/zip', {
+      const { message, base64Data, name } = await request('/config-sync/zip', {
         method: 'GET'
       });
       toggleNotification({ type: 'success', message });
-      if (url) {
-        window.location = url;
+      if (base64Data) {
+        function b64toBlob(dataURI) {
+          const byteString = atob(dataURI);
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          return new Blob([ab], { type: 'image/jpeg' });
+        }
+        saveAs(b64toBlob(base64Data), name, { type: 'application/zip' })
       }
       dispatch(setLoadingState(false));
     } catch (err) {
