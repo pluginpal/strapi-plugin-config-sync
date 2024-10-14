@@ -3,9 +3,9 @@
 const { isEmpty } = require('lodash');
 const fs = require('fs');
 const util = require('util');
+const childProcess = require("child_process");
 const difference = require('../utils/getObjectDiff');
 const { logMessage } = require('../utils');
-const child_process = require("child_process");
 
 /**
  * Main services for config import/export.
@@ -73,11 +73,11 @@ module.exports = () => ({
    * @returns {void}
    */
   zipConfigFiles: async () => {
-    const fileName = `config-${new Date().toJSON()}.zip`
-    child_process.execSync(`zip -r ${fileName} *`, {
-      cwd: strapi.config.get('plugin.config-sync.syncDir')
+    const fileName = `config-${new Date().toJSON()}.zip`;
+    childProcess.execSync(`zip -r ${fileName} *`, {
+      cwd: strapi.config.get('plugin.config-sync.syncDir'),
     });
-    const fullFilePath = `${strapi.config.get('plugin.config-sync.syncDir')}${fileName}`
+    const fullFilePath = `${strapi.config.get('plugin.config-sync.syncDir')}${fileName}`;
     const base64Data = fs.readFileSync(fullFilePath, { encoding: 'base64' });
     fs.unlinkSync(fullFilePath);
     return { base64Data, name: fileName, message: 'Success' };
