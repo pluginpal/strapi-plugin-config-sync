@@ -8,7 +8,7 @@ import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 
 import ConfirmModal from '../ConfirmModal';
-import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
+import { exportAllConfig, importAllConfig, downloadZip } from '../../state/actions/Config';
 
 const ActionButtons = () => {
   const { post, get } = getFetchClient();
@@ -37,6 +37,7 @@ const ActionButtons = () => {
         )}
         onSubmit={(force) => dispatch(exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get))}
       />
+      <Button onClick={() => dispatch(downloadZip(toggleNotification, formatMessage, post, get))}>{formatMessage({ id: 'config-sync.Buttons.DownloadConfig' })}</Button>
       {!isEmpty(partialDiff) && (
         <Typography variant="epsilon">{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</Typography>
       )}
