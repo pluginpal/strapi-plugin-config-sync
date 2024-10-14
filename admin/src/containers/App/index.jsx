@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { CheckPagePermissions } from '@strapi/helper-plugin';
+import { Page } from '@strapi/strapi/admin';
 
 import pluginPermissions from '../../permissions';
 import Header from '../../components/Header';
@@ -16,12 +16,12 @@ import ConfigPage from '../ConfigPage';
 
 const App = () => {
   return (
-    <CheckPagePermissions permissions={pluginPermissions.settings}>
+    <Page.Protect permissions={pluginPermissions.settings}>
       <Provider store={store}>
         <Header />
         <ConfigPage />
       </Provider>
-    </CheckPagePermissions>
+    </Page.Protect>
   );
 };
 

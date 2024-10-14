@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           always-auth: true
-          node-version: 16
+          node-version: 18
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org/'
       - name: Install dependencies
@@ -31,3 +31,4 @@ jobs:
         with:
           commit_message: 'chore: Bump version to ${{ steps.get_version.outputs.VERSION }}'
           file_pattern: 'package.json'
+          branch: master

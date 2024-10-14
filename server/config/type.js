@@ -1,9 +1,10 @@
 const { isEmpty } = require('lodash');
 const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } = require('../utils');
 const { difference, same } = require('../utils/getArrayDiff');
+const queryFallBack = require('../utils/queryFallBack');
 
 const ConfigType = class ConfigType {
-  constructor({ queryString, configName, uid, jsonFields, relations }) {
+  constructor({ queryString, configName, uid, jsonFields, relations, components }) {
     if (!configName) {
       strapi.log.error(logMessage('A config type was registered without a config name.'));
       process.exit(0);
@@ -25,6 +26,7 @@ const ConfigType = class ConfigType {
     this.configPrefix = configName;
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
+    this.components = components || null;
   }
 
   /**
@@ -37,10 +39,10 @@ const ConfigType = class ConfigType {
    */
   importSingle = async (configName, configContent, force) => {
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${configName}`.startsWith(option)));
     if (shouldExclude) return;
 
-    const softImport = strapi.config.get('plugin.config-sync.soft');
+    const softImport = strapi.config.get('plugin::config-sync.soft');
     const queryAPI = strapi.query(this.queryString);
     const uidParams = getUidParamsFromName(this.uidKeys, configName);
     const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, uidParams);
@@ -68,15 +70,15 @@ const ConfigType = class ConfigType {
         });
 
         await Promise.all(relations.map(async (relation) => {
-          await strapi.query(queryString).delete({
-            where: { id: relation.id },
-          });
+          await queryFallBack.delete(queryString, { where: {
+            id: relation.id,
+          }});
         }));
       }));
 
-      await queryAPI.delete({
-        where: { id: existingConfig.id },
-      });
+      await queryFallBack.delete(this.queryString, { where: {
+        id: existingConfig.id,
+      }});
 
       return;
     }
@@ -89,15 +91,17 @@ const ConfigType = class ConfigType {
 
       // Create entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const newEntity = await queryAPI.create({ data: query });
+      const newEntity = await queryFallBack.create(this.queryString, {
+        data: query,
+      });
 
       // Create relation entities.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName }) => {
-        const relationQueryApi = strapi.query(queryString);
-
         await Promise.all(configContent[relationName].map(async (relationEntity) => {
           const relationQuery = { ...relationEntity, [parentName]: newEntity };
-          await relationQueryApi.create({ data: relationQuery });
+          await queryFallBack.create(queryString, {
+            data: relationQuery,
+          });
         }));
       }));
     } else { // Config does exist in DB --> update config in DB
@@ -105,19 +109,22 @@ const ConfigType = class ConfigType {
       if (softImport && !force) return false;
 
       // Format JSON fields.
-      configContent = sanitizeConfig(configContent);
+      configContent = sanitizeConfig({
+        config: configContent,
+        configName,
+      });
       const query = { ...configContent };
       this.jsonFields.map((field) => query[field] = JSON.stringify(configContent[field]));
 
       // Update entity.
       this.relations.map(({ relationName }) => delete query[relationName]);
-      const entity = await queryAPI.update({ where: combinedUidWhereFilter, data: query });
+      const entity = await queryFallBack.update(this.queryString, { where: combinedUidWhereFilter, data: query });
 
       // Delete/create relations.
       await Promise.all(this.relations.map(async ({ queryString, relationName, parentName, relationSortFields }) => {
         const relationQueryApi = strapi.query(queryString);
-        existingConfig = sanitizeConfig(existingConfig, relationName, relationSortFields);
-        configContent = sanitizeConfig(configContent, relationName, relationSortFields);
+        existingConfig = sanitizeConfig({ config: existingConfig, configName, relation: relationName, relationSortFields });
+        configContent = sanitizeConfig({ config: configContent, configName, relation: relationName, relationSortFields });
 
         const configToAdd = difference(configContent[relationName], existingConfig[relationName], relationSortFields);
         const configToDelete = difference(existingConfig[relationName], configContent[relationName], relationSortFields);
@@ -137,7 +144,7 @@ const ConfigType = class ConfigType {
         }));
 
         await Promise.all(configToAdd.map(async (config) => {
-          await relationQueryApi.create({
+          await queryFallBack.create(queryString, {
             data: { ...config, [parentName]: entity.id },
           });
         }));
@@ -170,7 +177,7 @@ const ConfigType = class ConfigType {
     const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
     // Check if the config should be excluded.
-    const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
+    const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
@@ -202,11 +209,13 @@ const ConfigType = class ConfigType {
    *
    * @returns {object} Object with key value pairs of configs.
    */
-  getAllFromDatabase = async () => {
-    const AllConfig = await noLimit(strapi.query(this.queryString), {});
+   getAllFromDatabase = async () => {
+    const AllConfig = await noLimit(strapi.query(this.queryString), {
+      populate: this.components,
+    });
     const configs = {};
 
-    await Promise.all(Object.values(AllConfig).map(async (config) => {
+    await Promise.all(Object.entries(AllConfig).map(async ([configName, config]) => {
       const combinedUid = getCombinedUid(this.uidKeys, config);
       const combinedUidWhereFilter = getCombinedUidWhereFilter(this.uidKeys, config);
 
@@ -216,16 +225,16 @@ const ConfigType = class ConfigType {
       }
 
       // Check if the config should be excluded.
-      const shouldExclude = !isEmpty(strapi.config.get('plugin.config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
+      const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${this.configPrefix}.${combinedUid}`.startsWith(option)));
       if (shouldExclude) return;
 
-      const formattedConfig = { ...sanitizeConfig(config) };
+      const formattedConfig = { ...sanitizeConfig({ config, configName }) };
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: { [parentName]: combinedUidWhereFilter },
         });
 
-        relations.map((relation) => sanitizeConfig(relation));
+        relations.map((relation) => sanitizeConfig({ config: relation, configName: relationName }));
         relationSortFields.map((sortField) => {
           relations.sort(dynamicSort(sortField));
         });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useIntl } from 'react-intl';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 
@@ -9,7 +10,7 @@ import {
   Tr,
   Th,
   Typography,
-  BaseCheckbox,
+  Checkbox,
   Loader,
 } from '@strapi/design-system';
 
@@ -19,31 +20,32 @@ import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
+
 const ConfigList = ({ diff, isLoading }) => {
-  const [openModal, setOpenModal] = useState(false);
   const [originalConfig, setOriginalConfig] = useState({});
   const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
   const dispatch = useDispatch();
+  const { formatMessage } = useIntl();
 
   const getConfigState = (configName) => {
     if (
       diff.fileConfig[configName]
       && diff.databaseConfig[configName]
     ) {
-      return 'Different';
+      return formatMessage({ id: 'config-sync.ConfigList.Different' });
     } else if (
       diff.fileConfig[configName]
       && !diff.databaseConfig[configName]
     ) {
-      return 'Only in sync dir';
+      return formatMessage({ id: 'config-sync.ConfigList.OnlyDir' });
     } else if (
       !diff.fileConfig[configName]
       && diff.databaseConfig[configName]
     ) {
-      return 'Only in DB';
+      return formatMessage({ id: 'config-sync.ConfigList.OnlyDB' });
     }
   };
 
@@ -69,7 +71,6 @@ const ConfigList = ({ diff, isLoading }) => {
           setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
           setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
-          setOpenModal(true);
         },
       });
     });
@@ -86,17 +87,10 @@ const ConfigList = ({ diff, isLoading }) => {
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
 
-  const closeModal = () => {
-    setOriginalConfig({});
-    setNewConfig({});
-    setCname('');
-    setOpenModal(false);
-  };
-
   if (isLoading) {
     return (
       <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <Loader>Loading content...</Loader>
+        <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
       </div>
     );
   }
@@ -114,45 +108,44 @@ const ConfigList = ({ diff, isLoading }) => {
 
   return (
     <div>
-      <ConfigDiff
-        isOpen={openModal}
-        oldValue={originalConfig}
-        newValue={newConfig}
-        onClose={closeModal}
-        configName={cName}
-      />
       <Table colCount={4} rowCount={rows.length + 1}>
         <Thead>
           <Tr>
             <Th>
-              <BaseCheckbox
-                aria-label="Select all entries"
-                indeterminate={isIndeterminate}
-                onValueChange={(value) => setCheckedItems(checkedItems.map(() => value))}
-                value={allChecked}
+              <Checkbox
+                aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
+                checked={isIndeterminate ? "indeterminate" : allChecked}
+                onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
               />
             </Th>
             <Th>
-              <Typography variant="sigma">Config name</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">Config type</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
             </Th>
             <Th>
-              <Typography variant="sigma">State</Typography>
+              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
             </Th>
           </Tr>
         </Thead>
         <Tbody>
           {rows.map((row, index) => (
-            <ConfigListRow
+            <ConfigDiff
               key={row.configName}
-              row={row}
-              checked={checkedItems[index]}
-              updateValue={() => {
-                checkedItems[index] = !checkedItems[index];
-                setCheckedItems([...checkedItems]);
-              }}
+              oldValue={originalConfig}
+              newValue={newConfig}
+              configName={cName}
+              trigger={(
+                <ConfigListRow
+                  row={row}
+                  checked={checkedItems[index]}
+                  updateValue={() => {
+                    checkedItems[index] = !checkedItems[index];
+                    setCheckedItems([...checkedItems]);
+                  }}
+                />
+              )}
             />
           ))}
         </Tbody>

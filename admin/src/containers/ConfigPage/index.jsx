@@ -3,30 +3,34 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Map } from 'immutable';
 import {
   Box,
-  ContentLayout,
   Alert,
   Typography,
 } from '@strapi/design-system';
-import { useNotification } from '@strapi/helper-plugin';
+import { useNotification } from '@strapi/strapi/admin';
+import { getFetchClient, Layouts } from '@strapi/admin/strapi-admin';
+import { useIntl } from 'react-intl';
 
 import { getAllConfigDiff, getAppEnv } from '../../state/actions/Config';
 import ConfigList from '../../components/ConfigList';
 import ActionButtons from '../../components/ActionButtons';
 
 const ConfigPage = () => {
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
+  const { get } = getFetchClient();
+  const { formatMessage } = useIntl();
+
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], Map({})));
   const configDiff = useSelector((state) => state.getIn(['config', 'configDiff'], Map({})));
   const appEnv = useSelector((state) => state.getIn(['config', 'appEnv', 'env']));
 
   useEffect(() => {
-    dispatch(getAllConfigDiff(toggleNotification));
-    dispatch(getAppEnv(toggleNotification));
+    dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
+    dispatch(getAppEnv(toggleNotification, formatMessage, get));
   }, []);
 
   return (
-    <ContentLayout paddingBottom={8}>
+    <Layouts.Content paddingBottom={8}>
       {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
@@ -38,7 +42,7 @@ const ConfigPage = () => {
       )}
       <ActionButtons />
       <ConfigList isLoading={isLoading} diff={configDiff.toJS()} />
-    </ContentLayout>
+    </Layouts.Content>
   );
 };
 
