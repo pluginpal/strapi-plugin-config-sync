@@ -37,10 +37,10 @@ const ActionButtons = () => {
         )}
         onSubmit={(force) => dispatch(exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get))}
       />
-      <Button onClick={() => dispatch(downloadZip(toggleNotification, formatMessage, post, get))}>{formatMessage({ id: 'config-sync.Buttons.DownloadConfig' })}</Button>
       {!isEmpty(partialDiff) && (
         <Typography variant="epsilon">{Object.keys(partialDiff).length} {Object.keys(partialDiff).length === 1 ? "config change" : "config changes"}</Typography>
       )}
+      <Button onClick={() => dispatch(downloadZip(toggleNotification, formatMessage, post, get))}>{formatMessage({ id: 'config-sync.Buttons.DownloadConfig' })}</Button>
     </ActionButtonsStyling>
   );
 };
@@ -52,6 +52,9 @@ const ActionButtonsStyling = styled.div`
 
   > button {
     margin-right: 10px;
+  }
+  > button:last-of-type {
+    margin-left: auto;
   }
 `;
 
