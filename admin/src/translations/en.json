@@ -28,6 +28,7 @@
   "ConfigDiff.Database": "Database",
 
   "Buttons.Export": "Export",
+  "Buttons.DownloadConfig": "Download Config",
   "Buttons.Import": "Import",
 
   "FirstExport.Message": "Looks like this is your first time using config-sync for this project.",

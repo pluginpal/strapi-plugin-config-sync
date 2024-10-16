@@ -173,7 +173,7 @@ const ConfigType = class ConfigType {
    * @param {string} configName - The name of the config file.
    * @returns {void}
    */
-   exportSingle = async (configName) => {
+  exportSingle = async (configName) => {
     const formattedDiff = await strapi.plugin('config-sync').service('main').getFormattedDiff(this.configPrefix);
 
     // Check if the config should be excluded.
@@ -191,6 +191,17 @@ const ConfigType = class ConfigType {
       const combinedUid = getCombinedUid(this.uidKeys, currentConfig);
       await strapi.plugin('config-sync').service('main').writeConfigFile(this.configPrefix, combinedUid, currentConfig);
     }
+  }
+
+
+  /**
+   * Zip config files
+   *
+   * @param {string} configName - The name of the zip archive.
+   * @returns {void}
+   */
+  zipConfig = async () => {
+    return strapi.plugin('config-sync').service('main').zipConfigFiles();
   }
 
   /**
@@ -243,7 +254,7 @@ const ConfigType = class ConfigType {
    *
    * @returns {void}
    */
-   importAll = async () => {
+  importAll = async () => {
     // The main.importAllConfig service will loop the core-store.importSingle service.
     await strapi.plugin('config-sync').service('main').importAllConfig(this.configPrefix);
   }
@@ -253,7 +264,7 @@ const ConfigType = class ConfigType {
    *
    * @returns {void}
    */
-   exportAll = async () => {
+  exportAll = async () => {
     // The main.importAllConfig service will loop the core-store.importSingle service.
     await strapi.plugin('config-sync').service('main').exportAllConfig(this.configPrefix);
   }

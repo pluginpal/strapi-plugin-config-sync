@@ -3,6 +3,7 @@
 const { isEmpty } = require('lodash');
 const fs = require('fs');
 const util = require('util');
+const childProcess = require("child_process");
 const difference = require('../utils/getObjectDiff');
 const { logMessage } = require('../utils');
 
@@ -54,7 +55,7 @@ module.exports = () => ({
    * @param {string} configName - The name of the config file.
    * @returns {void}
    */
-   deleteConfigFile: async (configName) => {
+  deleteConfigFile: async (configName) => {
     // Check if the config should be excluded.
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (shouldExclude) return;
@@ -63,6 +64,23 @@ module.exports = () => ({
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
     fs.unlinkSync(`${strapi.config.get('plugin::config-sync.syncDir')}${configName}.json`);
+  },
+
+  /**
+   * Zip config files.
+   *
+   * @param {string} configName - The name of the config file.
+   * @returns {void}
+   */
+  zipConfigFiles: async () => {
+    const fileName = `config-${new Date().toJSON()}.zip`;
+    childProcess.execSync(`zip -r ${fileName} *`, {
+      cwd: strapi.config.get('plugin.config-sync.syncDir'),
+    });
+    const fullFilePath = `${strapi.config.get('plugin.config-sync.syncDir')}${fileName}`;
+    const base64Data = fs.readFileSync(fullFilePath, { encoding: 'base64' });
+    fs.unlinkSync(fullFilePath);
+    return { base64Data, name: fileName, message: 'Success' };
   },
 
   /**
@@ -191,7 +209,7 @@ module.exports = () => ({
    * @param {object} onSuccess - Success callback to run on each single successfull import.
    * @returns {void}
    */
-   exportAllConfig: async (configType = null, onSuccess) => {
+  exportAllConfig: async (configType = null, onSuccess) => {
     const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles();
     const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase();
 

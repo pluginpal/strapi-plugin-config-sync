@@ -3,6 +3,8 @@
  * Main actions
  *
  */
+import { saveAs } from 'file-saver';
+import { b64toBlob } from '../../helpers/blob';
 
 export function getAllConfigDiff(toggleNotification, formatMessage, get) {
   return async function(dispatch) {
@@ -42,6 +44,23 @@ export function exportAllConfig(partialDiff, toggleNotification, formatMessage, 
       const response = await post('/config-sync/export', partialDiff);
       toggleNotification({ type: 'success', message: response.data.message });
       dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
+      dispatch(setLoadingState(false));
+    } catch (err) {
+      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
+      dispatch(setLoadingState(false));
+    }
+  };
+}
+
+export function downloadZip(toggleNotification, formatMessage, post, get) {
+  return async function(dispatch) {
+    dispatch(setLoadingState(true));
+    try {
+      const { message, base64Data, name } = (await get('/config-sync/zip')).data;
+      toggleNotification({ type: 'success', message });
+      if (base64Data) {
+        saveAs(b64toBlob(base64Data, 'application/zip'), name, { type: 'application/zip' });
+      }
       dispatch(setLoadingState(false));
     } catch (err) {
       toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
