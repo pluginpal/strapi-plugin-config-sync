@@ -56,7 +56,7 @@ export function downloadZip(toggleNotification, formatMessage, post, get) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
-      const { message, base64Data, name } = await get('/config-sync/zip');
+      const { message, base64Data, name } = (await get('/config-sync/zip')).data;
       toggleNotification({ type: 'success', message });
       if (base64Data) {
         saveAs(b64toBlob(base64Data, 'application/zip'), name, { type: 'application/zip' });
