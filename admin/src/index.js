@@ -60,10 +60,21 @@ export default {
             };
           })
           .catch(() => {
-            return {
-              data: {},
-              locale,
-            };
+            return import(
+              /* webpackChunkName: "config-sync-translation-[request]" */ `./translations/en.json`
+            )
+              .then(({ default: data }) => {
+                return {
+                  data: prefixPluginTranslations(data, pluginId),
+                  locale,
+                };
+              })
+              .catch(() => {
+                return {
+                  data: {},
+                  locale,
+                };
+              });
           });
       }),
     );
