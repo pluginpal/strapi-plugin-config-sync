@@ -49,33 +49,20 @@ export default {
   bootstrap(app) {},
   async registerTrads({ locales }) {
     const importedTrads = await Promise.all(
-      locales.map((locale) => {
-        return import(
-          /* webpackChunkName: "config-sync-translation-[request]" */ `./translations/${locale}.json`
-        )
-          .then(({ default: data }) => {
-            return {
-              data: prefixPluginTranslations(data, pluginId),
-              locale,
-            };
-          })
-          .catch(() => {
-            return import(
-              /* webpackChunkName: "config-sync-translation-[request]" */ `./translations/en.json`
-            )
-              .then(({ default: data }) => {
-                return {
-                  data: prefixPluginTranslations(data, pluginId),
-                  locale,
-                };
-              })
-              .catch(() => {
-                return {
-                  data: {},
-                  locale,
-                };
-              });
-          });
+      locales.map(async (locale) => {
+        try {
+          // eslint-disable-next-line import/no-dynamic-require
+          const data = require(`./translations/${locale}.json`);
+          return {
+            data: prefixPluginTranslations(data, pluginId),
+            locale,
+          };
+        } catch {
+          return {
+            data: {},
+            locale,
+          };
+        }
       }),
     );
 
