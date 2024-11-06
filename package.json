@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.2.7",
+    "@strapi/strapi": "5.2.0",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
