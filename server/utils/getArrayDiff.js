@@ -1,4 +1,4 @@
-const difference = (arrayOne, arrayTwo, compareKeys) => {
+export const difference = (arrayOne, arrayTwo, compareKeys) => {
   return arrayOne.filter(({
     [compareKeys[0]]: id1,
     [compareKeys[1]]: id2,
@@ -10,7 +10,7 @@ const difference = (arrayOne, arrayTwo, compareKeys) => {
   });
 };
 
-const same = (arrayOne, arrayTwo, compareKeys) => {
+export const same = (arrayOne, arrayTwo, compareKeys) => {
   return arrayOne.filter(({
     [compareKeys[0]]: id1,
     [compareKeys[1]]: id2,
@@ -24,9 +24,4 @@ const same = (arrayOne, arrayTwo, compareKeys) => {
       && id2 === id4
       && JSON.stringify(restOne) === JSON.stringify(restTwo));
   });
-};
-
-module.exports = {
-  difference,
-  same,
 };

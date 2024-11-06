@@ -2,4 +2,4 @@
 
 'use strict';
 
-require('../server/cli');
+require('../dist/cli');

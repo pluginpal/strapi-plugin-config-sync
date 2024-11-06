@@ -1,17 +1,17 @@
 'use strict';
 
-const { isEmpty } = require('lodash');
-const fs = require('fs');
-const util = require('util');
-const childProcess = require("child_process");
-const difference = require('../utils/getObjectDiff');
-const { logMessage } = require('../utils');
+import { isEmpty } from 'lodash';
+import fs from 'fs';
+import util from 'util';
+import childProcess from "child_process";
+import difference from '../utils/getObjectDiff';
+import { logMessage } from '../utils';
 
 /**
  * Main services for config import/export.
  */
 
-module.exports = () => ({
+export default () => ({
   /**
    * Write a single config file.
    *

@@ -49,4 +49,4 @@ const types = (strapi) => {
   return typesArray;
 };
 
-module.exports = types;
+export default types;

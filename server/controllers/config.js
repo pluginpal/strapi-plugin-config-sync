@@ -1,13 +1,13 @@
 'use strict';
 
-const fs = require('fs');
-const { isEmpty } = require('lodash');
+import fs from 'fs';
+import { isEmpty } from 'lodash';
 
 /**
  * Main controllers for config import/export.
  */
 
-module.exports = {
+export default {
   /**
    * Export all config, from db to filesystem.
    *

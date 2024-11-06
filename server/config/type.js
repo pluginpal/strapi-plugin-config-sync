@@ -1,7 +1,7 @@
-const { isEmpty } = require('lodash');
-const { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } = require('../utils');
-const { difference, same } = require('../utils/getArrayDiff');
-const queryFallBack = require('../utils/queryFallBack');
+import { isEmpty } from 'lodash';
+import { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } from '../utils';
+import { difference, same } from '../utils/getArrayDiff';
+import queryFallBack from '../utils/queryFallBack';
 
 const ConfigType = class ConfigType {
   constructor({ queryString, configName, uid, jsonFields, relations, components }) {
@@ -270,4 +270,4 @@ const ConfigType = class ConfigType {
   }
 };
 
-module.exports = ConfigType;
+export default ConfigType;

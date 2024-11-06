@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
   default: {
     syncDir: "config/sync/",
     minify: false,

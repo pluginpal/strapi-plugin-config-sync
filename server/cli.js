@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const { Command } = require('commander');
-const Table = require('cli-table');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const { isEmpty } = require('lodash');
-const { createStrapi, compileStrapi } = require('@strapi/strapi');
-const gitDiff = require('git-diff');
+import fs from 'fs';
+import { Command } from 'commander';
+import Table from 'cli-table';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import { isEmpty } from 'lodash';
+import { createStrapi, compileStrapi } from '@strapi/strapi';
+import gitDiff from 'git-diff';
 
-const warnings = require('./warnings');
-const packageJSON = require('../package.json');
+import warnings from './warnings';
+import packageJSON from '../package.json';
 
 const program = new Command();
 

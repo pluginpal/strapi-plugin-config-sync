@@ -13,9 +13,25 @@
   "bin": {
     "config-sync": "./bin/config-sync"
   },
+  "exports": {
+    "./strapi-admin": {
+      "source": "./admin/src/index.js",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "source": "./server/index.js",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "develop": "nodemon -e js,jsx --ignore playground --exec \"yalc publish && yalc push\"",
-    "build": "yalc push --publish",
+    "develop": "strapi-plugin watch:link",
+    "watch": "pack-up watch",
+    "build": "pack-up build && yalc push --publish",
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
@@ -52,18 +68,20 @@
     }
   ],
   "files": [
-    "admin",
-    "server",
-    "bin",
-    "strapi-admin.js",
-    "strapi-server.js"
+    "dist",
+    "bin"
   ],
   "peerDependencies": {
-    "@strapi/strapi": "^5.0.0"
+    "@strapi/strapi": "^5.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@strapi/design-system": "2.0.0-rc.11",
     "@strapi/icons": "2.0.0-rc.11",
+    "@strapi/sdk-plugin": "^5.2.7",
     "@strapi/strapi": "5.0.4",
     "@strapi/utils": "5.0.4",
     "babel-eslint": "9.0.0",

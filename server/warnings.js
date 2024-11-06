@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
   delete: {
     'user-role.public': "You've just deleted a default role from the users-permissions plugin.",
     'user-role.authenticated': "You've just deleted a default role from the users-permissions plugin.",

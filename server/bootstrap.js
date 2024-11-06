@@ -1,10 +1,10 @@
 'use strict';
 
-const fs = require('fs');
+import fs from 'fs';
 
-const ConfigType = require('./config/type');
-const defaultTypes = require('./config/types');
-const { logMessage } = require('./utils');
+import ConfigType from './config/type';
+import defaultTypes from './config/types';
+import { logMessage } from './utils';
 
 /**
  * An asynchronous bootstrap function that runs before
@@ -16,7 +16,7 @@ const { logMessage } = require('./utils');
  * See more details here: https://strapi.io/documentation/v3.x/concepts/configurations.html#bootstrap
  */
 
-module.exports = async () => {
+export default async () => {
   // Register config types.
   const registerTypes = () => {
     const types = {};

@@ -1,7 +1,7 @@
 'use strict';
 
-const adminRoutes = require('./admin');
+import adminRoutes from './admin';
 
-module.exports = {
+export default {
   admin: adminRoutes,
 };

@@ -1,7 +1,7 @@
 'use strict';
 
-const main = require('./main');
+import main from './main';
 
-module.exports = {
+export default {
   main,
 };

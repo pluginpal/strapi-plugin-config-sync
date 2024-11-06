@@ -33,4 +33,4 @@ const queryFallBack = {
   },
 };
 
-module.exports = queryFallBack;
+export default queryFallBack;

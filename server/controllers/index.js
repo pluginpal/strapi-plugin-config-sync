@@ -1,7 +1,7 @@
 'use strict';
 
-const config = require('./config');
+import config from './config';
 
-module.exports = {
+export default {
   config: config,
 };
