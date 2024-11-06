@@ -1,6 +1,9 @@
 'use strict';
 
-import { transform, isEqual, isArray, isObject } from 'lodash';
+import transform from 'lodash/transform';
+import isEqual from 'lodash/isEqual';
+import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
 
 /**
  * Find difference between two objects

@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } from '../utils';
 import { difference, same } from '../utils/getArrayDiff';
 import queryFallBack from '../utils/queryFallBack';

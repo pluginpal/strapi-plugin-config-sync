@@ -1,7 +1,7 @@
 'use strict';
 
 import fs from 'fs';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Main controllers for config import/export.

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { Button, Typography } from '@strapi/design-system';
 import { Map } from 'immutable';
 import { getFetchClient, useNotification } from '@strapi/strapi/admin';

@@ -1,6 +1,6 @@
 'use strict';
 
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import fs from 'fs';
 import util from 'util';
 import childProcess from "child_process";

@@ -5,7 +5,7 @@ import { Command } from 'commander';
 import Table from 'cli-table';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { createStrapi, compileStrapi } from '@strapi/strapi';
 import gitDiff from 'git-diff';
 
