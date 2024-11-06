@@ -18,7 +18,6 @@ const HeaderComponent = () => {
       <Layouts.Header
         title={formatMessage({ id: 'config-sync.Header.Title' })}
         subtitle={formatMessage({ id: 'config-sync.Header.Description' })}
-        as="h2"
       />
     </Box>
   );

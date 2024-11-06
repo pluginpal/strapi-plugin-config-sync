@@ -30,17 +30,11 @@ export default {
         {
           intlLabel: {
             id: `${pluginId}.Settings.Tool.Title`,
-            defaultMessage: 'Tools',
+            defaultMessage: 'Interface',
           },
           id: 'config-sync-page',
-          to: `/settings/${pluginId}`,
-          Component: async () => {
-            const component = await import(
-              /* webpackChunkName: "config-sync-settings-page" */ './containers/App'
-            );
-
-            return component;
-          },
+          to: `${pluginId}`,
+          Component: () => import('./containers/App'),
           permissions: pluginPermissions['settings'],
         },
       ],
