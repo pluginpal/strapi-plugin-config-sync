@@ -43,10 +43,10 @@
     "playground:develop": "cd playground && yarn develop"
   },
   "dependencies": {
+    "@strapi/admin": "5.2.0",
     "@strapi/design-system": "2.0.0-rc.11",
     "@strapi/icons": "2.0.0-rc.11",
     "@strapi/strapi": "5.2.0",
-    "@strapi/admin": "5.2.0",
     "@strapi/utils": "5.2.0",
     "chalk": "^4.1.2",
     "cli-table": "^0.3.6",
@@ -58,10 +58,11 @@
     "lodash": "^4.17.11",
     "react-diff-viewer-continued": "3.2.6",
     "react-intl": "6.6.2",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
-    "react-redux": "^7.2.2",
-    "redux": "^4.0.5"
+    "react-query": "^3.39.3"
   },
   "author": {
     "name": "Boaz Poolman",
