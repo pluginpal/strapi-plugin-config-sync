@@ -3,7 +3,8 @@
 import isEmpty from 'lodash/isEmpty';
 import fs from 'fs';
 import util from 'util';
-import childProcess from "child_process";
+import AdmZip from 'adm-zip';
+
 import difference from '../utils/getObjectDiff';
 import { logMessage } from '../utils';
 
@@ -73,13 +74,12 @@ export default () => ({
    * @returns {void}
    */
   zipConfigFiles: async () => {
-    const fileName = `config-${new Date().toJSON()}.zip`;
-    childProcess.execSync(`zip -r ${fileName} *`, {
-      cwd: strapi.config.get('plugin.config-sync.syncDir'),
-    });
-    const fullFilePath = `${strapi.config.get('plugin.config-sync.syncDir')}${fileName}`;
-    const base64Data = fs.readFileSync(fullFilePath, { encoding: 'base64' });
-    fs.unlinkSync(fullFilePath);
+    const fileName = `config-sync-${new Date().toJSON()}.zip`;
+
+    const zip = new AdmZip();
+    zip.addLocalFolder(strapi.config.get('plugin.config-sync.syncDir'));
+    const base64Data = zip.toBuffer().toString('base64');
+
     return { base64Data, name: fileName, message: 'Success' };
   },
 
