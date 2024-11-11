@@ -86,7 +86,7 @@ export default {
 
   zipConfig: async (ctx) => {
     // Check for existance of the config file sync dir.
-    if (!fs.existsSync(strapi.config.get('plugin.config-sync.syncDir'))) {
+    if (!fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
       ctx.send({
         message: 'No config files were found.',
       });

@@ -77,7 +77,7 @@ export default () => ({
     const fileName = `config-sync-${new Date().toJSON()}.zip`;
 
     const zip = new AdmZip();
-    zip.addLocalFolder(strapi.config.get('plugin.config-sync.syncDir'));
+    zip.addLocalFolder(strapi.config.get('plugin::config-sync.syncDir'));
     const base64Data = zip.toBuffer().toString('base64');
 
     return { base64Data, name: fileName, message: 'Success' };
