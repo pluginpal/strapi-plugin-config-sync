@@ -2582,7 +2582,7 @@
     semver "7.5.4"
     umzug "3.8.1"
 
-"@strapi/design-system@2.0.0-rc.14", "@strapi/design-system@^2.0.0":
+"@strapi/design-system@2.0.0-rc.14", "@strapi/design-system@^2.0.0-rc.14":
   version "2.0.0-rc.14"
   resolved "https://registry.yarnpkg.com/@strapi/design-system/-/design-system-2.0.0-rc.14.tgz#7478f50b3740311a3df3b929f410699b039cf5ef"
   integrity sha512-zOtArGfAQmKO5qqRE0IlONfjR1JL2VL/KjV3hE++KSybOZgfhbdckN4svpNtJ6i2Pv+glm7nHdu9h6AHRBuujQ==
@@ -2654,7 +2654,7 @@
     react-redux "8.1.3"
     yup "0.32.9"
 
-"@strapi/icons@2.0.0-rc.14", "@strapi/icons@^2.0.0":
+"@strapi/icons@2.0.0-rc.14", "@strapi/icons@^2.0.0-rc.14":
   version "2.0.0-rc.14"
   resolved "https://registry.yarnpkg.com/@strapi/icons/-/icons-2.0.0-rc.14.tgz#ff3179c2c3c51ec70ac5e29982b74e1f2b531e87"
   integrity sha512-6kamFHcsoFpffp96HmFGgpM8FDezwb86sJ4c3Ydp7+eTgtEsHd8yLekAQhpaWXd2ZsHwRDbLLR0Tu1orgvRVYg==
@@ -2738,10 +2738,10 @@
     react-redux "8.1.3"
     yup "0.32.9"
 
-"@strapi/sdk-plugin@^5.2.7":
-  version "5.2.7"
-  resolved "https://registry.yarnpkg.com/@strapi/sdk-plugin/-/sdk-plugin-5.2.7.tgz#b27060d49c0ff45ef17195f5f361dff51e8a705d"
-  integrity sha512-9oC7Z1egW00RSL+cRh+pgx4PRrv+IsA64kDiHRkz+zbsW/HfEmj6CogzEAHdmB+EnteuNCEhZziyQ8/WHF5G5A==
+"@strapi/sdk-plugin@^5.0.0":
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/@strapi/sdk-plugin/-/sdk-plugin-5.2.8.tgz#ac5c376682a76be32f47e6b2403aab57dcb740dc"
+  integrity sha512-Il8HCG7MS/1hocyfUDKibCdjSd1JTgOnU/vTmg0aBUZUYJzCT1W7bOQPbKegUDqFb0oS9Em9UAWrGhp/VuUQ7w==
   dependencies:
     "@strapi/pack-up" "^5.0.1"
     "@types/prompts" "2.4.9"
@@ -11148,7 +11148,7 @@ react-window@1.8.10:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
-react@^17.0.2:
+react@^17.0.0:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
