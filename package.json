@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-config-sync",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "description": "Migrate your config data across environments using the CLI or Strapi admin panel.",
   "strapi": {
     "displayName": "Config Sync",
@@ -77,10 +77,10 @@
     "bin"
   ],
   "peerDependencies": {
-    "@strapi/strapi": "^5.0.0",
     "@strapi/admin": "^5.0.0",
     "@strapi/design-system": "^2.0.0-rc.14",
     "@strapi/icons": "^2.0.0-rc.14",
+    "@strapi/strapi": "^5.0.0",
     "@strapi/utils": "^5.0.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
@@ -88,11 +88,11 @@
     "styled-components": "^6.0.0"
   },
   "devDependencies": {
-    "@strapi/sdk-plugin": "^5.0.0",
-    "@strapi/strapi": "^5.0.0",
     "@strapi/admin": "^5.0.0",
     "@strapi/design-system": "^2.0.0-rc.14",
     "@strapi/icons": "^2.0.0-rc.14",
+    "@strapi/sdk-plugin": "^5.0.0",
+    "@strapi/strapi": "^5.0.0",
     "@strapi/utils": "^5.0.0",
     "babel-eslint": "9.0.0",
     "eslint": "^7.32.0",
