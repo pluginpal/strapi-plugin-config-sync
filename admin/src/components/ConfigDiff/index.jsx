@@ -1,6 +1,22 @@
 import React from 'react';
-import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer-continued';
+import RDV, { DiffMethod } from 'react-diff-viewer-continued';
 import { useIntl } from 'react-intl';
+
+/**
+ * An issue with the diff-viewer library causes a difference in the way the library is exported.
+ * Depending on whether the library is loaded through the browser or through the server, the default export may or may not be present.
+ * This causes issues with SSR and the way the library is imported.
+ *
+ * Below a workaround to fix this issue.
+ *
+ * @see https://github.com/Aeolun/react-diff-viewer-continued/issues/43
+ */
+let ReactDiffViewer;
+if (typeof RDV.default !== 'undefined') {
+  ReactDiffViewer = RDV.default;
+} else {
+  ReactDiffViewer = RDV;
+}
 
 import {
   Modal,
