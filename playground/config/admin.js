@@ -19,5 +19,6 @@ module.exports = ({ env }) => ({
   },
   watchIgnoreFiles: [
     '!**/.yalc/**/server/**',
+    '**/config/sync/**',
   ]
 });
