@@ -5,7 +5,7 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:1337',
     specPattern: '**/*.cy.{js,ts,jsx,tsx}',
-    video: process.env.ACTIONS_RUNNER_DEBUG,
+    video: true,
     defaultCommandTimeout: 20000,
     requestTimeout: 20000,
     setupNodeEvents(on, config) {
