@@ -11,12 +11,12 @@ import { useIntl } from 'react-intl';
  *
  * @see https://github.com/Aeolun/react-diff-viewer-continued/issues/43
  */
-// let ReactDiffViewer;
-// if (typeof RDV.default !== 'undefined') {
-//   ReactDiffViewer = RDV.default;
-// } else {
-//   ReactDiffViewer = RDV;
-// }
+let ReactDiffViewer;
+if (typeof RDV.default !== 'undefined') {
+  ReactDiffViewer = RDV.default;
+} else {
+  ReactDiffViewer = RDV;
+}
 
 import {
   Modal,
@@ -48,7 +48,7 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
             </Grid.Item>
           </Grid.Root>
           <Typography variant="pi">
-            <RDV
+            <ReactDiffViewer
               oldValue={JSON.stringify(oldValue, null, 2)}
               newValue={JSON.stringify(newValue, null, 2)}
               splitView
