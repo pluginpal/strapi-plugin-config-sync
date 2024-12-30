@@ -5,6 +5,9 @@ module.exports = ({ env }) => ({
   apiToken: {
     salt: env('API_TOKEN_SALT'),
   },
+  rateLimit: {
+    enabled: false,
+  },
   transfer: {
     token: {
       salt: env('TRANSFER_TOKEN_SALT'),
@@ -16,5 +19,6 @@ module.exports = ({ env }) => ({
   },
   watchIgnoreFiles: [
     '!**/.yalc/**/server/**',
+    '**/config/sync/**',
   ]
 });

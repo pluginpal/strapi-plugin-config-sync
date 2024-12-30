@@ -14,3 +14,8 @@ npm-debug.log
 build
 dist
 bundle
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
