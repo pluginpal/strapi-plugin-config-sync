@@ -64,6 +64,8 @@ Cypress.Commands.add('login', (path) => {
       cy.wait('@sessionCheck').its('response.statusCode').should('equal', 200);
     }
   });
+
+  cy.reload();
 });
 
 Cypress.Commands.add('navigateToInterface', (path) => {
