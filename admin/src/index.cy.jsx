@@ -39,36 +39,36 @@ describe('Config Sync', () => {
     });
   });
 
-  // it('Partial import & export', () => {
-  //   cy.login();
-  //   cy.navigateToInterface();
-  //   cy.initialExport();
+  it('Partial import & export', () => {
+    cy.login();
+    cy.navigateToInterface();
+    cy.initialExport();
 
-  //   cy.makeConfigChanges();
+    cy.makeConfigChanges();
 
-  //   cy.navigateToInterface();
+    cy.navigateToInterface();
 
-  //   cy.get('button[aria-label="Select all entries"]').click();
+    cy.get('button[aria-label="Select all entries"]').click();
 
-  //   cy.intercept({
-  //     method: 'POST',
-  //     url: '/config-sync/import',
-  //   }).as('importConfig');
-  //   cy.get('button[aria-label="Select plugin_upload_settings"]').click();
-  //   cy.get('button').contains('Import').click();
-  //   cy.get('button').contains('Yes, import').click();
-  //   cy.wait('@importConfig').its('response.statusCode').should('equal', 200);
-  //   cy.contains('plugin_users-permissions_advanced');
-  //   cy.contains('plugin_users-permissions_email');
+    cy.intercept({
+      method: 'POST',
+      url: '/config-sync/import',
+    }).as('importConfig');
+    cy.get('button[aria-label="Select plugin_upload_settings"]').click();
+    cy.get('button').contains('Import').click();
+    cy.get('button').contains('Yes, import').click();
+    cy.wait('@importConfig').its('response.statusCode').should('equal', 200);
+    cy.contains('plugin_users-permissions_advanced');
+    cy.contains('plugin_users-permissions_email');
 
-  //   cy.intercept({
-  //     method: 'POST',
-  //     url: '/config-sync/export',
-  //   }).as('exportConfig');
-  //   cy.get('button[aria-label="Select plugin_users-permissions_advanced"]').click();
-  //   cy.get('button').contains('Export').click();
-  //   cy.get('button').contains('Yes, export').click();
-  //   cy.wait('@exportConfig').its('response.statusCode').should('equal', 200);
-  //   cy.contains('plugin_users-permissions_email');
-  // });
+    cy.intercept({
+      method: 'POST',
+      url: '/config-sync/export',
+    }).as('exportConfig');
+    cy.get('button[aria-label="Select plugin_users-permissions_advanced"]').click();
+    cy.get('button').contains('Export').click();
+    cy.get('button').contains('Yes, export').click();
+    cy.wait('@exportConfig').its('response.statusCode').should('equal', 200);
+    cy.contains('plugin_users-permissions_email');
+  });
 });
