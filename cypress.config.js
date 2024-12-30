@@ -10,6 +10,7 @@ module.exports = defineConfig({
     requestTimeout: 10000,
     setupNodeEvents(on, config) {
       // implement node event listeners here.
+      // eslint-disable-next-line global-require
       require('cypress-terminal-report/src/installLogsPrinter')(on);
 
       on('task', {
@@ -21,7 +22,7 @@ module.exports = defineConfig({
             console.log(`folder ${folderName} deleted`);
             return null;
           })
-          .catch(err => {
+          .catch((err) => {
             console.error(`error deleting folder ${folderName}`, err);
             throw err;
           });

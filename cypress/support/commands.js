@@ -1,4 +1,4 @@
-/// <reference types="cypress" />
+// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -43,6 +43,7 @@ Cypress.Commands.add('login', (path) => {
   cy.wait('@adminInit').its('response.statusCode').should('equal', 200);
 
   // Wait for the form to render.
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 
   cy.get('body').then(($body) => {
@@ -120,7 +121,8 @@ Cypress.Commands.add('makeConfigChanges', (path) => {
   }).as('saveUpEmailTemplates');
   cy.get('a[href="/admin/settings/users-permissions/email-templates"]').click();
   cy.get('tbody tr').contains('Reset password').click();
-  cy.get('input[name="options.response_email"]').clear().type(`${Math.random().toString(36).substring(2, 15)}@example.com`);
+  cy.get('input[name="options.response_email"]').clear();
+  cy.get('input[name="options.response_email"]').type(`${Math.random().toString(36).substring(2, 15)}@example.com`);
   cy.get('button[type="submit"]').click();
   cy.wait('@saveUpEmailTemplates').its('response.statusCode').should('equal', 200);
 });
