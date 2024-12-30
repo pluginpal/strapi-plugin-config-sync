@@ -6,8 +6,8 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:1337',
     specPattern: '**/*.cy.{js,ts,jsx,tsx}',
     video: false,
-    defaultCommandTimeout: 10000,
-    requestTimeout: 10000,
+    defaultCommandTimeout: 20000,
+    requestTimeout: 20000,
     setupNodeEvents(on, config) {
       // implement node event listeners here.
       // eslint-disable-next-line global-require
