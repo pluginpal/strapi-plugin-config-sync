@@ -53,6 +53,7 @@ Cypress.Commands.add('login', (path) => {
       cy.get('input[name="password"]').type('Abc12345678');
       cy.get('button[type="submit"]').click();
       cy.wait('@sessionCheck').its('response.statusCode').should('equal', 200);
+      cy.reload();
     }
     // Register
     if ($body.text().includes('Credentials are only used to authenticate in Strapi')) {
@@ -64,8 +65,6 @@ Cypress.Commands.add('login', (path) => {
       cy.wait('@sessionCheck').its('response.statusCode').should('equal', 200);
     }
   });
-
-  cy.reload();
 });
 
 Cypress.Commands.add('navigateToInterface', (path) => {
