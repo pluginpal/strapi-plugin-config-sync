@@ -41,7 +41,8 @@
     "playground:yalc-add": "cd playground && yalc add strapi-plugin-config-sync",
     "playground:yalc-add-link": "cd playground && yalc add --link strapi-plugin-config-sync",
     "playground:build": "cd playground && yarn build",
-    "playground:develop": "cd playground && yarn develop"
+    "playground:develop": "cd playground && yarn develop",
+    "playground:start": "cd playground && yarn start"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
