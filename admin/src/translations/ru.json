@@ -1,1 +1,40 @@
-{}
+{
+  "popUpWarning.warning.import_1": "Если вы продолжите, все ваши локальные конфигурационные файлы",
+  "popUpWarning.warning.import_2": "будут импортированы в базу данных.",
+  "popUpWarning.warning.export_1": "Если вы продолжите, вся конфигурация вашей базы данных",
+  "popUpWarning.warning.export_2": "будет записана в конфигурационные файлы.",
+  "popUpWarning.button.import": "Да, импортировать",
+  "popUpWarning.button.export": "Да, экспортитровать",
+  "popUpWarning.button.cancel": "Отмена",
+  "popUpWarning.force": "Принудительно",
+  "popUpWarning.Confirmation": "Подтверждение",
+
+  "Header.Title": "Config Sync",
+  "Header.Description": "Управляйте конфигурацией своей базы данных в разных средах.",
+
+  "ConfigList.Loading": "Загрузка содержимого...",
+  "ConfigList.SelectAll": "Выбрать все записи",
+  "ConfigList.ConfigName": "Имя конфигурации",
+  "ConfigList.ConfigType": "Тип конфигурации",
+  "ConfigList.State": "Состояние",
+  "ConfigList.Different": "Различия",
+  "ConfigList.OnlyDir": "Только в каталоге синхронизации",
+  "ConfigList.OnlyDB": "Только в базе данных",
+
+  "NoChanges.Message": "Нет различий между базой данных и каталогом синхронизации. Данные синхронизированы!",
+
+  "ConfigDiff.Title": "Изменения конфигурации для",
+  "ConfigDiff.SyncDirectory": "Каталог синхронизации",
+  "ConfigDiff.Database": "База данных",
+
+  "Buttons.Export": "Экспортировать",
+  "Buttons.DownloadConfig": "Скачать конфиг",
+  "Buttons.Import": "Импортировать",
+
+  "FirstExport.Message": "Похоже, вы впервые используете config-sync для этого проекта.",
+  "FirstExport.Button": "Выполнить первоначальный экспорт",
+
+  "Settings.Tool.Title": "Управление",
+
+  "plugin.name": "Config Sync"
+}
