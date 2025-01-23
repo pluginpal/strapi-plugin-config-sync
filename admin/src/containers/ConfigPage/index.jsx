@@ -34,9 +34,9 @@ const ConfigPage = () => {
       {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
-            <Typography variant="omega" fontWeight="bold">{formatMessage({ id: 'envWarning.production.heading' })}</Typography><br />
-            {formatMessage({ id: 'envWarning.production.message_1' })}<br />
-            {formatMessage({ id: 'envWarning.production.message_2' })}
+            <Typography variant="omega" fontWeight="bold">{formatMessage({ id: 'config-sync.envWarning.production.heading' })}</Typography><br />
+            {formatMessage({ id: 'config-sync.envWarning.production.message_1' })}<br />
+            {formatMessage({ id: 'config-sync.envWarning.production.message_2' })}
           </Alert>
         </Box>
       )}
