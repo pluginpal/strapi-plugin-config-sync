@@ -9,6 +9,10 @@
   "popUpWarning.force": "Принудительно",
   "popUpWarning.Confirmation": "Подтверждение",
 
+  "envWarning.production.heading": "Вы находитесь в prodoction-среде",
+  "envWarning.production.message_1": "Пожалуйста, будьте осторожны при синхронизации конфигурации в prodoction-среде.",
+  "envWarning.production.message_2": "Убедитесь, что вы не переопределяете важные изменения конфигурации при импорте.",
+
   "Header.Title": "Config Sync",
   "Header.Description": "Управляйте конфигурацией своей базы данных в разных средах.",
 

@@ -34,9 +34,9 @@ const ConfigPage = () => {
       {appEnv === 'production' && (
         <Box paddingBottom={4}>
           <Alert variant="danger">
-            <Typography variant="omega" fontWeight="bold">You&apos;re in the production environment</Typography><br />
-            Please be careful when syncing your config in production.<br />
-            Make sure you are not overriding critical config changes on import.
+            <Typography variant="omega" fontWeight="bold">{formatMessage({ id: 'envWarning.production.heading' })}</Typography><br />
+            {formatMessage({ id: 'envWarning.production.message_1' })}<br />
+            {formatMessage({ id: 'envWarning.production.message_2' })}
           </Alert>
         </Box>
       )}
