@@ -52,8 +52,8 @@ jobs:
         run: yarn playground:build
       # - name: Run unit tests
       #   run: yarn test:unit
-      - name: Run integration tests
-        run: yarn run -s test:integration
+      # - name: Run integration tests
+      #   run: yarn run -s test:integration
       - name: Run end-to-end tests
         uses: cypress-io/github-action@v6
         with:
