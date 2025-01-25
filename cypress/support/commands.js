@@ -53,16 +53,8 @@ Cypress.Commands.add('login', (path) => {
       cy.get('input[name="password"]').type('Abc12345678');
       cy.get('button[type="submit"]').click();
       cy.wait('@sessionCheck').its('response.statusCode').should('equal', 200);
-
-      // Sometimes the page hangs after logging in.
-      // If this happens we reload the page and log in again.
-      cy.reload();
-      cy.get('body').then(($b) => {
-        if ($b.text().includes('Log in to your Strapi account')) {
-          cy.login();
-        }
-      });
     }
+
     // Register
     if ($body.text().includes('Credentials are only used to authenticate in Strapi')) {
       cy.get('input[name="firstname"]').type('John');
