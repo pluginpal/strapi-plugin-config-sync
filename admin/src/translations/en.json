@@ -9,6 +9,10 @@
   "popUpWarning.force": "Force",
   "popUpWarning.Confirmation": "Confirmation",
 
+  "envWarning.production.heading": "You're in the production environment",
+  "envWarning.production.message_1": "Please be careful when syncing your config in production.",
+  "envWarning.production.message_2": "Make sure you are not overriding critical config changes on import.",
+
   "Header.Title": "Config Sync",
   "Header.Description": "Manage your database config across environments.",
 
