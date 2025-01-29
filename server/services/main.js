@@ -22,7 +22,7 @@ export default () => ({
    * @returns {void}
    */
   writeConfigFile: async (configType, configName, fileContents) => {
-    // Check if the config should be excluded.
+    // Check if the config should be included.
     const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedConfig')) || !isEmpty(strapi.config.get('plugin::config-sync.includedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${configType}.${configName}`.startsWith(option)));
     if (!shouldInclude || shouldExclude) return;
@@ -58,7 +58,7 @@ export default () => ({
    * @returns {void}
    */
   deleteConfigFile: async (configName) => {
-    // Check if the config should be excluded.
+    // Check if the config should be included.
     const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedConfig')) || !isEmpty(strapi.config.get('plugin::config-sync.includedConfig').filter((option) => configName.startsWith(option)));
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (!shouldInclude || shouldExclude) return;
@@ -242,7 +242,7 @@ export default () => ({
    * @returns {void}
    */
   importSingleConfig: async (configName, onSuccess, force) => {
-    // Check if the config should be excluded.
+    // Check if the config should be included.
     const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedConfig')) || !isEmpty(strapi.config.get('plugin::config-sync.includedConfig').filter((option) => configName.startsWith(option)));
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (!shouldInclude || shouldExclude) return;
@@ -269,7 +269,7 @@ export default () => ({
    */
    exportSingleConfig: async (configName, onSuccess) => {
     console.log(configName);
-    // Check if the config should be excluded.
+    // Check if the config should be included.
     const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedConfig')) || !isEmpty(strapi.config.get('plugin::config-sync.includedConfig').filter((option) => configName.startsWith(option)));
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
     if (!shouldInclude || shouldExclude) return;
