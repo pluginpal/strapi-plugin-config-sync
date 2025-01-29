@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 
+import { isEmpty } from 'lodash';
 import ConfigType from './config/type';
 import defaultTypes from './config/types';
 import { logMessage } from './utils';
@@ -23,21 +24,27 @@ export default async () => {
 
     // The default types provided by the plugin.
     defaultTypes(strapi).map((type) => {
-      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
+      const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedTypes')) || strapi.config.get('plugin::config-sync.includedTypes').includes(type.configName);
+      const shouldExclude = strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName);
+      if (shouldInclude && !shouldExclude) {
         types[type.configName] = new ConfigType(type);
       }
     });
 
     // The types provided by other plugins.
     strapi.plugin('config-sync').pluginTypes.map((type) => {
-      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
+      const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedTypes')) || strapi.config.get('plugin::config-sync.includedTypes').includes(type.configName);
+      const shouldExclude = strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName);
+      if (shouldInclude && !shouldExclude) {
         types[type.configName] = new ConfigType(type);
       }
     });
 
     // The custom types provided by the user.
     strapi.config.get('plugin::config-sync.customTypes').map((type) => {
-      if (!strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName)) {
+      const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedTypes')) || strapi.config.get('plugin::config-sync.includedTypes').includes(type.configName);
+      const shouldExclude = strapi.config.get('plugin::config-sync.excludedTypes').includes(type.configName);
+      if (shouldInclude && !shouldExclude) {
         types[type.configName] = new ConfigType(type);
       }
     });
