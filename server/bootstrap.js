@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import ConfigType from './config/type';
 import defaultTypes from './config/types';
 import { logMessage } from './utils';

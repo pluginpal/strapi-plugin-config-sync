@@ -268,7 +268,6 @@ export default () => ({
    * @returns {void}
    */
    exportSingleConfig: async (configName, onSuccess) => {
-    console.log(configName);
     // Check if the config should be included.
     const shouldInclude = isEmpty(strapi.config.get('plugin::config-sync.includedConfig')) || !isEmpty(strapi.config.get('plugin::config-sync.includedConfig').filter((option) => configName.startsWith(option)));
     const shouldExclude = !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => configName.startsWith(option)));
