@@ -63,6 +63,6 @@ After successful installation you have to rebuild the admin UI so it'll include 
 
 The **Config Sync** plugin should now appear in the **Settings** section of your Strapi app.
 
-To start tracking your config changes you have to make the first export. This will dump all your configuration data to the `/config/sync` directory. You can export either through [the CLI](/config-sync/cli) or [Strapi admin panel](/config-sync/admin-gui)
+To start tracking your config changes you have to make the first export. This will dump all your configuration data to the `/config/sync` directory. You can export either through [the CLI](/cli) or [Strapi admin panel](/admin-gui)
 
 Enjoy 🎉

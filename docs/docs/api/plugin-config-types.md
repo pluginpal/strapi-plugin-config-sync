@@ -27,4 +27,4 @@ if (strapi.plugin('config-sync')) {
 }
 ```
 
-If you want to read more about what the different values of a config type actually mean please read the in depth [custom types](/config-sync/config-types#custom-types) docs
+If you want to read more about what the different values of a config type actually mean please read the in depth [custom types](/config-types#custom-types) docs

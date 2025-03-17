@@ -34,7 +34,7 @@ These 4 types are by default registered in the sync process.
 
 Your custom types can be registered through the `customTypes` plugin config. This is a setting that can be set in the `config/plugins.js` file in your project.
 
-_Read more about the `config/plugins.js` file [here](/config-sync/configuration)._
+_Read more about the `config/plugins.js` file [here](/configuration)._
 
 You can register a type by giving the `customTypes` array an object which contains at least the following 3 properties:
 

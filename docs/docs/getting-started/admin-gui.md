@@ -10,4 +10,4 @@ This plugin ships with a React app which can be accessed from the settings page 
 **Pro tip:**
 By clicking on one of the items in the diff table you can see the exact difference between sync dir and database in a git-style diff viewer.
 
-<img src="/img/assets/config-sync/admin-diff-viewer.png" alt="Config diff in admin" />
+<img src="/img/assets/admin-diff-viewer.png" alt="Config diff in admin" />
