@@ -1,0 +1,42 @@
+/** Component: Details/Accordion */
+
+details.alert {
+  --docusaurus-details-decoration-color: var(--strapi-neutral-800);
+
+  --ifm-alert-background-color: var(--strapi-neutral-150);
+  --ifm-alert-background-color-highlight: var(--strapi-neutral-500);
+  --ifm-alert-border-radius: var(--strapi-spacing-1);
+  --ifm-alert-foreground-color: var( --ifm-color-info-contrast-foreground );
+  --ifm-alert-border-color: transparent;
+
+  --ifm-tabs-color-active: var(--ifm-color-primary);
+  --ifm-tabs-color-active-border: var(--ifm-color-primary);
+
+  summary {
+    p {
+      margin: 0;
+    }
+  }
+
+  /** Content element */
+  > div > div {
+    --docusaurus-details-decoration-color: transparent;
+
+    margin-top: 0;
+  }
+
+  a {
+    color: var(--custom-code-color);
+  }
+
+  a:hover {
+    text-decoration: var(--ifm-link-decoration);
+  }
+}
+
+@include dark {
+  details a {
+    color: var(--strapi-primary-500);
+    font-weight: 700;
+  }
+}

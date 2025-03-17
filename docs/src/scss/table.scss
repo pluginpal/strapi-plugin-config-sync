@@ -1,0 +1,18 @@
+/** Component: Table */
+table {
+  min-width: 100%;
+  overflow: auto;
+
+  thead {
+    --ifm-table-background: transparent;
+    --ifm-table-stripe-background: transparent;
+
+    tr {
+      border-bottom-width: 1px;
+
+      th {
+        --ifm-table-head-background: transparent;
+      }
+    }
+  }
+}
