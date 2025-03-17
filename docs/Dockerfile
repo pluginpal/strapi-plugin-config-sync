@@ -17,7 +17,7 @@ WORKDIR /opt/docusaurus
 ## Copy over the source code.
 COPY . /opt/docusaurus/
 ## Install dependencies with `--immutable` to ensure reproducibility.
-RUN yarn install --immutable
+RUN yarn install
 ## Build the static site.
 RUN yarn build
 
