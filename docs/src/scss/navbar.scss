@@ -22,7 +22,7 @@ $selector-color-mode-toggle-wrapper: 'div[class*="ColorModeToggle"]';
   --custom-navbar-icon-button-hover-background: var(--strapi-neutral-100);
   --custom-navbar-items-font-size: var(--strapi-font-size-sm);
   --custom-navbar-items-gap: var(--strapi-spacing-3);
-  --custom-navbar-logo-img-width: 150px;
+  --custom-navbar-logo-img-width: 40px;
   --custom-navbar-toggle-mr: var(--strapi-spacing-1);
   --custom-navbar-transition: all 0.2s ease;
 
@@ -38,11 +38,16 @@ $selector-color-mode-toggle-wrapper: 'div[class*="ColorModeToggle"]';
   &__brand,
   &__logo {
     height: auto;
-    line-height: 0;
+    display: flex;
   }
 
   &__brand {
     margin-right: var(--custom-navbar-brand-mr);
+    font-size: large;
+
+    @include small-up {
+      font-size: x-large;
+    }
   }
 
   &__toggle {
@@ -50,7 +55,7 @@ $selector-color-mode-toggle-wrapper: 'div[class*="ColorModeToggle"]';
   }
 
   &__logo {
-    margin-right: 0;
+    margin-right: var(--custom-navbar-items-gap);
 
     img {
       height: var(--custom-navbar-logo-img-height);
