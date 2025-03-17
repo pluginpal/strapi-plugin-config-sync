@@ -1,0 +1,52 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: docs.pluginpal.io
+      url: https://docs.pluginpal.io/config-sync
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Build a Docker image
+        run: |
+          cd docs
+          docker build \
+            -t docs-config-sync:latest .
+          docker save -o ../docs-config-sync-latest.tar docs-config-sync:latest
+
+      - name: Transfer the Docker image to the Dokku server
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_CI_USERNAME }}
+          password: ${{ secrets.SSH_CI_PASSWORD }}
+          source: docs-config-sync-latest.tar
+          target: /var/lib/dokku/data/storage/docs/docker-images
+
+      - name: Deploy the Dokku app based on the Docker image
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_CI_USERNAME }}
+          password: ${{ secrets.SSH_CI_PASSWORD }}
+          script_stop: true
+          script: |
+            sudo docker load -i /var/lib/dokku/data/storage/docs/docker-images/docs-config-sync-latest.tar
+            DOCS_CONFIG_SYNC_LATEST_IMAGE=$(sudo docker images --format "{{.ID}}" docs-config-sync:latest)
+            sudo docker tag docs-config-sync:latest docs-config-sync:$DOCS_CONFIG_SYNC_LATEST_IMAGE
+            dokku git:from-image docs-config-sync docs-config-sync:$DOCS_CONFIG_SYNC_LATEST_IMAGE
+            sudo docker system prune --all --force
