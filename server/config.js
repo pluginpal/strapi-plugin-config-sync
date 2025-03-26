@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 export default {
   default: {
@@ -7,7 +7,9 @@ export default {
     soft: false,
     importOnBootstrap: false,
     customTypes: [],
+    includedTypes: [],
     excludedTypes: [],
+    includedConfig: [],
     excludedConfig: [
       "core-store.plugin_users-permissions_grant",
       "core-store.plugin_upload_metrics",
