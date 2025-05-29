@@ -6,7 +6,7 @@ slug: /motivation
 
 # 💡 Motivation
 
-In Strapi we come across what I would call config types. These are models of which the records are stored in our database, just like content types. Though the big difference here is that your code ofter relies on the database records of these types. 
+In Strapi we come across what I would call config types. These are models of which the records are stored in our database, just like content types. Though the big difference here is that your code often relies on the database records of these types. 
 
 Having said that, it makes sense that these records can be exported, added to git, and be migrated across environments. This way we can make sure we have all the data our code relies on, on each environment.
 
