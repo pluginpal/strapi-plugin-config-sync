@@ -27,8 +27,10 @@ const getStrapiApp = async () => {
   if (!isTSProject || !alreadyCompiled) {
     appContext = await compileStrapi();
   } else {
-    appContext = { appDir, outDir };
+    const distDir = isTSProject ? outDir : appDir;
+    appContext = { appDir, distDir };
   }
+
   const app = await createStrapi(appContext).load();
   return app;
 };
