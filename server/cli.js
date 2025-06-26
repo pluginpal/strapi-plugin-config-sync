@@ -8,6 +8,7 @@ import inquirer from 'inquirer';
 import isEmpty from 'lodash/isEmpty';
 import { createStrapi, compileStrapi } from '@strapi/strapi';
 import gitDiff from 'git-diff';
+import tsUtils from '@strapi/typescript-utils';
 
 import warnings from './warnings';
 import packageJSON from '../package.json';
@@ -17,7 +18,17 @@ const program = new Command();
 const getStrapiApp = async () => {
   process.env.CONFIG_SYNC_CLI = 'true';
 
-  const appContext = await compileStrapi();
+  const appDir = process.cwd();
+  const isTSProject = await tsUtils.isUsingTypeScript(appDir);
+  const outDir = await tsUtils.resolveOutDir(appDir);
+  const alreadyCompiled = await fs.existsSync(outDir);
+
+  let appContext;
+  if (!isTSProject || !alreadyCompiled) {
+    appContext = await compileStrapi();
+  } else {
+    appContext = { appDir, outDir };
+  }
   const app = await createStrapi(appContext).load();
   return app;
 };
