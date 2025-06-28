@@ -58,4 +58,40 @@ describe('Test the config-sync CLI', () => {
     }
     expect(error).toHaveProperty('code', 1);
   });
+
+  test('Import build project', async () => {
+    // First we make sure the dist folder is deleted.
+    await exec('rm -rf dist');
+
+    await exec('yarn cs import -y');
+
+    const { stdout: buildOutput } = await exec('ls dist');
+    expect(buildOutput).toContain('config');
+    expect(buildOutput).toContain('src');
+    expect(buildOutput).toContain('tsconfig.tsbuildinfo');
+
+  });
+  test('Import project already built', async () => {
+
+
+    // First we make sure the dist folder exists by doing an import.
+    await exec('yarn cs import -y');
+
+    const { stdout: lsDist } = await exec('ls dist');
+    expect(lsDist).toContain('config');
+    expect(lsDist).toContain('src');
+    expect(lsDist).toContain('tsconfig.tsbuildinfo');
+
+    // We remove on file from the dist folder
+    await exec('mv dist/tsconfig.tsbuildinfo .tmp');
+
+    // The new import should not rebuild the project.
+    await exec('yarn cs import -y');
+
+    const { stdout: buildOutput } = await exec('ls dist');
+    expect(buildOutput).toContain('config');
+    expect(buildOutput).toContain('src');
+    expect(buildOutput).not.toContain('tsconfig.tsbuildinfo');
+
+  });
 });
