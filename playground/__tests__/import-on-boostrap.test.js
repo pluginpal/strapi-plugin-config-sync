@@ -7,7 +7,7 @@ jest.setTimeout(20000);
 
 afterEach(async () => {
   // Disable importOnBootstrap
-  await exec('sed -i "s/importOnBootstrap: true/importOnBootstrap: false/g" config/plugins.js');
+  await exec('sed -i "s/importOnBootstrap: true/importOnBootstrap: false/g" config/plugins.ts');
 
   await cleanupStrapi();
   await exec('rm -rf config/sync');
@@ -19,8 +19,8 @@ describe('Test the importOnBootstrap feature', () => {
     await exec('yarn cs export -y');
     await exec('rm -rf .tmp');
 
-    // Manually change the plugins.js to enable importOnBoostrap.
-    await exec('sed -i "s/importOnBootstrap: false/importOnBootstrap: true/g" config/plugins.js');
+    // Manually change the plugins.ts to enable importOnBoostrap.
+    await exec('sed -i "s/importOnBootstrap: false/importOnBootstrap: true/g" config/plugins.ts');
 
     // Start up Strapi to initiate the importOnBootstrap function.
     await setupStrapi();
@@ -33,8 +33,8 @@ describe('Test the importOnBootstrap feature', () => {
     await exec('rm -rf .tmp');
     await exec('yarn cs export -y');
 
-    // Manually change the plugins.js to enable importOnBoostrap.
-    await exec('sed -i "s/importOnBootstrap: false/importOnBootstrap: true/g" config/plugins.js');
+    // Manually change the plugins.ts to enable importOnBoostrap.
+    await exec('sed -i "s/importOnBootstrap: false/importOnBootstrap: true/g" config/plugins.ts');
 
     // Remove a config file to make sure the importOnBoostrap
     // function actually attempts to import.

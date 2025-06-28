@@ -1,4 +1,4 @@
-module.exports = ({ env }) => ({
+export default ({ env }) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
@@ -19,6 +19,5 @@ module.exports = ({ env }) => ({
   },
   watchIgnoreFiles: [
     '!**/.yalc/**/server/**',
-    '**/config/sync/**',
-  ]
+  ],
 });
