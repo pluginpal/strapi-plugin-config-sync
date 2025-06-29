@@ -1,4 +1,4 @@
-module.exports = {
+export default () => ({
   'config-sync': {
     enabled: true,
     config: {
@@ -6,4 +6,4 @@ module.exports = {
       minify: true,
     },
   },
-};
+});
