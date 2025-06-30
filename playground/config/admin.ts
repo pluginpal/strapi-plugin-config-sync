@@ -18,6 +18,7 @@ export default ({ env }) => ({
     promoteEE: env.bool('FLAG_PROMOTE_EE', true),
   },
   watchIgnoreFiles: [
+    '**/config/sync/**',
     '!**/.yalc/**/server/**',
   ],
 });
