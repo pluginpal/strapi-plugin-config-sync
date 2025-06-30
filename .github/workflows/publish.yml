@@ -21,11 +21,30 @@ jobs:
         run: yarn build
       - name: Get the release tag version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      - name: Extract pre-release tag if any
+        id: extract_tag
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          if [[ $VERSION == *-* ]]; then
+            # Extract everything between hyphen and last period (or end of string)
+            PRETAG=$(echo $VERSION | sed -E 's/.*-([^.]+).*/\1/')
+            echo "IS_PRERELEASE=true" >> $GITHUB_OUTPUT
+            echo "NPM_TAG=$PRETAG" >> $GITHUB_OUTPUT
+          else
+            echo "IS_PRERELEASE=false" >> $GITHUB_OUTPUT
+            echo "NPM_TAG=latest" >> $GITHUB_OUTPUT
+          fi
+      - name: Get source branch
+        id: get_branch
+        run: |
+          RELEASE_COMMIT=$(git rev-list -n 1 ${{ steps.get_version.outputs.VERSION }})
+          SOURCE_BRANCH=$(git branch -r --contains $RELEASE_COMMIT | grep -v HEAD | head -n 1 | sed 's/.*origin\///')
+          echo "SOURCE_BRANCH=$SOURCE_BRANCH" >> $GITHUB_OUTPUT
       - name: Set package version
         run: yarn version --new-version "${{ steps.get_version.outputs.VERSION }}" --no-git-tag-version
       - name: Publish package
-        run: yarn publish --access public
+        run: yarn publish --access public --tag ${{ steps.extract_tag.outputs.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Push version bump
