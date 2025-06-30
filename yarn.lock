@@ -2895,7 +2895,7 @@
     prettier "3.3.3"
     typescript "5.3.2"
 
-"@strapi/typescript-utils@^5.16.1":
+"@strapi/typescript-utils@^5.0.0":
   version "5.16.1"
   resolved "https://registry.yarnpkg.com/@strapi/typescript-utils/-/typescript-utils-5.16.1.tgz#df0fb6601a3e12914500d8264129f68cac9c02a0"
   integrity sha512-2I1m2rbXCZzXZARzFSPvpNIGd4r+sBAanCZZAVfP1SSzZg9LbX3+h9HyPfx3WYQN0YOhgmtk79MZLIi9Pgj36g==
