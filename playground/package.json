@@ -21,10 +21,10 @@
     "yalc": "^1.0.0-pre.53"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.16.0",
-    "@strapi/plugin-users-permissions": "5.16.0",
-    "@strapi/strapi": "5.16.0",
-    "better-sqlite3": "9.4.3",
+    "@strapi/plugin-cloud": "5.30.1",
+    "@strapi/plugin-users-permissions": "5.30.1",
+    "@strapi/strapi": "5.30.1",
+    "better-sqlite3": "11.3.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
@@ -38,7 +38,7 @@
     "uuid": "edadddbd-0f25-4da7-833b-d4cd7dcae2fc"
   },
   "engines": {
-    "node": ">=18.0.0 <=20.x.x",
+    "node": ">=20.0.0 <=22.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT"
