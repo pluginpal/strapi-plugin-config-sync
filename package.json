@@ -79,7 +79,12 @@
     "bin"
   ],
   "resolutions": {
-    "@strapi/pack-up": "^5.1.0"
+    "@strapi/pack-up": "^5.1.0",
+    "elliptic": "^6.6.1",
+    "glob": "^10.5.0",
+    "@babel/helpers": "^7.26.10",
+    "js-yaml": "^3.14.2",
+    "tmp": "^0.2.4"
   },
   "peerDependencies": {
     "@strapi/admin": "^5.0.0",
