@@ -31,7 +31,7 @@
   "scripts": {
     "develop": "strapi-plugin watch:link",
     "watch": "pack-up watch",
-    "build": "pack-up build && yalc push --publish",
+    "build": "pack-up build",
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
