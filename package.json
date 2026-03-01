@@ -26,12 +26,18 @@
       "require": "./dist/server/index.js",
       "default": "./dist/server/index.js"
     },
+    "./cli": {
+      "source": "./server/cli.js",
+      "import": "./dist/cli/index.mjs",
+      "require": "./dist/cli/index.js",
+      "default": "./dist/cli/index.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
     "develop": "strapi-plugin watch:link",
-    "watch": "pack-up watch",
-    "build": "pack-up build && yalc push --publish",
+    "watch": "strapi-plugin watch",
+    "build": "strapi-plugin build && yalc push --publish",
     "eslint": "eslint --max-warnings=0 './**/*.{js,jsx}'",
     "eslint:fix": "eslint --fix './**/*.{js,jsx}'",
     "test:unit": "jest --verbose",
@@ -78,9 +84,6 @@
     "dist",
     "bin"
   ],
-  "resolutions": {
-    "@strapi/pack-up": "^5.1.0"
-  },
   "peerDependencies": {
     "@strapi/admin": "^5.0.0",
     "@strapi/design-system": "^2.0.0",
@@ -97,7 +100,7 @@
     "@strapi/admin": "^5.0.0",
     "@strapi/design-system": "^2.0.0",
     "@strapi/icons": "^2.0.0",
-    "@strapi/sdk-plugin": "^5.0.0",
+    "@strapi/sdk-plugin": "^6.0.0",
     "@strapi/strapi": "^5.0.0",
     "@strapi/typescript-utils": "^5.0.0",
     "@strapi/utils": "^5.0.0",
