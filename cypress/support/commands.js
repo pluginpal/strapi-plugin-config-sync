@@ -73,6 +73,7 @@ Cypress.Commands.add('navigateToInterface', (path) => {
     url: '/config-sync/diff',
   }).as('getConfigDiff');
 
+  cy.get('button[aria-controls="burger-menu"]').click();
   cy.get('a[href="/admin/settings"]').click();
   cy.get('a[href="/admin/settings/config-sync"]').click();
 
