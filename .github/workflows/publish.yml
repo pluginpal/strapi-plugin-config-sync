@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           always-auth: true
-          node-version: 24
+          node-version: 22
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org/'
       - name: Install dependencies
