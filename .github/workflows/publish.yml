@@ -44,9 +44,7 @@ jobs:
       - name: Set package version
         run: yarn version --new-version "${{ steps.get_version.outputs.VERSION }}" --no-git-tag-version
       - name: Publish package
-        run: yarn publish --access public --tag ${{ steps.extract_tag.outputs.NPM_TAG }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --tag ${{ steps.extract_tag.outputs.NPM_TAG }}
       - name: Push version bump
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
