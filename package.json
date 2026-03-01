@@ -129,7 +129,7 @@
   },
   "homepage": "https://www.pluginpal.io/plugin/config-sync",
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT",
