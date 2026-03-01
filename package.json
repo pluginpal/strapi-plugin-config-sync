@@ -57,7 +57,7 @@
     "commander": "^14.0.3",
     "file-saver": "^2.0.5",
     "git-diff": "^2.0.6",
-    "immutable": "^5.1.4",
+    "immutable": "^4.0.0",
     "inquirer": "^13.3.0",
     "lodash": "^4.17.23",
     "react-diff-viewer-continued": "4.0.6",
