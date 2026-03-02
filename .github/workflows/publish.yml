@@ -45,8 +45,6 @@ jobs:
           echo "SOURCE_BRANCH=$SOURCE_BRANCH" >> $GITHUB_OUTPUT
       - name: Set package version
         run: yarn version --new-version "${{ steps.get_version.outputs.VERSION }}" --no-git-tag-version
-      - name: Install latests npm (for trusted publishing)
-        run: npm install -g npm@latest
       - name: Publish package
         run: npm publish --provenance --access public --tag ${{ steps.extract_tag.outputs.NPM_TAG }}
       - name: Push version bump
