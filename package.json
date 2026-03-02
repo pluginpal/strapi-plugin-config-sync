@@ -130,6 +130,10 @@
   "bugs": {
     "url": "https://github.com/pluginpal/strapi-plugin-config-sync/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pluginpal/strapi-plugin-config-sync.git"
+  },
   "homepage": "https://www.pluginpal.io/plugin/config-sync",
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
