@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 import {
   Table,
@@ -12,7 +13,12 @@ import {
   Typography,
   Checkbox,
   Loader,
+  Flex,
+  Box,
+  TextInput,
+  IconButton,
 } from '@strapi/design-system';
+import { CaretDown, CaretUp, Search, Cross } from '@strapi/icons';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
@@ -20,6 +26,13 @@ import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
+const SearchBox = styled(Box)`
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 40%;
+  }
+`;
 
 const ConfigList = ({ diff, isLoading }) => {
   const [originalConfig, setOriginalConfig] = useState({});
@@ -27,8 +40,20 @@ const ConfigList = ({ diff, isLoading }) => {
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
+  const [sortBy, setSortBy] = useState('configName');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useDispatch();
   const { formatMessage } = useIntl();
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
 
   const getConfigState = (configName) => {
     if (
@@ -87,6 +112,25 @@ const ConfigList = ({ diff, isLoading }) => {
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
 
+  const sortedRows = useMemo(() => {
+    const rowsWithIndex = rows.map((row, originalIndex) => ({ ...row, originalIndex }));
+
+    const filteredRows = searchQuery
+      ? rowsWithIndex.filter((row) => (
+        `${row.configType}.${row.configName}`.toLowerCase().includes(searchQuery.toLowerCase())
+      ))
+      : rowsWithIndex;
+
+    return filteredRows.sort((a, b) => {
+      const aValue = (a[sortBy] || '').toLowerCase();
+      const bValue = (b[sortBy] || '').toLowerCase();
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [rows, sortBy, sortOrder, searchQuery]);
+
   if (isLoading) {
     return (
       <div style={{ textAlign: 'center', marginTop: 40 }}>
@@ -106,9 +150,32 @@ const ConfigList = ({ diff, isLoading }) => {
   const allChecked = checkedItems && checkedItems.every(Boolean);
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
 
+  const renderSortIcon = (field) => {
+    if (sortBy !== field) return null;
+    return sortOrder === 'asc' ? <CaretUp /> : <CaretDown />;
+  };
+
   return (
     <div>
-      <Table colCount={4} rowCount={rows.length + 1}>
+      <SearchBox paddingBottom={4}>
+        <TextInput
+          startAction={<Search />}
+          endAction={searchQuery ? (
+            <IconButton
+              label={formatMessage({ id: 'config-sync.ConfigList.ClearSearch' })}
+              onClick={() => setSearchQuery('')}
+              variant="ghost"
+            >
+              <Cross />
+            </IconButton>
+          ) : null}
+          aria-label={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+          placeholder={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </SearchBox>
+      <Table colCount={4} rowCount={sortedRows.length + 1}>
         <Thead>
           <Tr>
             <Th>
@@ -118,19 +185,28 @@ const ConfigList = ({ diff, isLoading }) => {
                 onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
               />
             </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
+            <Th onClick={() => handleSort('configName')} style={{ cursor: 'pointer' }}>
+              <Flex gap={1}>
+                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
+                {renderSortIcon('configName')}
+              </Flex>
             </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
+            <Th onClick={() => handleSort('configType')} style={{ cursor: 'pointer' }}>
+              <Flex gap={1}>
+                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
+                {renderSortIcon('configType')}
+              </Flex>
             </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
+            <Th onClick={() => handleSort('state')} style={{ cursor: 'pointer' }}>
+              <Flex gap={1}>
+                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
+                {renderSortIcon('state')}
+              </Flex>
             </Th>
           </Tr>
         </Thead>
         <Tbody>
-          {rows.map((row, index) => (
+          {sortedRows.map((row) => (
             <ConfigDiff
               key={row.configName}
               oldValue={originalConfig}
@@ -139,9 +215,9 @@ const ConfigList = ({ diff, isLoading }) => {
               trigger={(
                 <ConfigListRow
                   row={row}
-                  checked={checkedItems[index]}
+                  checked={checkedItems[row.originalIndex]}
                   updateValue={() => {
-                    checkedItems[index] = !checkedItems[index];
+                    checkedItems[row.originalIndex] = !checkedItems[row.originalIndex];
                     setCheckedItems([...checkedItems]);
                   }}
                 />
