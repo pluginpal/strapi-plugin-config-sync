@@ -1,6 +1,8 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import RDV, { DiffMethod } from 'react-diff-viewer-continued';
 import { useIntl } from 'react-intl';
+import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 
 /**
  * An issue with the diff-viewer library causes a difference in the way the library is exported.
@@ -19,13 +21,20 @@ if (typeof RDV.default !== 'undefined') {
 }
 
 import {
+  Button,
   Modal,
   Grid,
   Typography,
 } from '@strapi/design-system';
+import ConfirmModal from '../ConfirmModal';
+import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
 const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
   const { formatMessage } = useIntl();
+  const dispatch = useDispatch();
+  const { toggleNotification } = useNotification();
+  const { post, get } = getFetchClient();
+  const commonHeadingStyle = { paddingRight: '2rem' };
 
   return (
     <Modal.Root>
@@ -40,11 +49,24 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
         </Modal.Header>
         <Modal.Body>
           <Grid.Root paddingBottom={4} style={{ textAlign: 'center' }}>
-            <Grid.Item col={6}>
-              <Typography variant="delta" style={{ width: '100%' }}>{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}</Typography>
+            <Grid.Item col={6} style={{ justifyContent: 'center' }}>
+              <Typography variant="delta" style={commonHeadingStyle}>{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}
+              </Typography>
+              <ConfirmModal
+                type="import"
+                trigger={<Button title="Import config into DB for this file only">Import</Button>}
+                onSubmit={(force) => dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get))}
+              />
             </Grid.Item>
-            <Grid.Item col={6}>
-              <Typography variant="delta" style={{ width: '100%' }}>{formatMessage({ id: 'config-sync.ConfigDiff.Database' })}</Typography>
+            <Grid.Item col={6} style={{ justifyContent: 'center' }}>
+              <Typography variant="delta" style={commonHeadingStyle}>
+                {formatMessage({ id: 'config-sync.ConfigDiff.Database' })}
+              </Typography>
+              <ConfirmModal
+                type="export"
+                trigger={<Button title="Export DB config for this file only">Export</Button>}
+                onSubmit={() => dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get))}
+              />
             </Grid.Item>
           </Grid.Root>
           <Typography variant="pi">
