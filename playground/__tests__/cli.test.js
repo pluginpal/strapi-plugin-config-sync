@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
@@ -42,6 +43,27 @@ describe('Test the config-sync CLI', () => {
     await exec('mv .tmp/admin-role.strapi-editor.json config/sync/');
     const { stdout: importOutput } = await exec('yarn cs import -y');
     expect(importOutput).toContain('Finished import');
+    const { stdout: diffOutput } = await exec('yarn cs diff');
+    expect(diffOutput).toContain('No differences between DB and sync directory');
+  });
+
+  test('Import (unparsable file)', async () => {
+    // A file that can't be parsed (a merge conflict left in it, a typo) is not a missing file:
+    // importing it must fail, and leave the config in the database.
+    const file = 'config/sync/user-role.public.json';
+    const original = fs.readFileSync(file, 'utf8');
+    fs.writeFileSync(file, '<<<<<<< HEAD\n{ "name": "Public",\n');
+    let output;
+    try {
+      const { stdout, stderr } = await exec('yarn cs import -p user-role.public -y');
+      output = stdout + stderr;
+    } catch (e) {
+      output = `${e.stdout}${e.stderr}`;
+    } finally {
+      fs.writeFileSync(file, original);
+    }
+    expect(output).toContain('is not valid JSON');
+    // The role is still in the database: with its file back, nothing differs.
     const { stdout: diffOutput } = await exec('yarn cs diff');
     expect(diffOutput).toContain('No differences between DB and sync directory');
   });
