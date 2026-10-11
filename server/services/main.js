@@ -94,14 +94,24 @@ export default () => ({
     // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
+    const filePath = `${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`;
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`)
-      .then((data) => {
-        return JSON.parse(data);
-      })
-      .catch(() => {
-        return null;
-      });
+
+    let data;
+    try {
+      data = await readFile(filePath);
+    } catch (e) {
+      // No file for this config.
+      if (e.code === 'ENOENT') return null;
+      throw e;
+    }
+
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      // A file that can't be parsed is not a missing file: it must never lead to deleting the config.
+      throw new Error(`The config file '${filePath}' is not valid JSON (${e.message}).`);
+    }
   },
 
 
@@ -136,7 +146,13 @@ export default () => ({
           return;
         }
 
-        const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
+        let fileContents;
+        try {
+          fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
+        } catch (e) {
+          strapi.log.warn(logMessage(`The config file '${file}' can't be read and is left out of the diff: ${e.message}`));
+          return;
+        }
 
         if (!fileContents) {
           strapi.log.warn(logMessage(`An empty config file '${file}' was found in the sync directory`));
@@ -242,9 +258,9 @@ export default () => ({
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
     const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename.
-    const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
+      const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
       const importState = await strapi.plugin('config-sync').types[type].importSingle(name, fileContents, force);
       if (onSuccess && importState !== false) onSuccess(`${type}.${name}`);
     } catch (e) {
