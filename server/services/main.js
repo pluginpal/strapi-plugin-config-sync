@@ -131,7 +131,7 @@ export default () => ({
         if (
           configType && configType !== type
           || !strapi.plugin('config-sync').types[type]
-          || !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${type}.${name}`.startsWith(option)))
+          || !isEmpty(strapi.config.get('plugin::config-sync.excludedConfig').filter((option) => `${type}.${formattedName}`.startsWith(option)))
         ) {
           return;
         }
