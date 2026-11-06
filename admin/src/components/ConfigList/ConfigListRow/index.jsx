@@ -49,13 +49,13 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
           onCheckedChange={updateValue}
         />
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega">{configName}</Typography>
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega">{configType}</Typography>
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega" style={stateStyle(state)}>{state}</Typography>
       </Td>
     </Tr>

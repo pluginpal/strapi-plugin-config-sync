@@ -29,7 +29,7 @@ import {
 import ConfirmModal from '../ConfirmModal';
 import { exportAllConfig, importAllConfig } from '../../state/actions/Config';
 
-const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
+const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
   const { formatMessage } = useIntl();
   const dispatch = useDispatch();
   const { toggleNotification } = useNotification();
@@ -37,10 +37,7 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
   const commonHeadingStyle = { paddingRight: '2rem' };
 
   return (
-    <Modal.Root>
-      <Modal.Trigger>
-        {trigger}
-      </Modal.Trigger>
+    <Modal.Root open={open} onOpenChange={onOpenChange}>
       <Modal.Content>
         <Modal.Header>
           <Typography variant="omega" fontWeight="bold" textColor="neutral800">
@@ -79,8 +76,8 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
           </Grid.Root>
           <Typography variant="pi">
             <ReactDiffViewer
-              oldValue={JSON.stringify(oldValue, null, 2)}
-              newValue={JSON.stringify(newValue, null, 2)}
+              oldValue={JSON.stringify(oldValue, null, 2) ?? ''}
+              newValue={JSON.stringify(newValue, null, 2) ?? ''}
               splitView
               compareMethod={DiffMethod.WORDS}
             />

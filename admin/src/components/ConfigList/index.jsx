@@ -22,8 +22,6 @@ import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
 
 const ConfigList = ({ diff, isLoading }) => {
-  const [originalConfig, setOriginalConfig] = useState({});
-  const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
@@ -68,8 +66,6 @@ const ConfigList = ({ diff, isLoading }) => {
         configType: type,
         state: getConfigState(name),
         onClick: (configType, configName) => {
-          setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
-          setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
         },
       });
@@ -87,24 +83,25 @@ const ConfigList = ({ diff, isLoading }) => {
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
 
-  if (isLoading) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
-      </div>
-    );
-  }
+  const renderList = () => {
+    if (isLoading) {
+      return (
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
+        </div>
+      );
+    }
 
-  if (!isLoading && !isEmpty(diff.message)) {
-    return <FirstExport />;
-  }
+    if (!isEmpty(diff.message)) {
+      return <FirstExport />;
+    }
 
-  if (!isLoading && isEmpty(diff.diff)) {
-    return <NoChanges />;
-  }
+    if (isEmpty(diff.diff)) {
+      return <NoChanges />;
+    }
 
-  const allChecked = checkedItems && checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+    const allChecked = checkedItems && checkedItems.every(Boolean);
+    const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
 
   return (
     <div>
@@ -131,26 +128,35 @@ const ConfigList = ({ diff, isLoading }) => {
         </Thead>
         <Tbody>
           {rows.map((row, index) => (
-            <ConfigDiff
-              key={row.configName}
-              oldValue={originalConfig}
-              newValue={newConfig}
-              configName={cName}
-              trigger={(
-                <ConfigListRow
-                  row={row}
-                  checked={checkedItems[index]}
-                  updateValue={() => {
-                    checkedItems[index] = !checkedItems[index];
-                    setCheckedItems([...checkedItems]);
-                  }}
-                />
-              )}
+            <ConfigListRow
+              key={`${row.configType}.${row.configName}`}
+              row={row}
+              checked={checkedItems[index]}
+              updateValue={() => {
+                checkedItems[index] = !checkedItems[index];
+                setCheckedItems([...checkedItems]);
+              }}
             />
           ))}
         </Tbody>
       </Table>
     </div>
+    );
+  };
+
+  return (
+    <>
+      {renderList()}
+      <ConfigDiff
+        oldValue={diff.fileConfig?.[cName]}
+        newValue={diff.databaseConfig?.[cName]}
+        configName={cName}
+        open={Boolean(cName)}
+        onOpenChange={(open) => {
+          if (!open) setCname('');
+        }}
+      />
+    </>
   );
 };
 
