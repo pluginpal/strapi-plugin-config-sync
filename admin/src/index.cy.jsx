@@ -71,4 +71,67 @@ describe('Config Sync', () => {
     cy.wait('@exportConfig').its('response.statusCode').should('equal', 200);
     cy.contains('plugin_users-permissions_email');
   });
+
+  ['import', 'export'].forEach((action) => {
+    it(`Single-file ${action} refreshes the open diff modal`, () => {
+      const selectedConfig = 'core-store.plugin_users-permissions_advanced';
+      const otherConfig = 'core-store.plugin_upload_settings';
+      const fileConfig = { fileOnly: true };
+      const databaseConfig = { databaseOnly: true };
+      const initialDiff = {
+        diff: { [selectedConfig]: {}, [otherConfig]: {} },
+        fileConfig: { [selectedConfig]: fileConfig, [otherConfig]: { enabled: true } },
+        databaseConfig: { [selectedConfig]: databaseConfig, [otherConfig]: { enabled: false } },
+      };
+      const syncedConfig = action === 'import' ? fileConfig : databaseConfig;
+      const refreshedDiff = {
+        diff: action === 'import' ? { [otherConfig]: {} } : {},
+        fileConfig: { ...initialDiff.fileConfig, [selectedConfig]: syncedConfig },
+        databaseConfig: { ...initialDiff.databaseConfig, [selectedConfig]: syncedConfig },
+      };
+      let completed = false;
+
+      cy.login();
+      cy.navigateToInterface();
+      cy.intercept('GET', '/config-sync/diff', (request) => {
+        request.reply(completed ? refreshedDiff : initialDiff);
+      }).as('modalDiff');
+      cy.intercept('GET', '/config-sync/app-env', {
+        env: 'development', config: { soft: false },
+      });
+      cy.intercept('POST', `/config-sync/${action}`, (request) => {
+        completed = true;
+        request.reply({ message: 'Config synchronized.' });
+      }).as('singleFileSync');
+      cy.reload();
+      cy.wait('@modalDiff');
+
+      cy.get('tbody tr').contains('plugin_users-permissions_advanced').click();
+      cy.get('[role="dialog"]').should('contain', 'fileOnly').and('contain', 'databaseOnly');
+      cy.get(`[role="dialog"] button[title="${action === 'import'
+        ? 'Import config into DB for this file only'
+        : 'Export DB config for this file only'}"]`).click();
+      cy.contains('button', 'Cancel').click();
+      cy.then(() => expect(completed).to.equal(false));
+
+      cy.get('[role="dialog"]').contains('button', action === 'import' ? 'Import' : 'Export').click();
+      cy.contains('button', `Yes, ${action}`).click();
+      cy.wait('@singleFileSync').then(({ request }) => {
+        expect(request.body).to.deep.equal(action === 'import'
+          ? { force: false, config: [selectedConfig] }
+          : [selectedConfig]);
+      });
+      cy.wait('@modalDiff');
+      cy.get('[role="dialog"]').should('be.visible')
+        .and('contain', selectedConfig)
+        .and('contain', action === 'import' ? 'fileOnly' : 'databaseOnly')
+        .and('not.contain', action === 'import' ? 'databaseOnly' : 'fileOnly');
+      cy.get('tbody tr').should('not.contain', 'plugin_users-permissions_advanced');
+      if (action === 'import') {
+        cy.get('tbody tr').should('contain', 'plugin_upload_settings');
+      } else {
+        cy.contains('No differences between DB and sync directory. You are up-to-date!');
+      }
+    });
+  });
 });
