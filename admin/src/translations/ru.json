@@ -30,6 +30,8 @@
   "ConfigDiff.Title": "Изменения конфигурации для",
   "ConfigDiff.SyncDirectory": "Каталог синхронизации",
   "ConfigDiff.Database": "База данных",
+  "ConfigDiff.ImportTitle": "Импортировать конфигурацию в базу данных только для этого файла",
+  "ConfigDiff.ExportTitle": "Экспортировать конфигурацию из базы данных только для этого файла",
 
   "Buttons.Export": "Экспортировать",
   "Buttons.DownloadConfig": "Скачать конфиг",

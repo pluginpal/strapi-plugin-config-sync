@@ -54,7 +54,11 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
               </Typography>
               <ConfirmModal
                 type="import"
-                trigger={<Button title="Import config into DB for this file only">Import</Button>}
+                trigger={(
+                  <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ImportTitle' })}>
+                    {formatMessage({ id: 'config-sync.Buttons.Import' })}
+                  </Button>
+                )}
                 onSubmit={(force) => dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get))}
               />
             </Grid.Item>
@@ -64,7 +68,11 @@ const ConfigDiff = ({ oldValue, newValue, configName, trigger }) => {
               </Typography>
               <ConfirmModal
                 type="export"
-                trigger={<Button title="Export DB config for this file only">Export</Button>}
+                trigger={(
+                  <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ExportTitle' })}>
+                    {formatMessage({ id: 'config-sync.Buttons.Export' })}
+                  </Button>
+                )}
                 onSubmit={() => dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get))}
               />
             </Grid.Item>

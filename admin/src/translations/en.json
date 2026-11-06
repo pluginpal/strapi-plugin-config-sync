@@ -30,6 +30,8 @@
   "ConfigDiff.Title": "Config changes for",
   "ConfigDiff.SyncDirectory": "Sync directory",
   "ConfigDiff.Database": "Database",
+  "ConfigDiff.ImportTitle": "Import config into DB for this file only",
+  "ConfigDiff.ExportTitle": "Export DB config for this file only",
 
   "Buttons.Export": "Export",
   "Buttons.DownloadConfig": "Download Config",
