@@ -72,7 +72,10 @@ const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
                 {formatMessage({ id: 'config-sync.Buttons.Import' })}
               </Button>
             )}
-            onSubmit={(force) => dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get))}
+            onSubmit={async (force) => {
+              const succeeded = await dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get));
+              if (succeeded) onOpenChange(false, configName);
+            }}
           />
           <ConfirmModal
             type="export"
@@ -81,7 +84,10 @@ const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
                 {formatMessage({ id: 'config-sync.Buttons.Export' })}
               </Button>
             )}
-            onSubmit={() => dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get))}
+            onSubmit={async () => {
+              const succeeded = await dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get));
+              if (succeeded) onOpenChange(false, configName);
+            }}
           />
         </Modal.Footer>
       </Modal.Content>

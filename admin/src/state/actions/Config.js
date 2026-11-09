@@ -45,9 +45,11 @@ export function exportAllConfig(partialDiff, toggleNotification, formatMessage, 
       toggleNotification({ type: 'success', message: response.data.message });
       dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       dispatch(setLoadingState(false));
+      return true;
     } catch (err) {
       toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
+      return false;
     }
   };
 }
@@ -80,9 +82,11 @@ export function importAllConfig(partialDiff, force, toggleNotification, formatMe
       toggleNotification({ type: 'success', message: response.data.message });
       dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       dispatch(setLoadingState(false));
+      return true;
     } catch (err) {
       toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
+      return false;
     }
   };
 }

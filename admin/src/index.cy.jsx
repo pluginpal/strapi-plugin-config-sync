@@ -73,7 +73,7 @@ describe('Config Sync', () => {
   });
 
   ['import', 'export'].forEach((action) => {
-    it(`Single-file ${action} refreshes the open diff modal`, () => {
+    it(`Single-file ${action} closes the diff modal after success`, () => {
       const selectedConfig = 'core-store.plugin_users-permissions_advanced';
       const otherConfig = 'core-store.plugin_upload_settings';
       const fileConfig = { fileOnly: true };
@@ -117,6 +117,7 @@ describe('Config Sync', () => {
         : 'Export DB config for this file only'}"]`).click();
       cy.contains('button', 'Cancel').click();
       cy.then(() => expect(completed).to.equal(false));
+      cy.get('[role="dialog"] footer').should('be.visible');
 
       cy.get('[role="dialog"] footer').contains('button', action === 'import' ? 'Import' : 'Export').click();
       cy.contains('button', `Yes, ${action}`).click();
@@ -126,16 +127,36 @@ describe('Config Sync', () => {
           : [selectedConfig]);
       });
       cy.wait('@modalDiff');
-      cy.get('[role="dialog"]').should('be.visible')
-        .and('contain', selectedConfig)
-        .and('contain', action === 'import' ? 'fileOnly' : 'databaseOnly')
-        .and('not.contain', action === 'import' ? 'databaseOnly' : 'fileOnly');
-      cy.get('tbody tr').should('not.contain', 'plugin_users-permissions_advanced');
+      cy.get('[role="dialog"]').should('not.exist');
       if (action === 'import') {
-        cy.get('tbody tr').should('contain', 'plugin_upload_settings');
+        cy.get('tbody tr').should('not.contain', 'plugin_users-permissions_advanced')
+          .and('contain', 'plugin_upload_settings');
       } else {
         cy.contains('No differences between DB and sync directory. You are up-to-date!');
       }
+    });
+
+    it(`Single-file ${action} keeps the diff modal open on failure`, () => {
+      const selectedConfig = 'core-store.plugin_users-permissions_advanced';
+      cy.login();
+      cy.navigateToInterface();
+      cy.intercept('GET', '/config-sync/diff', {
+        diff: { [selectedConfig]: {} },
+        fileConfig: { [selectedConfig]: { fileOnly: true } },
+        databaseConfig: { [selectedConfig]: { databaseOnly: true } },
+      }).as('modalDiff');
+      cy.intercept('POST', `/config-sync/${action}`, {
+        statusCode: 500,
+        body: { error: { message: 'Sync failed' } },
+      }).as('singleFileSync');
+      cy.reload();
+      cy.wait('@modalDiff');
+      cy.get('tbody tr').contains('plugin_users-permissions_advanced').click();
+      cy.get('[role="dialog"] footer').contains('button', action === 'import' ? 'Import' : 'Export').click();
+      cy.contains('button', `Yes, ${action}`).click();
+      cy.wait('@singleFileSync').its('response.statusCode').should('equal', 500);
+      cy.get('[role="dialog"]').should('be.visible').and('contain', selectedConfig);
+      cy.get('[role="dialog"] footer').contains('button', action === 'import' ? 'Import' : 'Export').should('be.visible');
     });
   });
 });

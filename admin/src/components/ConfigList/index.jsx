@@ -152,8 +152,8 @@ const ConfigList = ({ diff, isLoading }) => {
         newValue={diff.databaseConfig?.[cName]}
         configName={cName}
         open={Boolean(cName)}
-        onOpenChange={(open) => {
-          if (!open) setCname('');
+        onOpenChange={(open, syncedName) => {
+          if (!open) setCname((current) => (!syncedName || current === syncedName ? '' : current));
         }}
       />
     </>
