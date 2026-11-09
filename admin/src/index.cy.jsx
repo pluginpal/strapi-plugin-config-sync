@@ -54,10 +54,20 @@ describe('Config Sync', () => {
       method: 'POST',
       url: '/config-sync/import',
     }).as('importConfig');
-    cy.get('button[aria-label="Select plugin_upload_settings"]').click();
+    cy.intercept('GET', '/config-sync/diff').as('refreshedDiff');
+    cy.get('button[aria-label="Select plugin_upload_settings"]')
+      .should('have.attr', 'aria-checked', 'false')
+      .click();
+    cy.get('button[aria-label="Select plugin_upload_settings"]').should('have.attr', 'aria-checked', 'true');
+    cy.get('[role="dialog"]').should('not.exist');
     cy.get('button').contains('Import').click();
     cy.get('button').contains('Yes, import').click();
-    cy.wait('@importConfig').its('response.statusCode').should('equal', 200);
+    cy.wait('@importConfig').then(({ request, response }) => {
+      expect(response.statusCode).to.equal(200);
+      expect(request.body.config).to.deep.equal(['core-store.plugin_upload_settings']);
+    });
+    cy.wait('@refreshedDiff').its('response.statusCode').should('equal', 200);
+    cy.get('tbody tr').should('not.contain', 'plugin_upload_settings');
     cy.contains('plugin_users-permissions_advanced');
     cy.contains('plugin_users-permissions_email');
 
@@ -65,11 +75,20 @@ describe('Config Sync', () => {
       method: 'POST',
       url: '/config-sync/export',
     }).as('exportConfig');
-    cy.get('button[aria-label="Select plugin_users-permissions_advanced"]').click();
+    cy.get('button[aria-label="Select plugin_users-permissions_advanced"]')
+      .should('have.attr', 'aria-checked', 'true')
+      .click();
+    cy.get('button[aria-label="Select plugin_users-permissions_advanced"]').should('have.attr', 'aria-checked', 'false');
+    cy.get('[role="dialog"]').should('not.exist');
     cy.get('button').contains('Export').click();
     cy.get('button').contains('Yes, export').click();
-    cy.wait('@exportConfig').its('response.statusCode').should('equal', 200);
-    cy.contains('plugin_users-permissions_email');
+    cy.wait('@exportConfig').then(({ request, response }) => {
+      expect(response.statusCode).to.equal(200);
+      expect(request.body).to.deep.equal(['core-store.plugin_users-permissions_email']);
+    });
+    cy.wait('@refreshedDiff').its('response.statusCode').should('equal', 200);
+    cy.get('tbody tr').should('not.contain', 'plugin_users-permissions_email')
+      .and('contain', 'plugin_users-permissions_advanced');
   });
 
   ['import', 'export'].forEach((action) => {
@@ -90,11 +109,18 @@ describe('Config Sync', () => {
         databaseConfig: { ...initialDiff.databaseConfig, [selectedConfig]: syncedConfig },
       };
       let completed = false;
+      let releaseRefresh;
+      const refreshGate = new Cypress.Promise((resolve) => {
+        releaseRefresh = resolve;
+      });
 
       cy.login();
       cy.navigateToInterface();
       cy.intercept('GET', '/config-sync/diff', (request) => {
-        request.reply(completed ? refreshedDiff : initialDiff);
+        if (completed) {
+          return refreshGate.then(() => request.reply(refreshedDiff));
+        }
+        return request.reply(initialDiff);
       }).as('modalDiff');
       cy.intercept('GET', '/config-sync/app-env', {
         env: 'development', config: { soft: false },
@@ -126,6 +152,11 @@ describe('Config Sync', () => {
           ? { force: false, config: [selectedConfig] }
           : [selectedConfig]);
       });
+      cy.contains('Loading content...').should('be.visible');
+      cy.get('button[aria-label="Select plugin_users-permissions_advanced"]').should('not.exist');
+      cy.contains('button', 'Import').should('be.disabled');
+      cy.contains('button', 'Export').should('be.disabled');
+      cy.then(() => releaseRefresh());
       cy.wait('@modalDiff');
       cy.get('[role="dialog"]').should('not.exist');
       if (action === 'import') {

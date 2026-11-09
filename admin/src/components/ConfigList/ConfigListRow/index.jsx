@@ -35,14 +35,10 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
   return (
     <Tr
       {...props}
-      onClick={(e) => {
-        if (e.target.type !== 'checkbox') {
-          onClick(configType, configName);
-        }
-      }}
+      onClick={() => onClick(configType, configName)}
       style={{ cursor: 'pointer' }}
     >
-      <Td>
+      <Td onClick={(e) => e.stopPropagation()}>
         <Checkbox
           aria-label={`Select ${configName}`}
           checked={checked}

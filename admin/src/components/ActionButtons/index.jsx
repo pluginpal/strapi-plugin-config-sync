@@ -15,6 +15,7 @@ const ActionButtons = () => {
   const dispatch = useDispatch();
   const { toggleNotification } = useNotification();
   const partialDiff = useSelector((state) => state.getIn(['config', 'partialDiff'], Map({}))).toJS();
+  const isLoading = useSelector((state) => state.getIn(['config', 'isLoading'], false));
   const { formatMessage } = useIntl();
 
   return (
@@ -22,7 +23,7 @@ const ActionButtons = () => {
       <ConfirmModal
         type="import"
         trigger={(
-          <Button disabled={isEmpty(partialDiff)}>
+          <Button disabled={isLoading || isEmpty(partialDiff)}>
             {formatMessage({ id: 'config-sync.Buttons.Import' })}
           </Button>
         )}
@@ -31,7 +32,7 @@ const ActionButtons = () => {
       <ConfirmModal
         type="export"
         trigger={(
-          <Button disabled={isEmpty(partialDiff)}>
+          <Button disabled={isLoading || isEmpty(partialDiff)}>
             {formatMessage({ id: 'config-sync.Buttons.Export' })}
           </Button>
         )}
