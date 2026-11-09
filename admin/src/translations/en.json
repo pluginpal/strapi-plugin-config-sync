@@ -18,6 +18,8 @@
 
   "ConfigList.Loading": "Loading content...",
   "ConfigList.SelectAll": "Select all entries",
+  "ConfigList.Search": "Search",
+  "ConfigList.ClearSearch": "Clear search",
   "ConfigList.ConfigName": "Config name",
   "ConfigList.ConfigType": "Config type",
   "ConfigList.State": "State",
