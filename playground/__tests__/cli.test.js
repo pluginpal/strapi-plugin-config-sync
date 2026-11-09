@@ -2,9 +2,15 @@
 
 const fs = require('fs');
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 jest.setTimeout(20000);
+
+const selectedConfig = 'admin-role.strapi-editor';
+const otherConfig = 'admin-role.strapi-author';
+const selectedConfigPath = `config/sync/${selectedConfig}.json`;
+const otherConfigPath = `config/sync/${otherConfig}.json`;
 
 describe('Test the config-sync CLI', () => {
   afterAll(async () => {
@@ -13,11 +19,58 @@ describe('Test the config-sync CLI', () => {
     await exec('rm -rf .tmp');
   });
 
+  test('Export can be declined', async () => {
+    const { stdout } = await exec("printf 'n\\n' | yarn cs export");
+    expect(stdout).toContain('Are you sure you want to export');
+    expect(stdout).not.toContain('Finished export');
+    expect(fs.existsSync('config/sync')).toBe(false);
+  });
+
   test('Export', async () => {
     const { stdout: exportOutput } = await exec('yarn cs export -y');
     expect(exportOutput).toContain('Finished export');
     const { stdout: diffOutput } = await exec('yarn cs diff');
     expect(diffOutput).toContain('No differences between DB and sync directory');
+  });
+
+  test('Partial export only exports the selected config', async () => {
+    const selectedConfigBefore = fs.readFileSync(selectedConfigPath, 'utf8');
+    const otherConfigBefore = fs.readFileSync(otherConfigPath, 'utf8');
+    const selectedConfigData = JSON.parse(selectedConfigBefore);
+    selectedConfigData.description = `${selectedConfigData.description} (partial export test)`;
+    fs.writeFileSync(selectedConfigPath, JSON.stringify(selectedConfigData));
+
+    try {
+      const { stdout: exportOutput } = await exec(`yarn cs export --partial ${selectedConfig} -y`);
+
+      expect(exportOutput).toContain(`Exported ${selectedConfig}`);
+      expect(exportOutput).not.toContain(`Exported ${otherConfig}`);
+      expect(JSON.parse(fs.readFileSync(selectedConfigPath, 'utf8'))).toEqual(JSON.parse(selectedConfigBefore));
+      expect(fs.readFileSync(otherConfigPath, 'utf8')).toBe(otherConfigBefore);
+    } finally {
+      fs.writeFileSync(selectedConfigPath, selectedConfigBefore);
+    }
+  });
+
+  test('Partial import only imports the selected config', async () => {
+    const selectedConfigBefore = fs.readFileSync(selectedConfigPath, 'utf8');
+    const otherConfigBefore = fs.readFileSync(otherConfigPath, 'utf8');
+    const selectedConfigData = JSON.parse(selectedConfigBefore);
+    selectedConfigData.description = `${selectedConfigData.description} (partial import test)`;
+    fs.writeFileSync(selectedConfigPath, JSON.stringify(selectedConfigData));
+
+    try {
+      const { stdout: importOutput } = await exec(`yarn cs import --partial ${selectedConfig} -y`);
+      const { stdout: diffOutput } = await exec('yarn cs diff');
+
+      expect(importOutput).toContain(`Imported ${selectedConfig}`);
+      expect(importOutput).not.toContain(`Imported ${otherConfig}`);
+      expect(diffOutput).toContain('No differences between DB and sync directory');
+      expect(fs.readFileSync(otherConfigPath, 'utf8')).toBe(otherConfigBefore);
+    } finally {
+      fs.writeFileSync(selectedConfigPath, selectedConfigBefore);
+      await exec(`yarn cs import --partial ${selectedConfig} -y`);
+    }
   });
 
   test('Import (delete)', async () => {

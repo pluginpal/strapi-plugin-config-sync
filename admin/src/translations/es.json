@@ -26,6 +26,8 @@
   "ConfigDiff.Title": "Cambios en la configuración para",
   "ConfigDiff.SyncDirectory": "Directorio de sincronización",
   "ConfigDiff.Database": "Base de datos",
+  "ConfigDiff.ImportTitle": "Importar configuración a la base de datos solo para este archivo",
+  "ConfigDiff.ExportTitle": "Exportar configuración de la base de datos solo para este archivo",
 
   "Buttons.Import": "Importar",
   "Buttons.Export": "Exportar",
