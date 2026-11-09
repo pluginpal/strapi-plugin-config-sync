@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('fs');
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 jest.setTimeout(20000);
