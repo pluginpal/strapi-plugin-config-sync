@@ -20,6 +20,108 @@ describe('Config Sync', () => {
     cy.contains('"unique_email": false,');
   });
 
+  it('Shows the JSON error and location in the config diff', () => {
+    cy.login();
+    cy.navigateToInterface();
+    cy.initialExport();
+
+    cy.writeFile('playground/config/sync/user-role.public.json', '{\n  "name": ,\n}');
+    cy.intercept('GET', '/config-sync/diff').as('invalidDiff');
+    cy.reload();
+    cy.wait('@invalidDiff').then(({ response }) => {
+      expect(response.body.invalidConfig['user-role.public']).to.include('line 2, column 11');
+    });
+
+    cy.get('tbody tr').contains('public').parents('tr').should('contain', 'Invalid file')
+      .click();
+    cy.get('[role="dialog"]').should('contain', 'user-role.public.json')
+      .and('contain', 'is not valid JSON')
+      .and('contain', 'line 2, column 11')
+      .and('not.contain', 'Database');
+  });
+
+  ['list', 'diff'].forEach((view) => {
+    it(`Shows an invalid-file notification when importing from the ${view}`, () => {
+      cy.login();
+      cy.navigateToInterface();
+      cy.initialExport();
+      cy.writeFile('playground/config/sync/user-role.public.json', '{\n  "name": ,\n}');
+      cy.intercept('GET', '/config-sync/diff').as('invalidDiff');
+      cy.reload();
+      cy.wait('@invalidDiff');
+
+      if (view === 'diff') {
+        cy.get('tbody tr').contains('public').click();
+        cy.get('[role="dialog"] footer').contains('button', 'Import').click();
+      } else {
+        cy.contains('button', 'Import').click();
+      }
+
+      cy.intercept('POST', '/config-sync/import').as('invalidImport');
+      cy.contains('button', 'Yes, import').click();
+      cy.wait('@invalidImport').then(({ response }) => {
+        expect(response.statusCode).to.equal(400);
+        expect(response.body.error.details).to.include({
+          code: 'CONFIG_SYNC_INVALID_FILE',
+          configName: 'user-role.public',
+          reason: 'invalid_json',
+        });
+      });
+      const message = 'Cannot import user-role.public: its config file contains invalid JSON. Open the diff for details.';
+      if (view === 'diff') cy.get('[role="dialog"]').should('be.visible').and('contain', message);
+      else cy.contains(message).should('be.visible');
+    });
+
+    it(`Shows an invalid-file notification when exporting without a database config from the ${view}`, () => {
+      cy.login();
+      cy.navigateToInterface();
+      cy.initialExport();
+      cy.writeFile('playground/config/sync/user-role.nonexistent-config-sync-test.json', '{\n  "name": ,\n}');
+      cy.intercept('GET', '/config-sync/diff').as('invalidDiff');
+      cy.reload();
+      cy.wait('@invalidDiff');
+
+      if (view === 'diff') {
+        cy.get('tbody tr').contains('nonexistent-config-sync-test').click();
+        cy.get('[role="dialog"] footer').contains('button', 'Export').click();
+      } else {
+        cy.contains('button', 'Export').click();
+      }
+
+      cy.intercept('POST', '/config-sync/export').as('invalidExport');
+      cy.contains('button', 'Yes, export').click();
+      cy.wait('@invalidExport').then(({ response }) => {
+        expect(response.statusCode).to.equal(400);
+        expect(response.body.error.details).to.include({
+          code: 'CONFIG_SYNC_INVALID_FILE',
+          configName: 'user-role.nonexistent-config-sync-test',
+          reason: 'no_database_config',
+        });
+      });
+      const message = 'Cannot export user-role.nonexistent-config-sync-test: its config file is invalid and there is no database config to replace it.';
+      if (view === 'diff') cy.get('[role="dialog"]').should('be.visible').and('contain', message);
+      else cy.contains(message).should('be.visible');
+      cy.readFile('playground/config/sync/user-role.nonexistent-config-sync-test.json', null)
+        .then((contents) => expect(contents.toString()).to.equal('{\n  "name": ,\n}'));
+    });
+  });
+
+  it('Exports a database config over its invalid file', () => {
+    cy.login();
+    cy.navigateToInterface();
+    cy.initialExport();
+    cy.writeFile('playground/config/sync/user-role.public.json', '{\n  "name": ,\n}');
+    cy.intercept('GET', '/config-sync/diff').as('invalidDiff');
+    cy.reload();
+    cy.wait('@invalidDiff');
+    cy.get('tbody tr').contains('public').click();
+    cy.get('[role="dialog"] footer').contains('button', 'Export').click();
+    cy.intercept('POST', '/config-sync/export').as('repairExport');
+    cy.contains('button', 'Yes, export').click();
+    cy.wait('@repairExport').its('response.statusCode').should('equal', 200);
+    cy.readFile('playground/config/sync/user-role.public.json').its('name').should('eq', 'Public');
+  });
+
   it('Download the config as zip', () => {
     cy.login();
     cy.navigateToInterface();

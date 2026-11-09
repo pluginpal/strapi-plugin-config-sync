@@ -24,6 +24,7 @@
   "ConfigList.Different": "Different",
   "ConfigList.OnlyDir": "Only in sync dir",
   "ConfigList.OnlyDB": "Only in DB",
+  "ConfigList.Invalid": "Invalid file",
 
   "NoChanges.Message": "No differences between DB and sync directory. You are up-to-date!",
 
@@ -32,6 +33,9 @@
   "ConfigDiff.Database": "Database",
   "ConfigDiff.ImportTitle": "Import config into DB for this file only",
   "ConfigDiff.ExportTitle": "Export DB config for this file only",
+
+  "notification.invalidJson": "Cannot import {configName}: its config file contains invalid JSON. Open the diff for details.",
+  "notification.noDatabaseConfig": "Cannot export {configName}: its config file is invalid and there is no database config to replace it.",
 
   "Buttons.Export": "Export",
   "Buttons.DownloadConfig": "Download Config",
