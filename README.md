@@ -33,6 +33,9 @@
 
 ## ⏳ Getting started
 
+Requires Strapi 5 and Node.js 22, 24, or 26. Recent Strapi releases may require
+a newer Node.js 22 minor version; check the requirements of your Strapi version.
+
 [Read the Getting Started tutorial](https://docs.pluginpal.io/config-sync) or follow the steps below:
 
 ```bash
