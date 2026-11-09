@@ -43,11 +43,12 @@ export function exportAllConfig(partialDiff, toggleNotification, formatMessage, 
     try {
       const response = await post('/config-sync/export', partialDiff);
       toggleNotification({ type: 'success', message: response.data.message });
-      dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
-      dispatch(setLoadingState(false));
+      await dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
+      return true;
     } catch (err) {
       toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
+      return false;
     }
   };
 }
@@ -78,11 +79,12 @@ export function importAllConfig(partialDiff, force, toggleNotification, formatMe
         config: partialDiff,
       });
       toggleNotification({ type: 'success', message: response.data.message });
-      dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
-      dispatch(setLoadingState(false));
+      await dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
+      return true;
     } catch (err) {
       toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       dispatch(setLoadingState(false));
+      return false;
     }
   };
 }
