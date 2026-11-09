@@ -10,4 +10,7 @@ This plugin ships with a React app which can be accessed from the settings page 
 **Pro tip:**
 By clicking on one of the items in the diff table you can see the exact difference between sync dir and database in a git-style diff viewer.
 
+If a config file contains invalid JSON, its state is **Invalid file**. Open it to see the parsing error and its location instead of a misleading diff.
+Importing an invalid file shows an error. Exporting can replace it with the database version; if no database version exists, export reports the error and leaves the file untouched.
+
 ![Config diff in admin](/img/assets/admin-diff-viewer.png)

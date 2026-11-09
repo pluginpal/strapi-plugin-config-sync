@@ -2,4 +2,11 @@
 
 'use strict';
 
+// The CLI loads ES-module-only dependencies (chalk, inquirer) with require(),
+// which Node.js supports from 20.19 and 22.12 on.
+if (!process.features.require_module) {
+  console.error(`config-sync: the CLI needs a Node.js that can require() ES modules: 20.19+ or 22.12+ (current: ${process.version}).`);
+  process.exit(1);
+}
+
 require('../dist/cli');

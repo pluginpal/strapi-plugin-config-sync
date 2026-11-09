@@ -2,6 +2,18 @@
 
 import fs from 'fs';
 import isEmpty from 'lodash/isEmpty';
+import InvalidConfigFileError from '../utils/invalidConfigFileError';
+
+const withConfigFileErrors = async (ctx, action) => {
+  try {
+    return await action();
+  } catch (error) {
+    if (error instanceof InvalidConfigFileError) {
+      return ctx.badRequest(error.message, error.details);
+    }
+    throw error;
+  }
+};
 
 /**
  * Main controllers for config import/export.
@@ -14,7 +26,7 @@ export default {
    * @param {object} ctx - Request context object.
    * @returns {void}
    */
-  exportAll: async (ctx) => {
+  exportAll: async (ctx) => withConfigFileErrors(ctx, async () => {
     if (isEmpty(ctx.request.body)) {
       await strapi.plugin('config-sync').service('main').exportAllConfig();
     } else {
@@ -27,7 +39,7 @@ export default {
     ctx.send({
       message: `Config was successfully exported to ${strapi.config.get('plugin::config-sync.syncDir')}.`,
     });
-  },
+  }),
 
   /**
    * Import all config, from filesystem to db.
@@ -35,7 +47,7 @@ export default {
    * @param {object} ctx - Request context object.
    * @returns {void}
    */
-  importAll: async (ctx) => {
+  importAll: async (ctx) => withConfigFileErrors(ctx, async () => {
     // Check for existance of the config file sync dir.
     if (!fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
       ctx.send({
@@ -60,7 +72,7 @@ export default {
     ctx.send({
       message: 'Config was successfully imported.',
     });
-  },
+  }),
 
   /**
    * Get config diff between filesystem & db.

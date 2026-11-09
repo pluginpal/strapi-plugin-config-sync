@@ -59,6 +59,10 @@ const initTable = (head) => {
 };
 
 const getConfigState = (diff, configName, syncType) => {
+  if (diff.invalidConfig && diff.invalidConfig[configName]) {
+    return chalk.red('Invalid file');
+  }
+
   if (
     diff.fileConfig[configName]
     && diff.databaseConfig[configName]
@@ -235,11 +239,10 @@ program
 
 // `$ config-sync diff`
 program
-  .command('diff')
+  .command('diff [config]')
   .alias('d')
   .description('The config diff')
-  .action(async (options, { args }) => {
-    const single = args[0];
+  .action(async (single) => {
     const app = await getStrapiApp();
     const diff = await app.plugin('config-sync').service('main').getFormattedDiff();
 
@@ -251,6 +254,11 @@ program
 
     // Single config diff.
     if (single) {
+      if (diff.invalidConfig && diff.invalidConfig[single]) {
+        console.log(`${chalk.red.bold('[error]')} ${diff.invalidConfig[single]}`);
+        process.exit(1);
+      }
+
       // No changes.
       if (!diff.fileConfig[single] && !diff.databaseConfig[single]) {
         console.log(`${chalk.cyan.bold('[notice]')} No differences between DB and sync directory for ${single}.`);

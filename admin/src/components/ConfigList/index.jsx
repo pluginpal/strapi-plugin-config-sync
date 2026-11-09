@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
 import {
   Table,
@@ -12,7 +13,12 @@ import {
   Typography,
   Checkbox,
   Loader,
+  Flex,
+  Box,
+  TextInput,
+  IconButton,
 } from '@strapi/design-system';
+import { CaretDown, CaretUp, Search, Cross } from '@strapi/icons';
 
 import ConfigDiff from '../ConfigDiff';
 import FirstExport from '../FirstExport';
@@ -20,17 +26,38 @@ import NoChanges from '../NoChanges';
 import ConfigListRow from './ConfigListRow';
 import { setConfigPartialDiffInState } from '../../state/actions/Config';
 
+const SearchBox = styled(Box)`
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 40%;
+  }
+`;
 
 const ConfigList = ({ diff, isLoading }) => {
-  const [originalConfig, setOriginalConfig] = useState({});
-  const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
+  const [sortBy, setSortBy] = useState('configName');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useDispatch();
   const { formatMessage } = useIntl();
 
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
+
   const getConfigState = (configName) => {
+    if (diff.invalidConfig && diff.invalidConfig[configName]) {
+      return formatMessage({ id: 'config-sync.ConfigList.Invalid' });
+    }
+
     if (
       diff.fileConfig[configName]
       && diff.databaseConfig[configName]
@@ -68,8 +95,6 @@ const ConfigList = ({ diff, isLoading }) => {
         configType: type,
         state: getConfigState(name),
         onClick: (configType, configName) => {
-          setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
-          setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
         },
       });
@@ -87,70 +112,132 @@ const ConfigList = ({ diff, isLoading }) => {
     dispatch(setConfigPartialDiffInState(newPartialDiff));
   }, [checkedItems]);
 
-  if (isLoading) {
+  const sortedRows = useMemo(() => {
+    const rowsWithIndex = rows.map((row, originalIndex) => ({ ...row, originalIndex }));
+
+    const filteredRows = searchQuery
+      ? rowsWithIndex.filter((row) => (
+        `${row.configType}.${row.configName}`.toLowerCase().includes(searchQuery.toLowerCase())
+      ))
+      : rowsWithIndex;
+
+    return filteredRows.sort((a, b) => {
+      const aValue = (a[sortBy] || '').toLowerCase();
+      const bValue = (b[sortBy] || '').toLowerCase();
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [rows, sortBy, sortOrder, searchQuery]);
+
+  const renderList = () => {
+    if (isLoading) {
+      return (
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
+        </div>
+      );
+    }
+
+    if (!isEmpty(diff.message)) {
+      return <FirstExport />;
+    }
+
+    if (isEmpty(diff.diff)) {
+      return <NoChanges />;
+    }
+
+    const allChecked = checkedItems && checkedItems.every(Boolean);
+    const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+
+    const renderSortIcon = (field) => {
+      if (sortBy !== field) return null;
+      return sortOrder === 'asc' ? <CaretUp /> : <CaretDown />;
+    };
+
     return (
-      <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
+      <div>
+        <SearchBox paddingBottom={4}>
+          <TextInput
+            startAction={<Search />}
+            endAction={searchQuery ? (
+              <IconButton
+                label={formatMessage({ id: 'config-sync.ConfigList.ClearSearch' })}
+                onClick={() => setSearchQuery('')}
+                variant="ghost"
+              >
+                <Cross />
+              </IconButton>
+            ) : null}
+            aria-label={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+            placeholder={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </SearchBox>
+        <Table colCount={4} rowCount={sortedRows.length + 1}>
+          <Thead>
+            <Tr>
+              <Th>
+                <Checkbox
+                  aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
+                  checked={isIndeterminate ? "indeterminate" : allChecked}
+                  onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
+                />
+              </Th>
+              <Th onClick={() => handleSort('configName')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
+                  {renderSortIcon('configName')}
+                </Flex>
+              </Th>
+              <Th onClick={() => handleSort('configType')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
+                  {renderSortIcon('configType')}
+                </Flex>
+              </Th>
+              <Th onClick={() => handleSort('state')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
+                  {renderSortIcon('state')}
+                </Flex>
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sortedRows.map((row) => (
+              <ConfigListRow
+                key={`${row.configType}.${row.configName}`}
+                row={row}
+                checked={checkedItems[row.originalIndex]}
+                updateValue={() => {
+                  checkedItems[row.originalIndex] = !checkedItems[row.originalIndex];
+                  setCheckedItems([...checkedItems]);
+                }}
+              />
+            ))}
+          </Tbody>
+        </Table>
       </div>
     );
-  }
-
-  if (!isLoading && !isEmpty(diff.message)) {
-    return <FirstExport />;
-  }
-
-  if (!isLoading && isEmpty(diff.diff)) {
-    return <NoChanges />;
-  }
-
-  const allChecked = checkedItems && checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+  };
 
   return (
-    <div>
-      <Table colCount={4} rowCount={rows.length + 1}>
-        <Thead>
-          <Tr>
-            <Th>
-              <Checkbox
-                aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
-                checked={isIndeterminate ? "indeterminate" : allChecked}
-                onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
-              />
-            </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
-            </Th>
-            <Th>
-              <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {rows.map((row, index) => (
-            <ConfigDiff
-              key={row.configName}
-              oldValue={originalConfig}
-              newValue={newConfig}
-              configName={cName}
-              trigger={(
-                <ConfigListRow
-                  row={row}
-                  checked={checkedItems[index]}
-                  updateValue={() => {
-                    checkedItems[index] = !checkedItems[index];
-                    setCheckedItems([...checkedItems]);
-                  }}
-                />
-              )}
-            />
-          ))}
-        </Tbody>
-      </Table>
-    </div>
+    <>
+      {renderList()}
+      <ConfigDiff
+        oldValue={diff.fileConfig?.[cName]}
+        newValue={diff.databaseConfig?.[cName]}
+        error={diff.invalidConfig?.[cName]}
+        configName={cName}
+        open={Boolean(cName)}
+        onOpenChange={(open, syncedName) => {
+          if (!open) setCname((current) => (!syncedName || current === syncedName ? '' : current));
+        }}
+      />
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-{ 
+{
   "popUpWarning.warning.import_1": "Si continuas todos tus ficheros de configuración locales",
   "popUpWarning.warning.import_2": "se importarán a la base de datos.",
   "popUpWarning.warning.export_1": "Si continuas las configuraciones de tu base de datos",
@@ -9,11 +9,17 @@
   "popUpWarning.force": "Forzar",
   "popUpWarning.Confirmation": "Confirmación",
 
+  "envWarning.production.heading": "Estás en el entorno de producción",
+  "envWarning.production.message_1": "Ten cuidado al sincronizar la configuración en producción.",
+  "envWarning.production.message_2": "Asegúrate de no sobrescribir cambios de configuración importantes al importar.",
+
   "Header.Title": "Config Sync",
   "Header.Description": "Gestiona las configuraciones de tu base de datos entre diferentes entornos o instancias.",
 
   "ConfigList.Loading": "Cargando contenido...",
   "ConfigList.SelectAll": "Seleccionar todas las entradas",
+  "ConfigList.Search": "Buscar",
+  "ConfigList.ClearSearch": "Borrar búsqueda",
   "ConfigList.ConfigName": "Nombre",
   "ConfigList.ConfigType": "Tipo",
   "ConfigList.State": "Estado",
@@ -26,9 +32,12 @@
   "ConfigDiff.Title": "Cambios en la configuración para",
   "ConfigDiff.SyncDirectory": "Directorio de sincronización",
   "ConfigDiff.Database": "Base de datos",
+  "ConfigDiff.ImportTitle": "Importar configuración a la base de datos solo para este archivo",
+  "ConfigDiff.ExportTitle": "Exportar configuración de la base de datos solo para este archivo",
 
   "Buttons.Import": "Importar",
   "Buttons.Export": "Exportar",
+  "Buttons.DownloadConfig": "Descargar configuración",
 
   "FirstExport.Message": "Parece ser la primera vez que se usa config-sync en este proyecto.",
   "FirstExport.Button": "Hacer la exportación inicial",

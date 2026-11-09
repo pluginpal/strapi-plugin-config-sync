@@ -9,8 +9,8 @@
   "popUpWarning.force": "Принудительно",
   "popUpWarning.Confirmation": "Подтверждение",
 
-  "envWarning.production.heading": "Вы находитесь в prodoction-среде",
-  "envWarning.production.message_1": "Пожалуйста, будьте осторожны при синхронизации конфигурации в prodoction-среде.",
+  "envWarning.production.heading": "Вы находитесь в производственной среде",
+  "envWarning.production.message_1": "Будьте осторожны при синхронизации конфигурации в производственной среде.",
   "envWarning.production.message_2": "Убедитесь, что вы не переопределяете важные изменения конфигурации при импорте.",
 
   "Header.Title": "Config Sync",
@@ -18,6 +18,8 @@
 
   "ConfigList.Loading": "Загрузка содержимого...",
   "ConfigList.SelectAll": "Выбрать все записи",
+  "ConfigList.Search": "Поиск",
+  "ConfigList.ClearSearch": "Очистить поиск",
   "ConfigList.ConfigName": "Имя конфигурации",
   "ConfigList.ConfigType": "Тип конфигурации",
   "ConfigList.State": "Состояние",
@@ -30,6 +32,8 @@
   "ConfigDiff.Title": "Изменения конфигурации для",
   "ConfigDiff.SyncDirectory": "Каталог синхронизации",
   "ConfigDiff.Database": "База данных",
+  "ConfigDiff.ImportTitle": "Импортировать конфигурацию в базу данных только для этого файла",
+  "ConfigDiff.ExportTitle": "Экспортировать конфигурацию из базы данных только для этого файла",
 
   "Buttons.Export": "Экспортировать",
   "Buttons.DownloadConfig": "Скачать конфиг",

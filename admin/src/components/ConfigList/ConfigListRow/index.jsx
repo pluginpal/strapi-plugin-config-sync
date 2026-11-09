@@ -24,6 +24,11 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
       style.color = '#3d302f';
     }
 
+    if (stateStr === 'Invalid file') {
+      style.backgroundColor = '#f0cac7';
+      style.color = '#3d302f';
+    }
+
     if (stateStr === 'Different') {
       style.backgroundColor = '#e8e6b7';
       style.color = '#4a4934';
@@ -35,27 +40,23 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
   return (
     <Tr
       {...props}
-      onClick={(e) => {
-        if (e.target.type !== 'checkbox') {
-          onClick(configType, configName);
-        }
-      }}
+      onClick={() => onClick(configType, configName)}
       style={{ cursor: 'pointer' }}
     >
-      <Td>
+      <Td onClick={(e) => e.stopPropagation()}>
         <Checkbox
           aria-label={`Select ${configName}`}
           checked={checked}
           onCheckedChange={updateValue}
         />
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega">{configName}</Typography>
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega">{configType}</Typography>
       </Td>
-      <Td onClick={(e) => props.onClick(e)}>
+      <Td>
         <Typography variant="omega" style={stateStyle(state)}>{state}</Typography>
       </Td>
     </Tr>

@@ -2,6 +2,7 @@ import isEmpty from 'lodash/isEmpty';
 import { logMessage, sanitizeConfig, dynamicSort, noLimit, getCombinedUid, getCombinedUidWhereFilter, getUidParamsFromName } from '../utils';
 import { difference, same } from '../utils/getArrayDiff';
 import queryFallBack from '../utils/queryFallBack';
+import InvalidConfigFileError from '../utils/invalidConfigFileError';
 
 const ConfigType = class ConfigType {
   constructor({ queryString, configName, uid, jsonFields, relations, components }) {
@@ -181,6 +182,14 @@ const ConfigType = class ConfigType {
     if (shouldExclude) return;
 
     const currentConfig = formattedDiff.databaseConfig[configName];
+
+    if (!currentConfig && formattedDiff.invalidConfig[configName]) {
+      throw new InvalidConfigFileError(
+        `Cannot export '${configName}': the config file is invalid and no database config exists to replace it.`,
+        configName,
+        'no_database_config',
+      );
+    }
 
     if (
       !currentConfig
