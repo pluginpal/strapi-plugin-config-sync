@@ -24,6 +24,11 @@ const CustomRow = ({ row, checked, updateValue, ...props }) => {
       style.color = '#3d302f';
     }
 
+    if (stateStr === 'Invalid file') {
+      style.backgroundColor = '#f0cac7';
+      style.color = '#3d302f';
+    }
+
     if (stateStr === 'Different') {
       style.backgroundColor = '#e8e6b7';
       style.color = '#4a4934';

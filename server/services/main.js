@@ -4,9 +4,11 @@ import isEmpty from 'lodash/isEmpty';
 import fs from 'fs';
 import util from 'util';
 import AdmZip from 'adm-zip';
+import { parse as parseJsonWithErrors } from 'jsonc-parser';
 
 import difference from '../utils/getObjectDiff';
 import { logMessage } from '../utils';
+import InvalidConfigFileError from '../utils/invalidConfigFileError';
 
 /**
  * Main services for config import/export.
@@ -91,17 +93,42 @@ export default () => ({
    * @returns {object} The JSON content of the config file.
    */
   readConfigFile: async (configType, configName) => {
+    const fullConfigName = `${configType}.${configName}`;
     // Replace reserved characters in filenames.
     configName = configName.replace(/:/g, "#").replace(/\//g, "$");
 
+    const filePath = `${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`;
     const readFile = util.promisify(fs.readFile);
-    return readFile(`${strapi.config.get('plugin::config-sync.syncDir')}${configType}.${configName}.json`)
-      .then((data) => {
-        return JSON.parse(data);
-      })
-      .catch(() => {
-        return null;
-      });
+
+    let data;
+    try {
+      data = await readFile(filePath);
+    } catch (e) {
+      // No file for this config.
+      if (e.code === 'ENOENT') return null;
+      throw e;
+    }
+
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      const contents = data.toString('utf8');
+      const errors = [];
+      parseJsonWithErrors(contents, errors, { disallowComments: true });
+      let location = '';
+      const position = e.message.match(/ at position (\d+)/);
+      if (position || errors.length) {
+        const offset = position ? Number(position[1]) : errors[0].offset;
+        const beforeError = contents.slice(0, offset);
+        const lines = beforeError.split(/\r\n|\r|\n/);
+        location = ` at line ${lines.length}, column ${lines[lines.length - 1].length + 1}`;
+      }
+      throw new InvalidConfigFileError(
+        `The config file '${filePath}' is not valid JSON${location} (${e.message}).`,
+        fullConfigName,
+        'invalid_json',
+      );
+    }
   },
 
 
@@ -109,9 +136,10 @@ export default () => ({
    * Get all the config JSON from the filesystem.
    *
    * @param {string} configType - Type of config to gather. Leave empty to get all config.
+   * @param {object} invalidConfig - Object that gets filled with the unreadable config files, keyed by config name.
    * @returns {object} Object with key value pairs of configs.
    */
-  getAllConfigFromFiles: async (configType = null) => {
+  getAllConfigFromFiles: async (configType = null, invalidConfig = {}) => {
     if (!fs.existsSync(strapi.config.get('plugin::config-sync.syncDir'))) {
       return {};
     }
@@ -136,7 +164,14 @@ export default () => ({
           return;
         }
 
-        const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
+        let fileContents;
+        try {
+          fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
+        } catch (e) {
+          strapi.log.warn(logMessage(`The config file '${file}' can't be read: ${e.message}`));
+          invalidConfig[`${type}.${formattedName}`] = e.message;
+          return;
+        }
 
         if (!fileContents) {
           strapi.log.warn(logMessage(`An empty config file '${file}' was found in the sync directory`));
@@ -242,12 +277,13 @@ export default () => ({
 
     const type = configName.split('.')[0]; // Grab the first part of the filename.
     const name = configName.split(/\.(.+)/)[1]; // Grab the rest of the filename.
-    const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
 
     try {
+      const fileContents = await strapi.plugin('config-sync').service('main').readConfigFile(type, name);
       const importState = await strapi.plugin('config-sync').types[type].importSingle(name, fileContents, force);
       if (onSuccess && importState !== false) onSuccess(`${type}.${name}`);
     } catch (e) {
+      if (e instanceof InvalidConfigFileError) throw e;
       throw new Error(`Error when trying to import ${type}.${name}. ${e}`);
     }
   },
@@ -272,6 +308,7 @@ export default () => ({
       await strapi.plugin('config-sync').types[type].exportSingle(configName);
       if (onSuccess) onSuccess(`${type}.${name}`);
     } catch (e) {
+      if (e instanceof InvalidConfigFileError) throw e;
       throw new Error(`Error when trying to export ${type}.${name}. ${e}`);
     }
   },
@@ -288,12 +325,18 @@ export default () => ({
       fileConfig: {},
       databaseConfig: {},
       diff: {},
+      invalidConfig: {},
     };
 
-    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles(configType);
+    const fileConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromFiles(configType, formattedDiff.invalidConfig);
     const databaseConfig = await strapi.plugin('config-sync').service('main').getAllConfigFromDatabase(configType);
 
     const diff = difference(databaseConfig, fileConfig);
+
+    // Unreadable files always show up in the diff, so they can't go unnoticed.
+    Object.keys(formattedDiff.invalidConfig).forEach((name) => {
+      diff[name] = diff[name] || databaseConfig[name] || {};
+    });
 
     formattedDiff.diff = diff;
 

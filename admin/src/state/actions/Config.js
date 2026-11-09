@@ -6,6 +6,19 @@
 import { saveAs } from 'file-saver';
 import { b64toBlob } from '../../helpers/blob';
 
+const getSyncErrorMessage = (err, formatMessage) => {
+  const details = err?.response?.data?.error?.details;
+  if (details?.code === 'CONFIG_SYNC_INVALID_FILE' && typeof details.configName === 'string') {
+    if (details.reason === 'invalid_json') {
+      return formatMessage({ id: 'config-sync.notification.invalidJson' }, { configName: details.configName });
+    }
+    if (details.reason === 'no_database_config') {
+      return formatMessage({ id: 'config-sync.notification.noDatabaseConfig' }, { configName: details.configName });
+    }
+  }
+  return formatMessage({ id: 'notification.error' });
+};
+
 export function getAllConfigDiff(toggleNotification, formatMessage, get) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
@@ -37,7 +50,7 @@ export function setConfigPartialDiffInState(config) {
   };
 }
 
-export function exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get) {
+export function exportAllConfig(partialDiff, toggleNotification, formatMessage, post, get, onError) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
@@ -46,7 +59,9 @@ export function exportAllConfig(partialDiff, toggleNotification, formatMessage, 
       await dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       return true;
     } catch (err) {
-      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
+      const message = getSyncErrorMessage(err, formatMessage);
+      if (onError) onError(message);
+      else toggleNotification({ type: 'warning', message });
       dispatch(setLoadingState(false));
       return false;
     }
@@ -70,7 +85,7 @@ export function downloadZip(toggleNotification, formatMessage, post, get) {
   };
 }
 
-export function importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get) {
+export function importAllConfig(partialDiff, force, toggleNotification, formatMessage, post, get, onError) {
   return async function(dispatch) {
     dispatch(setLoadingState(true));
     try {
@@ -82,7 +97,9 @@ export function importAllConfig(partialDiff, force, toggleNotification, formatMe
       await dispatch(getAllConfigDiff(toggleNotification, formatMessage, get));
       return true;
     } catch (err) {
-      toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
+      const message = getSyncErrorMessage(err, formatMessage);
+      if (onError) onError(message);
+      else toggleNotification({ type: 'warning', message });
       dispatch(setLoadingState(false));
       return false;
     }

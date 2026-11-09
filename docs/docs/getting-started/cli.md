@@ -122,6 +122,8 @@ _Example:_
 
 Add a single config name as the argument of the `diff` command to see the difference of that single file in a git-style diff viewer.
 
+For invalid JSON, the diff table shows **Invalid file**, and the single-config diff reports the parsing error and its location.
+
 _Example:_
 
 <Tabs groupId="yarn-npm">

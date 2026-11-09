@@ -99,6 +99,86 @@ describe('Test the config-sync CLI', () => {
     expect(diffOutput).toContain('No differences between DB and sync directory');
   });
 
+  test('Import (unparsable file)', async () => {
+    // A file that can't be parsed (a merge conflict left in it, a typo) is not a missing file:
+    // importing it must fail, and leave the config in the database.
+    const file = 'config/sync/user-role.public.json';
+    const original = fs.readFileSync(file, 'utf8');
+    fs.writeFileSync(file, '<<<<<<< HEAD\n{ "name": "Public",\n');
+    let output;
+    let diffWhileInvalid;
+    try {
+      try {
+        await exec('yarn cs diff');
+      } catch (e) {
+        diffWhileInvalid = e.stdout;
+      }
+      const { stdout, stderr } = await exec('yarn cs import -p user-role.public -y');
+      output = stdout + stderr;
+    } catch (e) {
+      output = `${e.stdout}${e.stderr}`;
+    } finally {
+      fs.writeFileSync(file, original);
+    }
+    expect(diffWhileInvalid).toContain('Invalid file');
+    expect(output).toContain('is not valid JSON');
+    // The role is still in the database: with its file back, nothing differs.
+    const { stdout: diffOutput } = await exec('yarn cs diff');
+    expect(diffOutput).toContain('No differences between DB and sync directory');
+  });
+
+  test.each([
+    ['user-role.public', '{\n  "name": ,\n}', 'line 2, column 11'],
+    ['user-role.public', '{\n  "name": "ab\\q"\n}', 'line 2, column 15'],
+    ['user-role.public', '', 'line 1, column 1'],
+    ['user-role.nonexistent-config-sync-test', '{\n  "name": "test"\n', 'line 3, column 1'],
+  ])('Single diff reports invalid JSON in %s at the error location', async (name, contents, location) => {
+    const file = `config/sync/${name}.json`;
+    const original = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+    fs.writeFileSync(file, contents);
+
+    try {
+      let error;
+      try {
+        await exec(`yarn cs diff ${name}`);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toHaveProperty('code', 1);
+      expect(error.stdout).toContain(`${name}.json`);
+      expect(error.stdout).toContain('is not valid JSON');
+      expect(error.stdout).toContain(location);
+      expect(error.stdout).toContain('[error]');
+      expect(error.stdout).not.toContain('No differences between DB and sync directory');
+    } finally {
+      if (original === null) fs.unlinkSync(file);
+      else fs.writeFileSync(file, original);
+    }
+  });
+
+  test('Single diff still displays changes for valid JSON', async () => {
+    const file = 'config/sync/user-role.public.json';
+    const original = fs.readFileSync(file, 'utf8');
+    const config = JSON.parse(original);
+    config.description = 'Single diff test';
+    fs.writeFileSync(file, JSON.stringify(config));
+
+    try {
+      let error;
+      try {
+        await exec('yarn cs diff user-role.public');
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toHaveProperty('code', 1);
+      expect(error.stdout).toContain('Single diff test');
+      expect(error.stdout).not.toContain('[error]');
+    } finally {
+      fs.writeFileSync(file, original);
+    }
+  });
+
   test('Non-empty diff returns 1', async () => {
     await exec('rm -rf config/sync/admin-role.strapi-editor.json');
     // Work around Jest not supporting custom error matching.

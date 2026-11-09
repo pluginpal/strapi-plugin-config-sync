@@ -54,6 +54,10 @@ const ConfigList = ({ diff, isLoading }) => {
   };
 
   const getConfigState = (configName) => {
+    if (diff.invalidConfig && diff.invalidConfig[configName]) {
+      return formatMessage({ id: 'config-sync.ConfigList.Invalid' });
+    }
+
     if (
       diff.fileConfig[configName]
       && diff.databaseConfig[configName]
@@ -226,6 +230,7 @@ const ConfigList = ({ diff, isLoading }) => {
       <ConfigDiff
         oldValue={diff.fileConfig?.[cName]}
         newValue={diff.databaseConfig?.[cName]}
+        error={diff.invalidConfig?.[cName]}
         configName={cName}
         open={Boolean(cName)}
         onOpenChange={(open, syncedName) => {
