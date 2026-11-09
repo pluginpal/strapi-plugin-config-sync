@@ -34,8 +34,6 @@ const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
   const dispatch = useDispatch();
   const { toggleNotification } = useNotification();
   const { post, get } = getFetchClient();
-  const commonHeadingStyle = { paddingRight: '2rem' };
-
   return (
     <Modal.Root open={open} onOpenChange={onOpenChange}>
       <Modal.Content>
@@ -46,32 +44,15 @@ const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
         </Modal.Header>
         <Modal.Body>
           <Grid.Root paddingBottom={4} style={{ textAlign: 'center' }}>
-            <Grid.Item col={6} style={{ justifyContent: 'center' }}>
-              <Typography variant="delta" style={commonHeadingStyle}>{formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}
+            <Grid.Item col={6}>
+              <Typography variant="delta" style={{ width: '100%' }}>
+                {formatMessage({ id: 'config-sync.ConfigDiff.SyncDirectory' })}
               </Typography>
-              <ConfirmModal
-                type="import"
-                trigger={(
-                  <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ImportTitle' })}>
-                    {formatMessage({ id: 'config-sync.Buttons.Import' })}
-                  </Button>
-                )}
-                onSubmit={(force) => dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get))}
-              />
             </Grid.Item>
-            <Grid.Item col={6} style={{ justifyContent: 'center' }}>
-              <Typography variant="delta" style={commonHeadingStyle}>
+            <Grid.Item col={6}>
+              <Typography variant="delta" style={{ width: '100%' }}>
                 {formatMessage({ id: 'config-sync.ConfigDiff.Database' })}
               </Typography>
-              <ConfirmModal
-                type="export"
-                trigger={(
-                  <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ExportTitle' })}>
-                    {formatMessage({ id: 'config-sync.Buttons.Export' })}
-                  </Button>
-                )}
-                onSubmit={() => dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get))}
-              />
             </Grid.Item>
           </Grid.Root>
           <Typography variant="pi">
@@ -83,6 +64,26 @@ const ConfigDiff = ({ oldValue, newValue, configName, open, onOpenChange }) => {
             />
           </Typography>
         </Modal.Body>
+        <Modal.Footer justifyContent="flex-end" gap={2}>
+          <ConfirmModal
+            type="import"
+            trigger={(
+              <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ImportTitle' })}>
+                {formatMessage({ id: 'config-sync.Buttons.Import' })}
+              </Button>
+            )}
+            onSubmit={(force) => dispatch(importAllConfig([configName], force, toggleNotification, formatMessage, post, get))}
+          />
+          <ConfirmModal
+            type="export"
+            trigger={(
+              <Button title={formatMessage({ id: 'config-sync.ConfigDiff.ExportTitle' })}>
+                {formatMessage({ id: 'config-sync.Buttons.Export' })}
+              </Button>
+            )}
+            onSubmit={() => dispatch(exportAllConfig([configName], toggleNotification, formatMessage, post, get))}
+          />
+        </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
   );

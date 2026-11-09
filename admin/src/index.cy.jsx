@@ -108,13 +108,17 @@ describe('Config Sync', () => {
 
       cy.get('tbody tr').contains('plugin_users-permissions_advanced').click();
       cy.get('[role="dialog"]').should('contain', 'fileOnly').and('contain', 'databaseOnly');
-      cy.get(`[role="dialog"] button[title="${action === 'import'
+      cy.get('[role="dialog"] footer').within(() => {
+        cy.contains('button', 'Import').should('be.visible');
+        cy.contains('button', 'Export').should('be.visible');
+      });
+      cy.get(`[role="dialog"] footer button[title="${action === 'import'
         ? 'Import config into DB for this file only'
         : 'Export DB config for this file only'}"]`).click();
       cy.contains('button', 'Cancel').click();
       cy.then(() => expect(completed).to.equal(false));
 
-      cy.get('[role="dialog"]').contains('button', action === 'import' ? 'Import' : 'Export').click();
+      cy.get('[role="dialog"] footer').contains('button', action === 'import' ? 'Import' : 'Export').click();
       cy.contains('button', `Yes, ${action}`).click();
       cy.wait('@singleFileSync').then(({ request }) => {
         expect(request.body).to.deep.equal(action === 'import'
