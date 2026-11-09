@@ -35,8 +35,6 @@ const SearchBox = styled(Box)`
 `;
 
 const ConfigList = ({ diff, isLoading }) => {
-  const [originalConfig, setOriginalConfig] = useState({});
-  const [newConfig, setNewConfig] = useState({});
   const [cName, setCname] = useState('');
   const [rows, setRows] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
@@ -93,8 +91,6 @@ const ConfigList = ({ diff, isLoading }) => {
         configType: type,
         state: getConfigState(name),
         onClick: (configType, configName) => {
-          setOriginalConfig(diff.fileConfig[`${configType}.${configName}`]);
-          setNewConfig(diff.databaseConfig[`${configType}.${configName}`]);
           setCname(`${configType}.${configName}`);
         },
       });
@@ -131,102 +127,112 @@ const ConfigList = ({ diff, isLoading }) => {
     });
   }, [rows, sortBy, sortOrder, searchQuery]);
 
-  if (isLoading) {
+  const renderList = () => {
+    if (isLoading) {
+      return (
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
+        </div>
+      );
+    }
+
+    if (!isEmpty(diff.message)) {
+      return <FirstExport />;
+    }
+
+    if (isEmpty(diff.diff)) {
+      return <NoChanges />;
+    }
+
+    const allChecked = checkedItems && checkedItems.every(Boolean);
+    const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+
+    const renderSortIcon = (field) => {
+      if (sortBy !== field) return null;
+      return sortOrder === 'asc' ? <CaretUp /> : <CaretDown />;
+    };
+
     return (
-      <div style={{ textAlign: 'center', marginTop: 40 }}>
-        <Loader>{formatMessage({ id: 'config-sync.ConfigList.Loading' })}</Loader>
+      <div>
+        <SearchBox paddingBottom={4}>
+          <TextInput
+            startAction={<Search />}
+            endAction={searchQuery ? (
+              <IconButton
+                label={formatMessage({ id: 'config-sync.ConfigList.ClearSearch' })}
+                onClick={() => setSearchQuery('')}
+                variant="ghost"
+              >
+                <Cross />
+              </IconButton>
+            ) : null}
+            aria-label={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+            placeholder={formatMessage({ id: 'config-sync.ConfigList.Search' })}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </SearchBox>
+        <Table colCount={4} rowCount={sortedRows.length + 1}>
+          <Thead>
+            <Tr>
+              <Th>
+                <Checkbox
+                  aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
+                  checked={isIndeterminate ? "indeterminate" : allChecked}
+                  onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
+                />
+              </Th>
+              <Th onClick={() => handleSort('configName')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
+                  {renderSortIcon('configName')}
+                </Flex>
+              </Th>
+              <Th onClick={() => handleSort('configType')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
+                  {renderSortIcon('configType')}
+                </Flex>
+              </Th>
+              <Th onClick={() => handleSort('state')} style={{ cursor: 'pointer' }}>
+                <Flex gap={1}>
+                  <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
+                  {renderSortIcon('state')}
+                </Flex>
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sortedRows.map((row) => (
+              <ConfigListRow
+                key={`${row.configType}.${row.configName}`}
+                row={row}
+                checked={checkedItems[row.originalIndex]}
+                updateValue={() => {
+                  checkedItems[row.originalIndex] = !checkedItems[row.originalIndex];
+                  setCheckedItems([...checkedItems]);
+                }}
+              />
+            ))}
+          </Tbody>
+        </Table>
       </div>
     );
-  }
-
-  if (!isLoading && !isEmpty(diff.message)) {
-    return <FirstExport />;
-  }
-
-  if (!isLoading && isEmpty(diff.diff)) {
-    return <NoChanges />;
-  }
-
-  const allChecked = checkedItems && checkedItems.every(Boolean);
-  const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
-
-  const renderSortIcon = (field) => {
-    if (sortBy !== field) return null;
-    return sortOrder === 'asc' ? <CaretUp /> : <CaretDown />;
   };
 
   return (
-    <div>
-      <SearchBox paddingBottom={4}>
-        <TextInput
-          startAction={<Search />}
-          endAction={searchQuery ? (
-            <IconButton
-              label={formatMessage({ id: 'config-sync.ConfigList.ClearSearch' })}
-              onClick={() => setSearchQuery('')}
-              variant="ghost"
-            >
-              <Cross />
-            </IconButton>
-          ) : null}
-          aria-label={formatMessage({ id: 'config-sync.ConfigList.Search' })}
-          placeholder={formatMessage({ id: 'config-sync.ConfigList.Search' })}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </SearchBox>
-      <Table colCount={4} rowCount={sortedRows.length + 1}>
-        <Thead>
-          <Tr>
-            <Th>
-              <Checkbox
-                aria-label={formatMessage({ id: 'config-sync.ConfigList.SelectAll' })}
-                checked={isIndeterminate ? "indeterminate" : allChecked}
-                onCheckedChange={(value) => setCheckedItems(checkedItems.map(() => value))}
-              />
-            </Th>
-            <Th onClick={() => handleSort('configName')} style={{ cursor: 'pointer' }}>
-              <Flex gap={1}>
-                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigName' })}</Typography>
-                {renderSortIcon('configName')}
-              </Flex>
-            </Th>
-            <Th onClick={() => handleSort('configType')} style={{ cursor: 'pointer' }}>
-              <Flex gap={1}>
-                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.ConfigType' })}</Typography>
-                {renderSortIcon('configType')}
-              </Flex>
-            </Th>
-            <Th onClick={() => handleSort('state')} style={{ cursor: 'pointer' }}>
-              <Flex gap={1}>
-                <Typography variant="sigma">{formatMessage({ id: 'config-sync.ConfigList.State' })}</Typography>
-                {renderSortIcon('state')}
-              </Flex>
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {sortedRows.map((row) => (
-            <ConfigDiff
-              key={row.configName}
-              oldValue={originalConfig}
-              newValue={newConfig}
-              configName={cName}
-              trigger={(
-                <ConfigListRow
-                  row={row}
-                  checked={checkedItems[row.originalIndex]}
-                  updateValue={() => {
-                    checkedItems[row.originalIndex] = !checkedItems[row.originalIndex];
-                    setCheckedItems([...checkedItems]);
-                  }}
-                />
-              )}
-            />
-          ))}
-        </Tbody>
-      </Table>
-    </div>
+    <>
+      {renderList()}
+      <ConfigDiff
+        oldValue={diff.fileConfig?.[cName]}
+        newValue={diff.databaseConfig?.[cName]}
+        configName={cName}
+        open={Boolean(cName)}
+        onOpenChange={(open, syncedName) => {
+          if (!open) setCname((current) => (!syncedName || current === syncedName ? '' : current));
+        }}
+      />
+    </>
   );
 };
 
