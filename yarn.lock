@@ -12903,7 +12903,7 @@ qs@6.16.1:
     es-define-property "^1.0.1"
     side-channel "^1.1.1"
 
-qs@^6.11.0, qs@^6.5.2:
+qs@^6.11.0, qs@^6.12.3, qs@^6.5.2:
   version "6.17.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.17.1.tgz#43ac71d29ca0e9d0eed16a218e35b6cde5628e81"
   integrity sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==
@@ -12911,19 +12911,12 @@ qs@^6.11.0, qs@^6.5.2:
     es-define-property "^1.0.1"
     side-channel "^1.1.1"
 
-qs@^6.12.3:
-  version "6.15.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.15.0.tgz#db8fd5d1b1d2d6b5b33adaf87429805f1909e7b3"
-  integrity sha512-mAZTtNCeetKMH+pSjrb76NAM8V9a05I9aBZOHztWy/UqcJdQYNsf59vrRKWnojAT9Y+GbIvoTBC++CPHqpDBhQ==
-  dependencies:
-    side-channel "^1.1.0"
-
 qs@~6.14.1:
-  version "6.14.2"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.2.tgz#b5634cf9d9ad9898e31fba3504e866e8efb6798c"
-  integrity sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==
+  version "6.14.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.14.3.tgz#5dfd93afa8db8a5bcbc1bc49494d43f4a01232c8"
+  integrity sha512-rQNAwFzg3KZjjfANpCQOAoZwHQvcpWuabal4khEuSStXNnVh6iLM+yscBqdSZuj+dRNl99Cgq5OuVyDBJZWq6Q==
   dependencies:
-    side-channel "^1.1.0"
+    side-channel "^1.1.1"
 
 quansync@^0.2.11:
   version "0.2.11"
