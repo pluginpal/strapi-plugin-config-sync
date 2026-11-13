@@ -65,7 +65,7 @@ export const sanitizeConfig = ({
       delete relationEntity._id;
       delete relationEntity.id;
       delete relationEntity.updatedAt;
-      delete config.publishedAt;
+      delete relationEntity.publishedAt;
       delete relationEntity.createdAt;
       relationEntity = sortByKeys(relationEntity);
 
