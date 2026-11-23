@@ -7,7 +7,7 @@ import AdmZip from 'adm-zip';
 import { parse as parseJsonWithErrors } from 'jsonc-parser';
 
 import difference from '../utils/getObjectDiff';
-import { logMessage } from '../utils';
+import { logMessage, dynamicSort } from '../utils';
 import InvalidConfigFileError from '../utils/invalidConfigFileError';
 
 /**
@@ -177,6 +177,16 @@ export default () => ({
           strapi.log.warn(logMessage(`An empty config file '${file}' was found in the sync directory`));
           return;
         }
+
+        // Formatted like the database config, so only real changes show up.
+        const { ignoreDocumentId, relations } = strapi.plugin('config-sync').types[type];
+        if (ignoreDocumentId) delete fileContents.documentId;
+        relations.forEach(({ relationName, relationSortFields }) => {
+          if (!Array.isArray(fileContents[relationName])) return;
+          relationSortFields.forEach((sortField) => {
+            fileContents[relationName].sort(dynamicSort(sortField));
+          });
+        });
 
         fileConfigs[`${type}.${formattedName}`] = fileContents;
       }));
