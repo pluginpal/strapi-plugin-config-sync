@@ -225,7 +225,9 @@ export default () => ({
 
     const diff = difference(databaseConfig, fileConfig);
 
-    await Promise.all(Object.keys(diff).map(async (file) => {
+    // One at a time: importing some configs changes others (each new
+    // i18n locale rewrites the super admin's permissions).
+    await Object.keys(diff).reduce((previousImport, file) => previousImport.then(async () => {
       const type = file.split('.')[0]; // Grab the first part of the filename.
       const name = file.split(/\.(.+)/)[1]; // Grab the rest of the filename.
 
@@ -234,7 +236,7 @@ export default () => ({
       }
 
       await strapi.plugin('config-sync').service('main').importSingleConfig(`${type}.${name}`, onSuccess);
-    }));
+    }), Promise.resolve());
   },
 
   /**
