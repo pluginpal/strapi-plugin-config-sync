@@ -65,9 +65,10 @@ export default {
       return;
     }
 
-    await Promise.all(ctx.request.body.config.map(async (configName) => {
-      await strapi.plugin('config-sync').service('main').importSingleConfig(configName, null, ctx.request.body.force);
-    }));
+    // One at a time, like the CLI and importAllConfig.
+    await ctx.request.body.config.reduce((previousImport, configName) => previousImport.then(() => (
+      strapi.plugin('config-sync').service('main').importSingleConfig(configName, null, ctx.request.body.force)
+    )), Promise.resolve());
 
     ctx.send({
       message: 'Config was successfully imported.',

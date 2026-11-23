@@ -164,7 +164,9 @@ const handleAction = async (syncType, skipConfirm, configType, partials, force) 
     if (syncType === 'import') {
       const onSuccess = (name) => console.log(`${chalk.cyan.bold('[notice]')} Imported ${name}`);
       try {
-        await Promise.all(Object.keys(finalDiff).map(async (name) => {
+        // One at a time: importing some configs changes others (each new
+        // i18n locale rewrites the super admin's permissions).
+        await Object.keys(finalDiff).reduce((previousImport, name) => previousImport.then(async () => {
           let warning;
           if (
             getConfigState(diff, name, syncType) === chalk.red('Delete')
@@ -173,10 +175,11 @@ const handleAction = async (syncType, skipConfirm, configType, partials, force) 
 
           await app.plugin('config-sync').service('main').importSingleConfig(name, onSuccess, force);
           if (warning) console.log(`${chalk.yellow.bold('[warning]')} ${warning}`);
-        }));
+        }), Promise.resolve());
         console.log(`${chalk.green.bold('[success]')} Finished import`);
       } catch (e) {
         console.log(`${chalk.red.bold('[error]')} ${e}`);
+        process.exit(1);
       }
     }
     if (syncType === 'export') {

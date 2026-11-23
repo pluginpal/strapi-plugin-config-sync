@@ -127,6 +127,34 @@ describe('Test the config-sync CLI', () => {
     expect(diffOutput).toContain('No differences between DB and sync directory');
   });
 
+  test('Import stops at the first config that fails and exits 1', async () => {
+    const invalidFile = 'config/sync/user-role.public.json';
+    const changedFile = 'config/sync/user-role.authenticated.json';
+    const invalidOriginal = fs.readFileSync(invalidFile, 'utf8');
+    const changedOriginal = fs.readFileSync(changedFile, 'utf8');
+    const changed = JSON.parse(changedOriginal);
+    changed.description = 'Not imported';
+    fs.writeFileSync(invalidFile, '{ "name": ');
+    fs.writeFileSync(changedFile, JSON.stringify(changed));
+
+    let error;
+    try {
+      await exec('yarn cs import -p user-role.public,user-role.authenticated -y');
+    } catch (e) {
+      error = e;
+    } finally {
+      fs.writeFileSync(invalidFile, invalidOriginal);
+      fs.writeFileSync(changedFile, changedOriginal);
+    }
+
+    expect(error).toHaveProperty('code', 1);
+    expect(error.stdout).toContain('[error]');
+    expect(error.stdout).not.toContain('Finished import');
+    // The config after the failing one was left alone.
+    const { stdout: diffOutput } = await exec('yarn cs diff');
+    expect(diffOutput).toContain('No differences between DB and sync directory');
+  });
+
   test.each([
     ['user-role.public', '{\n  "name": ,\n}', 'line 2, column 11'],
     ['user-role.public', '{\n  "name": "ab\\q"\n}', 'line 2, column 15'],
