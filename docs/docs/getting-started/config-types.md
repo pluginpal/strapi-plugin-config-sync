@@ -123,3 +123,11 @@ This property can accept an array of field names from the type. It is meant to s
 ##### Key: `jsonFields`
 
 > `required:` NO | `type:` array
+
+### Ignore document ID
+
+Leaves the `documentId` out of the sync for this type: it is not exported and not compared. Use it for entries that each environment creates by itself, with its own random `documentId`. They are matched by their UID only. The plugin does this for the admin roles, user roles and i18n locales, which Strapi creates at bootstrap.
+
+##### Key: `ignoreDocumentId`
+
+> `required:` NO | `type:` boolean

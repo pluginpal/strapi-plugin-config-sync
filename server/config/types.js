@@ -1,5 +1,8 @@
 'use strict';
 
+// Strapi creates the default roles and locale itself at bootstrap, each with a
+// random documentId that an update can't change. These types are matched by
+// their uid, so their documentId is left out of the sync (ignoreDocumentId).
 const types = (strapi) => {
   // Initiate Strapi 'core-store' and 'admin-role' types.
   const typesArray = [
@@ -13,6 +16,7 @@ const types = (strapi) => {
       configName: 'admin-role',
       queryString: 'admin::role',
       uid: 'code',
+      ignoreDocumentId: true,
       relations: [{
         queryString: 'admin::permission',
         relationName: 'permissions',
@@ -28,6 +32,7 @@ const types = (strapi) => {
       configName: 'user-role',
       queryString: 'plugin::users-permissions.role',
       uid: 'type',
+      ignoreDocumentId: true,
       relations: [{
         queryString: 'plugin::users-permissions.permission',
         relationName: 'permissions',
@@ -43,6 +48,7 @@ const types = (strapi) => {
       configName: 'i18n-locale',
       queryString: 'plugin::i18n.locale',
       uid: 'code',
+      ignoreDocumentId: true,
     });
   }
 

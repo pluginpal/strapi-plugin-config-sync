@@ -32,6 +32,51 @@ describe('Test the config-sync CLI', () => {
     expect(diffOutput).toContain('No differences between DB and sync directory');
   });
 
+  test('Roles and locales Strapi creates itself match their files on a new database', async () => {
+    // A new database gets new random documentIds for the default roles and locale.
+    await exec('rm -rf .tmp');
+    const { stdout: importOutput } = await exec('yarn cs import -y');
+    expect(importOutput).toContain('Finished import');
+    const { stdout: diffOutput } = await exec('yarn cs diff');
+    expect(diffOutput).toContain('No differences between DB and sync directory');
+    ['admin-role.strapi-editor', 'user-role.public', 'i18n-locale.en'].forEach((name) => {
+      expect(JSON.parse(fs.readFileSync(`config/sync/${name}.json`, 'utf8'))).not.toHaveProperty('documentId');
+    });
+  });
+
+  test('A documentId left in a role or locale file from an older export is not a difference', async () => {
+    const names = ['admin-role.strapi-editor', 'user-role.public', 'i18n-locale.en'];
+    const originals = names.map((name) => fs.readFileSync(`config/sync/${name}.json`, 'utf8'));
+    names.forEach((name, i) => {
+      fs.writeFileSync(`config/sync/${name}.json`, JSON.stringify({ ...JSON.parse(originals[i]), documentId: 'olddocumentid' }));
+    });
+
+    try {
+      const { stdout: diffOutput } = await exec('yarn cs diff');
+      expect(diffOutput).toContain('No differences between DB and sync directory');
+    } finally {
+      names.forEach((name, i) => fs.writeFileSync(`config/sync/${name}.json`, originals[i]));
+    }
+  });
+
+  test.each([
+    'admin-role.strapi-editor',
+    'user-role.public',
+  ])('Permissions listed in another order in %s are not a difference', async (name) => {
+    const file = `config/sync/${name}.json`;
+    const original = fs.readFileSync(file, 'utf8');
+    const config = JSON.parse(original);
+    config.permissions.reverse();
+    fs.writeFileSync(file, JSON.stringify(config));
+
+    try {
+      const { stdout: diffOutput } = await exec('yarn cs diff');
+      expect(diffOutput).toContain('No differences between DB and sync directory');
+    } finally {
+      fs.writeFileSync(file, original);
+    }
+  });
+
   test('Partial export only exports the selected config', async () => {
     const selectedConfigBefore = fs.readFileSync(selectedConfigPath, 'utf8');
     const otherConfigBefore = fs.readFileSync(otherConfigPath, 'utf8');

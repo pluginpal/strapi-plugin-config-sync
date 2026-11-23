@@ -5,7 +5,7 @@ import queryFallBack from '../utils/queryFallBack';
 import InvalidConfigFileError from '../utils/invalidConfigFileError';
 
 const ConfigType = class ConfigType {
-  constructor({ queryString, configName, uid, jsonFields, relations, components }) {
+  constructor({ queryString, configName, uid, jsonFields, relations, components, ignoreDocumentId }) {
     if (!configName) {
       strapi.log.error(logMessage('A config type was registered without a config name.'));
       process.exit(0);
@@ -28,6 +28,7 @@ const ConfigType = class ConfigType {
     this.jsonFields = jsonFields || [];
     this.relations = relations || [];
     this.components = components || null;
+    this.ignoreDocumentId = ignoreDocumentId || false;
   }
 
   /**
@@ -238,6 +239,7 @@ const ConfigType = class ConfigType {
       if (shouldExclude) return;
 
       const formattedConfig = { ...sanitizeConfig({ config, configName }) };
+      if (this.ignoreDocumentId) delete formattedConfig.documentId;
       await Promise.all(this.relations.map(async ({ queryString, relationName, relationSortFields, parentName }) => {
         const relations = await noLimit(strapi.query(queryString), {
           where: { [parentName]: combinedUidWhereFilter },
